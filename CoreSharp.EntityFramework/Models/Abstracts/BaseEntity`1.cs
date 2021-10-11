@@ -6,7 +6,6 @@ using System.Diagnostics;
 
 namespace CoreSharp.EntityFramework.Models.Abstracts
 {
-    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public abstract class BaseEntity<TKey> : IEntity<TKey>
     {
         //Fields 
@@ -15,14 +14,15 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         [Newtonsoft.Json.JsonIgnore]
         private DateTime? _dateCreatedUtc;
 
-        //Properties 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay
-            => ToString();
-
+        //Properties
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public TKey Id { get; set; }
+
+        [NotMapped]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        object IKeyedEntity.Id { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime DateCreatedUtc
@@ -34,7 +34,7 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         [DataType(DataType.DateTime)]
         public DateTime? DateModifiedUtc { get; set; }
 
-        //Methods
+        //Methods 
         public override string ToString()
             => $"{Id}";
     }

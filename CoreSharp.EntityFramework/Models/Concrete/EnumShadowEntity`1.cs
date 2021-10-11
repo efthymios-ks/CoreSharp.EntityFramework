@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace CoreSharp.EntityFramework.Models.Concrete
 {
     /// <summary>
-    /// Enum shadow entity used for one-to-many relationship.
+    /// Enum shadow entity used table relationships.
     /// </summary>
     public sealed class EnumShadowEntity<TEnum> where TEnum : Enum
     {

@@ -30,19 +30,19 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         private void UpdateTrackableEntities()
         {
             var utcNow = DateTime.UtcNow;
-            var trackableEntities = ChangeTracker.Entries().Where(e => e is ITrackableEntity);
-            foreach (var entity in trackableEntities)
+            var trackableEntries = ChangeTracker.Entries().Where(e => e.Entity is ITrackableEntity);
+            foreach (var entry in trackableEntries)
             {
-                var trackableEntity = entity as ITrackableEntity;
-                switch (entity.State)
+                var trackableEntity = entry.Entity as ITrackableEntity;
+                switch (entry.State)
                 {
                     case EntityState.Added:
                         trackableEntity.DateCreatedUtc = utcNow;
-                        entity.Property(nameof(ITrackableEntity.DateModifiedUtc)).IsModified = false;
+                        entry.Property(nameof(ITrackableEntity.DateModifiedUtc)).IsModified = false;
                         break;
                     case EntityState.Modified:
                         trackableEntity.DateModifiedUtc = utcNow;
-                        entity.Property(nameof(ITrackableEntity.DateCreatedUtc)).IsModified = false;
+                        entry.Property(nameof(ITrackableEntity.DateCreatedUtc)).IsModified = false;
                         break;
                 }
             }

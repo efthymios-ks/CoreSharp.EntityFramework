@@ -1,8 +1,8 @@
 ﻿namespace CoreSharp.EntityFramework.Models.Interfaces
 {
-    public interface IKeyedEntity<TKey> : IKeyedEntity
+    public interface IKeyedEntity
     {
         //Properties 
-        new TKey Id { get; set; }
+        object Id { get; set; }
     }
 }
