@@ -4,6 +4,7 @@ using CoreSharp.EntityFramework.Examples.CodeFirst.Database.Repositories;
 using CoreSharp.EntityFramework.Examples.CodeFirst.Database.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,28 +19,48 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
 
             var dbContext = services.GetRequiredService<DbContext>();
             var teacherRepository = services.GetRequiredService<ITeacherRepository>();
+            var courseRepository = services.GetRequiredService<ICourseRepository>();
 
-            var teachers = await teacherRepository.GetAsync(navigation: q => q.Include(t => t.Courses));
-            var teacher = teachers.FirstOrDefault();
-            if (teacher is not null)
+            //Get first teacher
+            var teacher = (await teacherRepository.GetAsync(navigation: q => q
+                                                            .Take(1)
+                                                            .Include(t => t.Courses)))
+                                                   .FirstOrDefault();
+
+            //Create one, if none 
+            if (teacher is null)
             {
-                if (teacher.Courses.Any())
+                var newTeacher = new Teacher()
                 {
-                    teacher.Courses.Clear();
-                    await teacherRepository.UpdateAsync(teacher);
-                    await dbContext.SaveChangesAsync();
-                }
+                    Name = "Efthymios"
+                };
+                teacher = await teacherRepository.AddAsync(newTeacher);
+                await dbContext.SaveChangesAsync();
+            }
 
+            //Remove courses 
+            if (teacher.Courses.Any())
+            {
+                foreach (var course in teacher.Courses)
+                    await courseRepository.RemoveAsync(course);
+
+                teacher.Courses.Clear();
+                await teacherRepository.UpdateAsync(teacher);
+                await dbContext.SaveChangesAsync();
+            }
+
+            //Add course from scratch
+            {
                 var course = new Course()
                 {
                     Name = "Math"
                 };
                 teacher.Courses.Add(course);
                 await teacherRepository.UpdateAsync(teacher);
+                await dbContext.SaveChangesAsync();
             }
 
-            //Save changes 
-            await dbContext.SaveChangesAsync();
+            Console.ReadLine();
         }
 
         private static ServiceProvider GetServiceProvider()
@@ -47,6 +68,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddScoped<DbContext, SchoolDbContext>();
             serviceCollection.AddScoped<ITeacherRepository, TeacherRepository>();
+            serviceCollection.AddScoped<ICourseRepository, CourseRepository>();
             return serviceCollection.BuildServiceProvider();
         }
     }

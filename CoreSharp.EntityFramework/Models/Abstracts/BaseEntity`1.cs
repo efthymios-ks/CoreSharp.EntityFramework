@@ -19,6 +19,7 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public TKey Id { get; set; }
 
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         [NotMapped]
         [System.Text.Json.Serialization.JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]

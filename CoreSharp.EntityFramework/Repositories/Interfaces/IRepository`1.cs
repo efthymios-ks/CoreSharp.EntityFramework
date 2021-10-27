@@ -36,10 +36,10 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
             Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null);
 
         /// <inheritdoc cref="DbContext.AddAsync{TEntity}(TEntity, System.Threading.CancellationToken)" />
-        Task AddAsync(TEntity entity);
+        Task<TEntity> AddAsync(TEntity entity);
 
         /// <inheritdoc cref="DbContext.Update{TEntity}(TEntity)" />
-        Task UpdateAsync(TEntity entity);
+        Task<TEntity> UpdateAsync(TEntity entity);
 
         /// <inheritdoc cref="DbContext.Remove{TEntity}(TEntity)" />
         Task RemoveAsync(TEntity entity);

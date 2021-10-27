@@ -42,30 +42,30 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             return await query.ToArrayAsync();
         }
 
-        public virtual async Task AddAsync(TEntity entity)
+        public virtual async Task<TEntity> AddAsync(TEntity entity)
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
 
-            await Table.AddAsync(entity);
+            return (await Table.AddAsync(entity).AsTask()).Entity;
         }
 
-        public virtual async Task UpdateAsync(TEntity entity)
+        public virtual async Task<TEntity> UpdateAsync(TEntity entity)
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
+            await Task.CompletedTask;
 
             Table.Attach(entity);
             Context.Entry(entity).State = EntityState.Modified;
 
-            await Task.CompletedTask;
+            return entity;
         }
 
         public virtual async Task RemoveAsync(TEntity entity)
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
+            await Task.CompletedTask;
 
             Table.Remove(entity);
-
-            await Task.CompletedTask;
         }
     }
 }
