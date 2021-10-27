@@ -1,7 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Database;
 using CoreSharp.EntityFramework.Examples.CodeFirst.Database.Models;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Database.Repositories;
 using CoreSharp.EntityFramework.Examples.CodeFirst.Database.Repositories.Interfaces;
+using CoreSharp.EntityFramework.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -67,8 +67,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddScoped<DbContext, SchoolDbContext>();
-            serviceCollection.AddScoped<ITeacherRepository, TeacherRepository>();
-            serviceCollection.AddScoped<ICourseRepository, CourseRepository>();
+            serviceCollection.RegisterRepositories();
             return serviceCollection.BuildServiceProvider();
         }
     }
