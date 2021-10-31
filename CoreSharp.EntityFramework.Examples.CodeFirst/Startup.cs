@@ -1,6 +1,6 @@
 ﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database;
 using CoreSharp.EntityFramework.Extensions;
-using Microsoft.EntityFrameworkCore;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst
@@ -15,8 +15,9 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
         {
             var serviceCollection = new ServiceCollection();
 
-            serviceCollection.AddScoped<DbContext, SchoolDbContext>();
+            serviceCollection.AddScoped<SchoolDbContext>();
             serviceCollection.RegisterRepositories(typeof(SchoolDbContext).Assembly);
+            serviceCollection.AddMediatR(typeof(MediatR.AssemblyReferenceHook));
 
             return serviceCollection.BuildServiceProvider();
         }

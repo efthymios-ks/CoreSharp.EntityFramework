@@ -1,5 +1,6 @@
-﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories.Interfaces;
+﻿using CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Commands;
+using CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Queries;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -15,47 +16,41 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
         {
             var services = Startup.ConfigureServices();
 
-            var dbContext = services.GetRequiredService<DbContext>();
-            var teacherRepository = services.GetRequiredService<ITeacherRepository>();
-            var courseRepository = services.GetRequiredService<ICourseRepository>();
+            var mediatR = services.GetRequiredService<IMediator>();
 
             //Get first teacher
-            var teacher = (await teacherRepository.GetAsync(navigation: q => q
-                                                            .Take(1)
-                                                            .Include(t => t.Courses)))
-                                                   .FirstOrDefault();
+            var getTeachersQuery = new GetTeachersQuery
+            {
+                Navigation = q => q.Take(1).Include(t => t.Courses)
+            };
+            var teacher = (await mediatR.Send(getTeachersQuery)).FirstOrDefault();
 
             //Create one, if none 
             if (teacher is null)
             {
-                var newTeacher = new Teacher()
+                var command = new AddTeacherCommand(new()
                 {
                     Name = "Efthymios"
-                };
-                teacher = await teacherRepository.AddAsync(newTeacher);
-                await dbContext.SaveChangesAsync();
+                });
+                teacher = await mediatR.Send(command);
             }
 
             //Remove courses 
             if (teacher.Courses.Any())
             {
-                foreach (var course in teacher.Courses)
-                    await courseRepository.RemoveAsync(course);
-
-                teacher.Courses.Clear();
-                await teacherRepository.UpdateAsync(teacher);
-                await dbContext.SaveChangesAsync();
+                var command = new RemoveTeacherCoursesCommand(teacher);
+                teacher = await mediatR.Send(command);
             }
+
 
             //Add course from scratch
             {
-                var course = new Course()
+                teacher.Courses.Add(new()
                 {
                     Name = "Math"
-                };
-                teacher.Courses.Add(course);
-                await teacherRepository.UpdateAsync(teacher);
-                await dbContext.SaveChangesAsync();
+                });
+                var command = new UpdateTeacherCommand(teacher);
+                teacher = await mediatR.Send(command);
             }
 
             Console.ReadLine();
