@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
@@ -8,16 +8,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.10" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.10">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        <TreatAsUsed>true</TreatAsUsed>
-      </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.10">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <TreatAsUsed>true</TreatAsUsed>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CoreSharp.EntityFramework\CoreSharp.EntityFramework.csproj" />
+        <ProjectReference Include="..\CoreSharp.EntityFramework.Examples.CodeFirst.Domain\CoreSharp.EntityFramework.Examples.CodeFirst.Domain.csproj" />
+        <ProjectReference Include="..\CoreSharp.EntityFramework.Examples.CodeFirst.MediatR\CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.csproj" />
+        <ProjectReference Include="..\CoreSharp.EntityFramework\CoreSharp.EntityFramework.csproj" />
     </ItemGroup>
 
 </Project>

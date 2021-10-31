@@ -1,5 +1,5 @@
-﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Database.Models;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Database.Repositories.Interfaces;
+﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models;
+using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
