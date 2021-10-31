@@ -1,7 +1,5 @@
-﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Database;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Database.Models;
+﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Database.Models;
 using CoreSharp.EntityFramework.Examples.CodeFirst.Database.Repositories.Interfaces;
-using CoreSharp.EntityFramework.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -15,7 +13,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
         //Methods 
         private static async Task Main()
         {
-            var services = GetServiceProvider();
+            var services = Startup.ConfigureServices();
 
             var dbContext = services.GetRequiredService<DbContext>();
             var teacherRepository = services.GetRequiredService<ITeacherRepository>();
@@ -61,14 +59,6 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
             }
 
             Console.ReadLine();
-        }
-
-        private static ServiceProvider GetServiceProvider()
-        {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddScoped<DbContext, SchoolDbContext>();
-            serviceCollection.RegisterRepositories();
-            return serviceCollection.BuildServiceProvider();
         }
     }
 }
