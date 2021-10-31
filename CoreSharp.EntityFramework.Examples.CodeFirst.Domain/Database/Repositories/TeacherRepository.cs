@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories
 {
-    internal class TeacherRepository : BaseRepository<Teacher>, ITeacherRepository
+    internal class TeacherRepository : RepositoryBase<Teacher>, ITeacherRepository
     {
         //Constructors
         public TeacherRepository(DbContext context) : base(context)

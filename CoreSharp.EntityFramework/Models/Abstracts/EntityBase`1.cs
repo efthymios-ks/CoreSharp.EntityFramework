@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace CoreSharp.EntityFramework.Models.Abstracts
 {
-    public abstract class BaseEntity<TKey> : IEntity<TKey>
+    public abstract class EntityBase<TKey> : IEntity<TKey>
     {
         //Fields 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]

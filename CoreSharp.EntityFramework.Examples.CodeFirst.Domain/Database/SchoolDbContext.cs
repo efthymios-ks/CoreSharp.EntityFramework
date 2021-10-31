@@ -8,7 +8,7 @@ using System;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
 {
-    public class SchoolDbContext : BaseDbContext
+    public class SchoolDbContext : DbContextBase
     {
         //Properties
         public DbSet<Teacher> Teachers { get; set; }

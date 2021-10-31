@@ -3,7 +3,7 @@ using System;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models.Abstracts
 {
-    public abstract class BaseAddress : BaseEntity<Guid>
+    public abstract class BaseAddress : EntityBase<Guid>
     {
         //Properties 
         public string Address { get; set; }

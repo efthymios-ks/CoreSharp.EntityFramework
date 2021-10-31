@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models
 {
-    public class Course : BaseEntity<Guid>
+    public class Course : EntityBase<Guid>
     {
         //Properties
         public string Name { get; set; }

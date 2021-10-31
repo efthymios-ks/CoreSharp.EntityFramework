@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Models.Abstracts
 {
-    public abstract class BaseDbContext : DbContext
+    public abstract class DbContextBase : DbContext
     {
         //Methods
         public override int SaveChanges(bool acceptAllChangesOnSuccess)

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Abstracts
 {
-    public abstract class BaseUnitOfWork : IUnitOfWork
+    public abstract class UnitOfWorkBase : IUnitOfWork
     {
         //Constructors
-        protected BaseUnitOfWork(DbContext context)
+        protected UnitOfWorkBase(DbContext context)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }

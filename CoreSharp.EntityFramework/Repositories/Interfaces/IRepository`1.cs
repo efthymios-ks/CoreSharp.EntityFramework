@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 namespace CoreSharp.EntityFramework.Repositories.Interfaces
 {
     /// <summary>
-    /// Suggested implementation with <see cref="BaseRepository{TKey}"/>.
+    /// Suggested implementation with <see cref="RepositoryBase{TKey}"/>.
     /// </summary>
-    /// <typeparam name="TEntity">Suggested implementation with <see cref="BaseEntity{TKey}"/>.</typeparam>
+    /// <typeparam name="TEntity">Suggested implementation with <see cref="EntityBase{TKey}"/>.</typeparam>
     public interface IRepository<TEntity> where TEntity : class, IEntity
     {
         //Methods

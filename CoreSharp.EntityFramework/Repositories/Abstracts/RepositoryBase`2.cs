@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Abstracts
 {
-    public abstract class BaseRepository<TEntity, TKey> : BaseRepository<TEntity>, IRepository<TEntity, TKey>
-        where TEntity : BaseEntity<TKey>
+    public abstract class RepositoryBase<TEntity, TKey> : RepositoryBase<TEntity>, IRepository<TEntity, TKey>
+        where TEntity : EntityBase<TKey>
     {
         //Constructors
-        protected BaseRepository(DbContext context) : base(context)
+        protected RepositoryBase(DbContext context) : base(context)
         {
         }
 
