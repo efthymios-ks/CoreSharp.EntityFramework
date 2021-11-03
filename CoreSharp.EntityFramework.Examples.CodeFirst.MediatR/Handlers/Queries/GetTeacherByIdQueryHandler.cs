@@ -21,6 +21,6 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Queries
 
         //Methods
         public async Task<Teacher> Handle(GetTeacherByIdQuery request, CancellationToken cancellationToken)
-            => await _teacherRepository.GetAsync(request.TeacherId, request.Navigation);
+            => await _teacherRepository.GetAsync(request.TeacherId, request.Navigation, cancellationToken);
     }
 }

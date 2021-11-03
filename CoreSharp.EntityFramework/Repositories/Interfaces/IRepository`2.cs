@@ -1,6 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Models.Abstracts;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Interfaces
@@ -10,6 +11,9 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
     {
         //Methods 
         /// <inheritdoc cref="IRepository{TEntity}.GetAsync(object, Func{IQueryable{TEntity}, IQueryable{TEntity}})"/>
-        Task<TEntity> GetAsync(TKey key, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null);
+        Task<TEntity> GetAsync(
+            TKey key,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
+            CancellationToken cancellationToken = default);
     }
 }

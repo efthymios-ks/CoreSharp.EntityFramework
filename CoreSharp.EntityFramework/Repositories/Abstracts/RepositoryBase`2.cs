@@ -3,6 +3,7 @@ using CoreSharp.EntityFramework.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Abstracts
@@ -16,7 +17,10 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         }
 
         //Methods 
-        public async virtual Task<TEntity> GetAsync(TKey key, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null)
-            => await GetAsync(key as object, navigation);
+        public async virtual Task<TEntity> GetAsync(
+            TKey key,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
+            CancellationToken cancellationToken = default)
+            => await GetAsync(key as object, navigation, cancellationToken);
     }
 }

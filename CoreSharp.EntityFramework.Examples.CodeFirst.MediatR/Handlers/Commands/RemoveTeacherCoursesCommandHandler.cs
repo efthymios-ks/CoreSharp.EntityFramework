@@ -30,16 +30,16 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
         //Methods
         public async Task<Teacher> Handle(RemoveTeacherCoursesCommand request, CancellationToken cancellationToken)
         {
-            _ = request.Teacher ?? throw new ArgumentNullException(nameof(request));
+            _ = request.Teacher ?? throw new NullReferenceException($"{nameof(Teacher)} cannot be null.");
 
             var teacher = request.Teacher;
             if (teacher.Courses.Any())
             {
                 foreach (var course in teacher.Courses)
-                    await _courseRepository.RemoveAsync(course);
+                    await _courseRepository.RemoveAsync(course, cancellationToken);
                 teacher.Courses.Clear();
-                await _teacherRepository.UpdateAsync(teacher);
-                await _schoolDbContext.SaveChangesAsync();
+                await _teacherRepository.UpdateAsync(teacher, cancellationToken);
+                await _schoolDbContext.SaveChangesAsync(cancellationToken);
             }
             return teacher;
         }

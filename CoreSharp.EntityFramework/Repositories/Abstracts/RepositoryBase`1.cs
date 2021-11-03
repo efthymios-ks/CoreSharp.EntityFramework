@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Abstracts
@@ -23,17 +24,23 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         protected DbSet<TEntity> Table { get; }
 
         //Methods 
-        public async virtual Task<TEntity> GetAsync(object key, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null)
+        public async virtual Task<TEntity> GetAsync(
+            object key,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
+            CancellationToken cancellationToken = default)
         {
             _ = key ?? throw new ArgumentNullException(nameof(key));
 
             var query = Table.AsQueryable();
             if (navigation is not null)
                 query = navigation(query);
-            return await query.SingleOrDefaultAsync(i => Equals(i.Id, key));
+            return await query.SingleOrDefaultAsync(i => Equals(i.Id, key), cancellationToken: cancellationToken);
         }
 
-        public async virtual Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null)
+        public virtual async Task<IEnumerable<TEntity>> GetAsync(
+            Expression<Func<TEntity, bool>> filter = null,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
+            CancellationToken cancellationToken = default)
         {
             var query = Table.AsQueryable();
             if (navigation is not null)
@@ -41,17 +48,21 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             if (filter is not null)
                 query = query.Where(filter);
 
-            return await query.ToArrayAsync();
+            return await query.ToArrayAsync(cancellationToken: cancellationToken);
         }
 
-        public virtual async Task<TEntity> AddAsync(TEntity entity)
+        public virtual async Task<TEntity> AddAsync(
+            TEntity entity,
+            CancellationToken cancellationToken = default)
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
 
-            return (await Table.AddAsync(entity).AsTask()).Entity;
+            return (await Table.AddAsync(entity, cancellationToken)).Entity;
         }
 
-        public virtual async Task<TEntity> UpdateAsync(TEntity entity)
+        public virtual async Task<TEntity> UpdateAsync(
+            TEntity entity,
+            CancellationToken cancellationToken = default)
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
             await Task.CompletedTask;
@@ -62,7 +73,9 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             return entity;
         }
 
-        public virtual async Task RemoveAsync(TEntity entity)
+        public virtual async Task RemoveAsync(
+            TEntity entity,
+            CancellationToken cancellationToken = default)
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
             await Task.CompletedTask;

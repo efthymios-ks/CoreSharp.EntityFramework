@@ -25,10 +25,10 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
         //Methods
         public async Task<Teacher> Handle(AddTeacherCommand request, CancellationToken cancellationToken)
         {
-            _ = request.Teacher ?? throw new ArgumentNullException(nameof(request.Teacher));
+            _ = request.Teacher ?? throw new NullReferenceException($"{nameof(Teacher)} cannot be null.");
 
-            var teacher = await _teacherRepository.AddAsync(request.Teacher);
-            await _schoolDbContext.SaveChangesAsync();
+            var teacher = await _teacherRepository.AddAsync(request.Teacher, cancellationToken);
+            await _schoolDbContext.SaveChangesAsync(cancellationToken);
             return teacher;
         }
     }

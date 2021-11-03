@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Interfaces
@@ -24,7 +25,8 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         /// <param name="navigation">Optional argument to build query.</param>
         Task<TEntity> GetAsync(
             object key,
-            Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null);
+            Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get all entities.
@@ -33,15 +35,16 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         /// <param name="navigation">Optional argument to build query.</param>
         Task<IEnumerable<TEntity>> GetAsync(
             Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null);
+            Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
+            CancellationToken cancellationToken = default);
 
         /// <inheritdoc cref="DbContext.AddAsync{TEntity}(TEntity, System.Threading.CancellationToken)" />
-        Task<TEntity> AddAsync(TEntity entity);
+        Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default);
 
         /// <inheritdoc cref="DbContext.Update{TEntity}(TEntity)" />
-        Task<TEntity> UpdateAsync(TEntity entity);
+        Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
 
         /// <inheritdoc cref="DbContext.Remove{TEntity}(TEntity)" />
-        Task RemoveAsync(TEntity entity);
+        Task RemoveAsync(TEntity entity, CancellationToken cancellationToken = default);
     }
 }

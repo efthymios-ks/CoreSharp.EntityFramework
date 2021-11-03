@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Abstracts
@@ -18,12 +19,15 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         protected DbContext Context { get; }
 
         //Methods   
-        public virtual async Task CommitAsync()
-            => await Context?.SaveChangesAsync();
+        public virtual async Task CommitAsync(CancellationToken cancellationToken = default)
+            => await Context?.SaveChangesAsync(cancellationToken);
 
-        public virtual async Task RollbackAsync()
+        public virtual async Task RollbackAsync(CancellationToken cancellationToken = default)
         {
-            var entities = Context?.ChangeTracker.Entries().Where(e => e.State != EntityState.Unchanged);
+            var entities = Context?
+                            .ChangeTracker
+                            .Entries()
+                            .Where(e => e.State != EntityState.Unchanged);
             if (entities is null)
                 return;
 
@@ -36,7 +40,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
                         break;
                     case EntityState.Modified:
                     case EntityState.Deleted:
-                        await entity.ReloadAsync();
+                        await entity.ReloadAsync(cancellationToken);
                         entity.State = EntityState.Unchanged;
                         break;
                 }
