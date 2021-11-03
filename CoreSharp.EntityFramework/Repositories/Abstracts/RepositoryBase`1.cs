@@ -27,8 +27,10 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         {
             _ = key ?? throw new ArgumentNullException(nameof(key));
 
-            var entities = await GetAsync(i => Equals(i.Id, key), navigation);
-            return entities.SingleOrDefault();
+            var query = Table.AsQueryable();
+            if (navigation is not null)
+                query = navigation(query);
+            return await query.SingleOrDefaultAsync(i => Equals(i.Id, key));
         }
 
         public async virtual Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null)

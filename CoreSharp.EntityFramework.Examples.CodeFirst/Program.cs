@@ -15,13 +15,12 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
         private static async Task Main()
         {
             var services = Startup.ConfigureServices();
-
             var mediatR = services.GetRequiredService<IMediator>();
 
             //Get first teacher
             var getTeachersQuery = new GetTeachersQuery
             {
-                Navigation = q => q.Take(1).Include(t => t.Courses)
+                Navigation = q => q.Include(t => t.Courses)
             };
             var teacher = (await mediatR.Send(getTeachersQuery)).FirstOrDefault();
 
@@ -41,7 +40,6 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
                 var command = new RemoveTeacherCoursesCommand(teacher);
                 teacher = await mediatR.Send(command);
             }
-
 
             //Add course from scratch
             {
