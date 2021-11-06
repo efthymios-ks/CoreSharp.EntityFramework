@@ -7,12 +7,12 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Commands
     public class RemoveTeacherCoursesCommand : IRequest<Teacher>
     {
         //Constructors
-        public RemoveTeacherCoursesCommand(Teacher teacher)
+        public RemoveTeacherCoursesCommand(Guid teacherId)
         {
-            Teacher = teacher ?? throw new ArgumentNullException(nameof(teacher));
+            TeacherId = teacherId;
         }
 
         //Properties
-        public Teacher Teacher { get; }
+        public Guid TeacherId { get; }
     }
 }

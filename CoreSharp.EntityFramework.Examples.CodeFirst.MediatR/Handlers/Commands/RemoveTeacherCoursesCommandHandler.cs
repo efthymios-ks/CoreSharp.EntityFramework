@@ -3,6 +3,7 @@ using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models;
 using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories.Interfaces;
 using CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Commands;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading;
@@ -30,9 +31,10 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
         //Methods
         public async Task<Teacher> Handle(RemoveTeacherCoursesCommand request, CancellationToken cancellationToken)
         {
-            _ = request.Teacher ?? throw new NullReferenceException($"{nameof(Teacher)} cannot be null.");
+            var teacher = await _teacherRepository.GetAsync(request.TeacherId, q => q.Include(t => t.Courses), cancellationToken);
+            if (teacher is null)
+                throw new ArgumentOutOfRangeException($"{nameof(Teacher)} with {nameof(Teacher.Id)}=`{request.TeacherId}` not found.");
 
-            var teacher = request.Teacher;
             if (teacher.Courses.Any())
             {
                 foreach (var course in teacher.Courses)

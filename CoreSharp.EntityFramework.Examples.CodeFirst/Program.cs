@@ -37,7 +37,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
             //Remove courses 
             if (teacher.Courses.Any())
             {
-                var command = new RemoveTeacherCoursesCommand(teacher);
+                var command = new RemoveTeacherCoursesCommand(teacher.Id);
                 teacher = await mediatR.Send(command);
             }
 
