@@ -49,8 +49,8 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
 
         public virtual void Dispose()
         {
-            Context?.Dispose();
             GC.SuppressFinalize(this);
+            Context?.Dispose();
         }
     }
 }

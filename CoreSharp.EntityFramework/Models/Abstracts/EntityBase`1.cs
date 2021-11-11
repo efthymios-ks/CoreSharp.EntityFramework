@@ -36,7 +36,6 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         public DateTime? DateModifiedUtc { get; set; }
 
         //Methods 
-        public override string ToString()
-            => $"{Id}";
+        public override string ToString() => $"{Id}";
     }
 }

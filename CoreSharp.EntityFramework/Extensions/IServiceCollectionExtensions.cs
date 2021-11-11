@@ -46,10 +46,10 @@ namespace CoreSharp.EntityFramework.Extensions
             => serviceCollection.RegisterRepositories(repositoryInterfaceType, assemblies?.ToArray());
 
         /// <summary>
-        /// Register all `interface contract` + `concrete implementation` combos found in given assemblies.
-        /// If single implementation is found, then it is registered regardless.
-        /// If multiple implementations are found, only the one with the `I{Name}Repository` and `{Name}Repository` convention is registered.
-        /// If multiple implementations are found and none has a proper name, then none is registered.
+        /// <para>Register all `interface contract` + `concrete implementation` combos found in given assemblies.</para>
+        /// <para>If single implementation is found, then it is registered regardless.</para>
+        /// <para>If multiple implementations are found, only the one with the `I{Name}Repository` and `{Name}Repository` convention is registered.</para>
+        /// <para>If multiple implementations are found and none has a proper name, then none is registered.</para>
         /// </summary>
         public static IServiceCollection RegisterRepositories(this IServiceCollection serviceCollection, Type repositoryInterfaceType, params Assembly[] assemblies)
         {
