@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,15 +37,12 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         }
 
         public virtual async Task<IEnumerable<TEntity>> GetAsync(
-            Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
             CancellationToken cancellationToken = default)
         {
             var query = Table.AsQueryable();
             if (navigation is not null)
                 query = navigation(query);
-            if (filter is not null)
-                query = query.Where(filter);
 
             return await query.ToArrayAsync(cancellationToken: cancellationToken);
         }
