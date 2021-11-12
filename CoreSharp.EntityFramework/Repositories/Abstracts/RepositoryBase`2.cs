@@ -21,6 +21,6 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             TKey key,
             Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
             CancellationToken cancellationToken = default)
-            => await GetAsync(key as object, navigation, cancellationToken);
+            => await base.GetAsync(key, navigation, cancellationToken);
     }
 }

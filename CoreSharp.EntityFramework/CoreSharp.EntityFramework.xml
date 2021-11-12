@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CoreSharp.EntityFramework</name>
+    </assembly>
+    <members>
+        <member name="T:CoreSharp.EntityFramework.Extensions.EntityTypeBuilderExtensions">
+            <summary>
+            <see cref="T:Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder`1"/> extensions.
+            </summary>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.EntityTypeBuilderExtensions.HasEnum``2(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{``0},System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+            One-to-many relation with an <see cref="T:System.Enum"/>.
+            The <see cref="T:System.Enum"/> must be first configured in <see cref="M:Microsoft.EntityFrameworkCore.DbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)"/>
+            by calling <see cref="M:CoreSharp.EntityFramework.Extensions.ModelBuilderExtensions.HasEnum``1(Microsoft.EntityFrameworkCore.ModelBuilder,System.String)"/>.
+            </summary>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.EntityTypeBuilderExtensions.HasEnums``2(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{``0},System.Linq.Expressions.Expression{System.Func{``0,System.Collections.Generic.ICollection{``1}}})">
+            <summary>
+            Many-to-many relation with an <see cref="T:System.Enum"/>.
+            Currently stored as json without any relationship validation.
+            </summary>
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions">
+            <summary>
+            <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> extensions.
+            </summary>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type)" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type)">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])">
+            <summary>
+            <para>Register all `interface contract` + `concrete implementation` combos found in given assemblies.</para>
+            <para>If single implementation is found, then it is registered regardless.</para>
+            <para>If multiple implementations are found, only the one with the `I{Name}Repository` and `{Name}Repository` convention is registered.</para>
+            <para>If multiple implementations are found and none has a proper name, then none is registered.</para>
+            </summary>
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Extensions.ModelBuilderExtensions">
+            <summary>
+            <see cref="T:Microsoft.EntityFrameworkCore.ModelBuilder"/> extensions.
+            </summary>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.ModelBuilderExtensions.HasEnum``1(Microsoft.EntityFrameworkCore.ModelBuilder,System.String)">
+            <summary>
+            Configure and seed <see cref="T:System.Enum"/> to database table.
+            </summary>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.ModelBuilderExtensions.ConfigureEnum``1(Microsoft.EntityFrameworkCore.ModelBuilder,System.String)">
+            <summary>
+            Configure database column type for given <see cref="T:System.Enum"/>.
+            </summary>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.ModelBuilderExtensions.SeedEnum``1(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <summary>
+            Seed data to database column for given enum <see cref="T:System.Enum"/>.
+            </summary>
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Extensions.PropertyBuilderExtensions">
+            <summary>
+            <see cref="T:Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder`1"/> extensions.
+            </summary>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.PropertyBuilderExtensions.HasJsonConversion``1(Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder{``0})">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.PropertyBuilderExtensions.HasJsonConversion``1(Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder{``0},Newtonsoft.Json.JsonSerializerSettings)"/>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.PropertyBuilderExtensions.HasJsonConversion``1(Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder{``0},Newtonsoft.Json.JsonSerializerSettings)">
+            <summary>
+            Convert a property from and to json for database storage.
+            </summary>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.PropertyBuilderExtensions.HasUtcConversion(Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder{System.DateTime})">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.PropertyBuilderExtensions.HasUtcConversion(Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder{System.Nullable{System.DateTime}})" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.PropertyBuilderExtensions.HasUtcConversion(Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder{System.Nullable{System.DateTime}})">
+            <summary>
+            If needed, converts <see cref="T:System.DateTime" /> to UTC from and to database.
+            </summary>
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Models.Concrete.EnumShadowEntity`1">
+            <summary>
+            Enum shadow entity used table relationships.
+            </summary>
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1">
+            <summary>
+            Suggested implementation with <see cref="T:CoreSharp.EntityFramework.Repositories.Abstracts.RepositoryBase`1"/>.
+            </summary>
+            <typeparam name="TEntity">Suggested implementation with <see cref="T:CoreSharp.EntityFramework.Models.Abstracts.EntityBase`1"/>.</typeparam>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.GetAsync(System.Object,System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)">
+            <summary>
+            Get single entity by given key.
+            </summary>
+            <param name="key">Value to match.</param>
+            <param name="navigation">Optional argument to build query.</param>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.GetAsync(System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)">
+            <summary>
+            Get all entities.
+            </summary>
+            <param name="navigation">Optional argument to build query.</param>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.AddAsync(`0,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:Microsoft.EntityFrameworkCore.DbContext.AddAsync``1(``0,System.Threading.CancellationToken)" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.UpdateAsync(`0,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:Microsoft.EntityFrameworkCore.DbContext.Update``1(``0)" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.RemoveAsync(`0,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:Microsoft.EntityFrameworkCore.DbContext.Remove``1(``0)" />
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`2">
+            <inheritdoc />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`2.GetAsync(`1,System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)">
+            <inheritdoc cref="!:IRepository&lt;TEntity&gt;.GetAsync(object, Func&lt;IQueryable&lt;TEntity&gt;, IQueryable&lt;TEntity&gt;&gt;)"/>
+        </member>
+    </members>
+</doc>

@@ -56,10 +56,10 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             CancellationToken cancellationToken = default)
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
-            await Task.CompletedTask;
 
             Table.Attach(entity);
             Context.Entry(entity).State = EntityState.Modified;
+            await Task.CompletedTask;
 
             return entity;
         }
@@ -69,9 +69,9 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             CancellationToken cancellationToken = default)
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
-            await Task.CompletedTask;
 
             Table.Remove(entity);
+            await Task.CompletedTask;
         }
 
         private static IQueryable<TEntity> NavigateTable(DbSet<TEntity> table, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation)
@@ -81,7 +81,6 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             var query = table.AsQueryable();
             if (navigation is not null)
                 query = navigation(query);
-
             return query;
         }
     }

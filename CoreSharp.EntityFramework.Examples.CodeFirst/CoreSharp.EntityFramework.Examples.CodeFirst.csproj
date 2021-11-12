@@ -5,6 +5,9 @@
         <ApplicationIcon />
         <OutputType>Exe</OutputType>
         <StartupObject />
+        <Authors>Efthymios Koktsidis</Authors>
+        <Company>Efthymios Koktsidis</Company>
+        <Product>Efthymios Koktsidis</Product>
     </PropertyGroup>
 
     <ItemGroup>

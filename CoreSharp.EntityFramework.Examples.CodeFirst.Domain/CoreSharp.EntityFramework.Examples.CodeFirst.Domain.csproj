@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Authors>Efthymios Koktsidis</Authors>
+    <Company>Efthymios Koktsidis</Company>
+    <Product>Efthymios Koktsidis</Product>
   </PropertyGroup>
 
   <ItemGroup>
