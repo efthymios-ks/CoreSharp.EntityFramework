@@ -1,4 +1,4 @@
-﻿using CoreSharp.EntityFramework.Models.Abstracts;
+﻿using CoreSharp.EntityFramework.Models.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 namespace CoreSharp.EntityFramework.Repositories.Abstracts
 {
     public abstract class RepositoryBase<TEntity, TKey> : RepositoryBase<TEntity>, IRepository<TEntity, TKey>
-        where TEntity : EntityBase<TKey>
+        where TEntity : class, IEntity<TKey>
     {
         //Constructors
-        protected RepositoryBase(DbContext context) : base(context)
+        protected RepositoryBase(DbContext dbContext) : base(dbContext)
         {
         }
 

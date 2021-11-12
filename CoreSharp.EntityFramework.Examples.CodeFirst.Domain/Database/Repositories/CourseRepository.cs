@@ -8,7 +8,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositor
     internal class CourseRepository : RepositoryBase<Course>, ICourseRepository
     {
         //Constructors 
-        public CourseRepository(DbContext context) : base(context)
+        public CourseRepository(DbContext dbContext) : base(dbContext)
         {
         }
     }

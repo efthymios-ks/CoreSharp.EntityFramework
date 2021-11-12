@@ -1,4 +1,4 @@
-﻿using CoreSharp.EntityFramework.Models.Abstracts;
+﻿using CoreSharp.EntityFramework.Models.Interfaces;
 using System;
 using System.Linq;
 using System.Threading;
@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Interfaces
 {
-    public interface IRepository<TEntity, TKey> : IRepository<TEntity> where TEntity : EntityBase<TKey>
+    public interface IRepository<TEntity, TKey> : IRepository<TEntity>
+        where TEntity : class, IEntity<TKey>
     {
         //Methods 
         /// <inheritdoc cref="IRepository{TEntity}.GetAsync(object, Func{IQueryable{TEntity}, IQueryable{TEntity}}, CancellationToken)"/>

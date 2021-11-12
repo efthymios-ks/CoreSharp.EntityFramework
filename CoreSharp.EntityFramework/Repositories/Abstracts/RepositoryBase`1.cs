@@ -9,12 +9,13 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Abstracts
 {
-    public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
+    public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
+        where TEntity : class, IEntity
     {
         //Constructors
-        protected RepositoryBase(DbContext context)
+        protected RepositoryBase(DbContext dbContext)
         {
-            Context = context ?? throw new ArgumentNullException(nameof(context));
+            Context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             Table = Context.Set<TEntity>();
         }
 

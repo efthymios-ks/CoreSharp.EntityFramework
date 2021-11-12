@@ -8,8 +8,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWor
     public class SchoolUnitOfWork : UnitOfWorkBase, ISchoolUnitOfWork
     {
         //Fields 
-        private readonly ICourseRepository _courses;
-        private readonly ITeacherRepository _teachers;
+        private readonly ICourseRepository _courses = null;
+        private readonly ITeacherRepository _teachers = null;
 
         //Constructors
         public SchoolUnitOfWork(SchoolDbContext schoolDbContext) : base(schoolDbContext)

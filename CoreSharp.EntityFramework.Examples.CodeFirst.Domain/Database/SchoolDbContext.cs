@@ -26,6 +26,9 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
         {
             _ = modelBuilder ?? throw new ArgumentNullException(nameof(modelBuilder));
 
+            //Always call base method 
+            base.OnModelCreating(modelBuilder);
+
             ConfigureEnums(modelBuilder);
             ConfigureModels(modelBuilder);
         }
