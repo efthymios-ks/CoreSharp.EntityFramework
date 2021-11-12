@@ -1,5 +1,4 @@
-﻿using CoreSharp.EntityFramework.Extensions;
-using CoreSharp.EntityFramework.Models.Interfaces;
+﻿using CoreSharp.EntityFramework.Models.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Abstracts;
 using CoreSharp.EntityFramework.Store.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +16,26 @@ namespace CoreSharp.EntityFramework.Store.Abstracts
         {
         }
 
-        //Methods
-        public async Task CommitAsync(CancellationToken cancellationToken = default)
-            => await Context.SaveChangesAsync(cancellationToken);
+        //Methods 
+        public override async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default)
+        {
+            var createdEntity = await base.AddAsync(entity, cancellationToken);
+            await Context.SaveChangesAsync(cancellationToken);
+            return createdEntity;
+        }
 
-        public async Task RollbackAsync(CancellationToken cancellationToken = default)
-            => await Context.RollbackAsync(cancellationToken);
+        public override async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+        {
+            var updatedEntity = await base.UpdateAsync(entity, cancellationToken);
+            await Context.SaveChangesAsync(cancellationToken);
+            return updatedEntity;
+        }
+
+        public override async Task RemoveAsync(TEntity entity, CancellationToken cancellationToken = default)
+        {
+            await base.RemoveAsync(entity, cancellationToken);
+            await Context.SaveChangesAsync(cancellationToken);
+        }
 
         public void Dispose()
         {

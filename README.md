@@ -113,7 +113,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWor
     public class SchoolUnitOfWork : UnitOfWorkBase, ISchoolUnitOfWork
     {
         //Fields 
-        private readonly ITeacherRepository _teachers = null;
+        private ITeacherRepository _teachers = null;
 
         //Constructors
         public SchoolUnitOfWork(SchoolDbContext schoolDbContext) : base(schoolDbContext)
@@ -121,7 +121,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWor
         }
 
         //Properties
-        public ITeacherRepository Teachers => _teachers ?? new TeacherRepository(Context);
+        public ITeacherRepository Teachers => _teachers ??= new TeacherRepository(Context);
     }
 }
 ```
@@ -228,7 +228,7 @@ Inherit from `IStore<TEntity>` [(link)](https://github.com/efthymios-ks/CoreShar
 ```
 using CoreSharp.EntityFramework.Repositories.Interfaces;
 
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories.Interfaces
+namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores.Interfaces
 {
     public interface ITeacherStore : IStore<Teacher>
     {
@@ -242,12 +242,12 @@ Inherit from `StoreBase<TEntity>` [(link)](https://github.com/efthymios-ks/CoreS
 using CoreSharp.EntityFramework.Repositories.Abstracts;
 using Microsoft.EntityFrameworkCore;
 
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories
+namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores
 {
     internal class TeacherStore : StoreBase<Teacher>, ITeacherStore
     {
         //Constructors
-        public TeacherRepository(DbContext context) : base(context)
+        public TeacherStore(DbContext context) : base(context)
         {
         }        
         
@@ -308,8 +308,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
         //Methods
         public async Task<Teacher> Handle(AddTeacherCommand request, CancellationToken cancellationToken)
         { 
-            await _teacherStore.AddAsync(request.Teacher, cancellationToken);
-            await _teacherStore.CommitAsync(cancellationToken);
+            await _teacherStore.AddAsync(request.Teacher, cancellationToken); 
             return request.Teacher;
         }
     }

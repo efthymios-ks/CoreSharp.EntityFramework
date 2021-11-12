@@ -8,8 +8,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWor
     public class SchoolUnitOfWork : UnitOfWorkBase, ISchoolUnitOfWork
     {
         //Fields 
-        private readonly ICourseRepository _courses = null;
-        private readonly ITeacherRepository _teachers = null;
+        private ICourseRepository _courses = null;
+        private ITeacherRepository _teachers = null;
 
         //Constructors
         public SchoolUnitOfWork(SchoolDbContext schoolDbContext) : base(schoolDbContext)
@@ -17,7 +17,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWor
         }
 
         //Properties
-        public ICourseRepository Courses => _courses ?? new CourseRepository(Context);
-        public ITeacherRepository Teachers => _teachers ?? new TeacherRepository(Context);
+        public ICourseRepository Courses => _courses ??= new CourseRepository(Context);
+        public ITeacherRepository Teachers => _teachers ??= new TeacherRepository(Context);
     }
 }
