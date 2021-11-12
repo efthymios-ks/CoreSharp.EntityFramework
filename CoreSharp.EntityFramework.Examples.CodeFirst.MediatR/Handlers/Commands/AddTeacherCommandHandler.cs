@@ -1,6 +1,5 @@
-﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories.Interfaces;
+﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models;
+using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork.Interfaces;
 using CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Commands;
 using MediatR;
 using System;
@@ -12,14 +11,12 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
     public class AddTeacherCommandHandler : IRequestHandler<AddTeacherCommand, Teacher>
     {
         //Fields
-        private readonly SchoolDbContext _schoolDbContext;
-        private readonly ITeacherRepository _teacherRepository;
+        private readonly ISchoolUnitOfWork _schoolUnitOfWork;
 
         //Constructors
-        public AddTeacherCommandHandler(SchoolDbContext schoolDbContext, ITeacherRepository teacherRepository)
+        public AddTeacherCommandHandler(ISchoolUnitOfWork schoolUnitOfWork)
         {
-            _schoolDbContext = schoolDbContext ?? throw new ArgumentNullException(nameof(schoolDbContext));
-            _teacherRepository = teacherRepository ?? throw new ArgumentNullException(nameof(teacherRepository));
+            _schoolUnitOfWork = schoolUnitOfWork ?? throw new ArgumentNullException(nameof(schoolUnitOfWork));
         }
 
         //Methods
@@ -27,8 +24,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
         {
             _ = request.Teacher ?? throw new NullReferenceException($"{nameof(Teacher)} cannot be null.");
 
-            var teacher = await _teacherRepository.AddAsync(request.Teacher, cancellationToken);
-            await _schoolDbContext.SaveChangesAsync(cancellationToken);
+            var teacher = await _schoolUnitOfWork.Teachers.AddAsync(request.Teacher, cancellationToken);
+            await _schoolUnitOfWork.CommitAsync(cancellationToken);
             return teacher;
         }
     }

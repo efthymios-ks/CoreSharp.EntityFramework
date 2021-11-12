@@ -107,13 +107,13 @@
             Get single entity by given key.
             </summary>
             <param name="key">Value to match.</param>
-            <param name="navigation">Optional argument to build query.</param>
+            <param name="navigation">Optional argument to build query.</param> 
         </member>
         <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.GetAsync(System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)">
             <summary>
             Get all entities.
             </summary>
-            <param name="navigation">Optional argument to build query.</param>
+            <param name="navigation">Optional argument to build query.</param> 
         </member>
         <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.AddAsync(`0,System.Threading.CancellationToken)">
             <inheritdoc cref="M:Microsoft.EntityFrameworkCore.DbContext.AddAsync``1(``0,System.Threading.CancellationToken)" />
@@ -124,11 +124,8 @@
         <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.RemoveAsync(`0,System.Threading.CancellationToken)">
             <inheritdoc cref="M:Microsoft.EntityFrameworkCore.DbContext.Remove``1(``0)" />
         </member>
-        <member name="T:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`2">
-            <inheritdoc />
-        </member>
         <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`2.GetAsync(`1,System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)">
-            <inheritdoc cref="!:IRepository&lt;TEntity&gt;.GetAsync(object, Func&lt;IQueryable&lt;TEntity&gt;, IQueryable&lt;TEntity&gt;&gt;)"/>
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.GetAsync(System.Object,System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)"/>
         </member>
     </members>
 </doc>

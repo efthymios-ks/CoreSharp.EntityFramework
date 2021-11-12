@@ -21,7 +21,7 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         /// Get single entity by given key.
         /// </summary>
         /// <param name="key">Value to match.</param>
-        /// <param name="navigation">Optional argument to build query.</param>
+        /// <param name="navigation">Optional argument to build query.</param> 
         Task<TEntity> GetAsync(
             object key,
             Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
@@ -30,7 +30,7 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         /// <summary>
         /// Get all entities.
         /// </summary>
-        /// <param name="navigation">Optional argument to build query.</param>
+        /// <param name="navigation">Optional argument to build query.</param> 
         Task<IEnumerable<TEntity>> GetAsync(
             Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
             CancellationToken cancellationToken = default);
