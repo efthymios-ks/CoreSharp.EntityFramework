@@ -1,4 +1,5 @@
 ﻿using CoreSharp.EntityFramework.Repositories.Interfaces;
+using CoreSharp.EntityFramework.Store.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -14,17 +15,21 @@ namespace CoreSharp.EntityFramework.Extensions
     public static class IServiceCollectionExtensions
     {
         //Fields
-        private const string RepositoryPrefix = "I";
-        private const string RepositoryGroupRegexExp = "(?<Name>.+)";
+        private const string InterfacePrefix = "I";
+        private const string InterfaceGroupRegexExp = "(?<Name>.+)";
 
         //Properties
         private static Type DefaultRepositoryInterfaceType
             => typeof(IRepository<>);
 
-        private static string RepositoryContractRegexExp
-            => $"^{RepositoryPrefix}{RepositoryGroupRegexExp}$";
+        private static Type DefaultStoreInterfaceType
+            => typeof(IStore<>);
+
+        private static string InterfaceContractRegexExp
+            => $"^{InterfacePrefix}{InterfaceGroupRegexExp}$";
 
         //Methods 
+        //Repositories 
         /// <inheritdoc cref="AddRepositories(IServiceCollection, Type)" />
         public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection)
             => serviceCollection.AddRepositories(DefaultRepositoryInterfaceType);
@@ -45,18 +50,47 @@ namespace CoreSharp.EntityFramework.Extensions
         public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, Type repositoryInterfaceType, IEnumerable<Assembly> assemblies)
             => serviceCollection.AddRepositories(repositoryInterfaceType, assemblies?.ToArray());
 
+        /// <inheritdoc cref="AddInterfaces(IServiceCollection, Type, Assembly[])" />
+        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, Type repositoryInterfaceType, params Assembly[] assemblies)
+            => serviceCollection.AddInterfaces(repositoryInterfaceType, assemblies);
+
+        //Stores 
+        /// <inheritdoc cref="AddStores(IServiceCollection, Type)" />
+        public static IServiceCollection AddStores(this IServiceCollection serviceCollection)
+            => serviceCollection.AddStores(DefaultStoreInterfaceType);
+
+        /// <inheritdoc cref="AddStores(IServiceCollection, Type, Assembly[])" />
+        public static IServiceCollection AddStores(this IServiceCollection serviceCollection, Type storeInterfaceType)
+            => serviceCollection.AddStores(storeInterfaceType, Assembly.GetEntryAssembly());
+
+        /// <inheritdoc cref="AddStores(IServiceCollection, Type, Assembly[])" />
+        public static IServiceCollection AddStores(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
+            => serviceCollection.AddStores(DefaultStoreInterfaceType, assemblies?.ToArray());
+
+        /// <inheritdoc cref="AddStores(IServiceCollection, Type, Assembly[])" />
+        public static IServiceCollection AddStores(this IServiceCollection serviceCollection, params Assembly[] assembly)
+            => serviceCollection.AddStores(DefaultStoreInterfaceType, assembly);
+
+        /// <inheritdoc cref="AddStores(IServiceCollection, Type, Assembly[])" />
+        public static IServiceCollection AddStores(this IServiceCollection serviceCollection, Type storeInterfaceType, IEnumerable<Assembly> assemblies)
+            => serviceCollection.AddStores(storeInterfaceType, assemblies?.ToArray());
+
+        /// <inheritdoc cref="AddInterfaces(IServiceCollection, Type, Assembly[])" />
+        public static IServiceCollection AddStores(this IServiceCollection serviceCollection, Type storeInterfaceType, params Assembly[] assemblies)
+            => serviceCollection.AddInterfaces(storeInterfaceType, assemblies);
+
         /// <summary>
         /// <para>Register all `interface contract` + `concrete implementation` combos found in given assemblies.</para>
         /// <para>If single implementation is found, then it is registered regardless.</para>
         /// <para>If multiple implementations are found, only the one with the `I{Name}Repository` and `{Name}Repository` convention is registered.</para>
         /// <para>If multiple implementations are found and none has a proper name, then none is registered.</para>
         /// </summary>
-        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, Type repositoryInterfaceType, params Assembly[] assemblies)
+        private static IServiceCollection AddInterfaces(this IServiceCollection serviceCollection, Type interfaceBaseType, params Assembly[] assemblies)
         {
             _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
             _ = assemblies ?? throw new ArgumentNullException(nameof(assemblies));
-            if (repositoryInterfaceType?.IsInterface is not true)
-                throw new ArgumentException($"{nameof(repositoryInterfaceType)} ({repositoryInterfaceType.FullName}) must be an interface.", nameof(repositoryInterfaceType));
+            if (interfaceBaseType?.IsInterface is not true)
+                throw new ArgumentException($"{nameof(interfaceBaseType)} ({interfaceBaseType.FullName}) must be an interface.", nameof(interfaceBaseType));
 
             //Get all contracts 
             var contracts = assemblies.SelectMany(a => a.GetTypes()).Where(t =>
@@ -68,7 +102,7 @@ namespace CoreSharp.EntityFramework.Extensions
                 else if (!t.IsInterface)
                     return false;
                 //Doesn't implement base interface, ignore
-                else if (t.GetInterface(repositoryInterfaceType.FullName) is null)
+                else if (t.GetInterface(interfaceBaseType.FullName) is null)
                     return false;
                 //Else take 
                 else
@@ -119,7 +153,7 @@ namespace CoreSharp.EntityFramework.Extensions
                     }
 
                     //Get contract name 
-                    var trimmedContractName = Regex.Match(contract.Name, RepositoryContractRegexExp).Groups["Name"].Value;
+                    var trimmedContractName = Regex.Match(contract.Name, InterfaceContractRegexExp).Groups["Name"].Value;
                     trimmedContractName = TrimGenericTypeName(contract, trimmedContractName);
 
                     //Register only if there is a single one with the correct name convention
