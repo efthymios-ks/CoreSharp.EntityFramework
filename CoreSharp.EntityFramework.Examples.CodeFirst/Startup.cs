@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace CoreSharp.EntityFramework.Examples.CodeFirst
 {
     /// <summary>
-    /// Pseude-startup class.
+    /// Pseudo-startup class.
     /// </summary>
     internal static class Startup
     {
@@ -16,7 +16,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
             var serviceCollection = new ServiceCollection();
 
             serviceCollection.AddScoped<SchoolDbContext>();
-            serviceCollection.RegisterRepositories(typeof(SchoolDbContext).Assembly);
+            serviceCollection.AddRepositories(typeof(SchoolDbContext).Assembly);
             serviceCollection.AddMediatR(typeof(MediatR.AssemblyReferenceHook));
 
             return serviceCollection.BuildServiceProvider();

@@ -27,22 +27,22 @@
             <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/> extensions.
             </summary>
         </member>
-        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
-            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type)" />
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type)" />
         </member>
-        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type)">
-            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type)">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
         </member>
-        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
-            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
         </member>
-        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])">
-            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
         </member>
-        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
-            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
         </member>
-        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.RegisterRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])">
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])">
             <summary>
             <para>Register all `interface contract` + `concrete implementation` combos found in given assemblies.</para>
             <para>If single implementation is found, then it is registered regardless.</para>

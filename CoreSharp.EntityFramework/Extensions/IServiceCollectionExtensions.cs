@@ -25,25 +25,25 @@ namespace CoreSharp.EntityFramework.Extensions
             => $"^{RepositoryPrefix}{RepositoryGroupRegexExp}$";
 
         //Methods 
-        /// <inheritdoc cref="RegisterRepositories(IServiceCollection, Type)" />
-        public static IServiceCollection RegisterRepositories(this IServiceCollection serviceCollection)
-            => serviceCollection.RegisterRepositories(DefaultRepositoryInterfaceType);
+        /// <inheritdoc cref="AddRepositories(IServiceCollection, Type)" />
+        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection)
+            => serviceCollection.AddRepositories(DefaultRepositoryInterfaceType);
 
-        /// <inheritdoc cref="RegisterRepositories(IServiceCollection, Type, Assembly[])" />
-        public static IServiceCollection RegisterRepositories(this IServiceCollection serviceCollection, Type repositoryInterfaceType)
-            => serviceCollection.RegisterRepositories(repositoryInterfaceType, Assembly.GetEntryAssembly());
+        /// <inheritdoc cref="AddRepositories(IServiceCollection, Type, Assembly[])" />
+        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, Type repositoryInterfaceType)
+            => serviceCollection.AddRepositories(repositoryInterfaceType, Assembly.GetEntryAssembly());
 
-        /// <inheritdoc cref="RegisterRepositories(IServiceCollection, Type, Assembly[])" />
-        public static IServiceCollection RegisterRepositories(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
-            => serviceCollection.RegisterRepositories(DefaultRepositoryInterfaceType, assemblies?.ToArray());
+        /// <inheritdoc cref="AddRepositories(IServiceCollection, Type, Assembly[])" />
+        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
+            => serviceCollection.AddRepositories(DefaultRepositoryInterfaceType, assemblies?.ToArray());
 
-        /// <inheritdoc cref="RegisterRepositories(IServiceCollection, Type, Assembly[])" />
-        public static IServiceCollection RegisterRepositories(this IServiceCollection serviceCollection, params Assembly[] assembly)
-            => serviceCollection.RegisterRepositories(DefaultRepositoryInterfaceType, assembly);
+        /// <inheritdoc cref="AddRepositories(IServiceCollection, Type, Assembly[])" />
+        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, params Assembly[] assembly)
+            => serviceCollection.AddRepositories(DefaultRepositoryInterfaceType, assembly);
 
-        /// <inheritdoc cref="RegisterRepositories(IServiceCollection, Type, Assembly[])" />
-        public static IServiceCollection RegisterRepositories(this IServiceCollection serviceCollection, Type repositoryInterfaceType, IEnumerable<Assembly> assemblies)
-            => serviceCollection.RegisterRepositories(repositoryInterfaceType, assemblies?.ToArray());
+        /// <inheritdoc cref="AddRepositories(IServiceCollection, Type, Assembly[])" />
+        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, Type repositoryInterfaceType, IEnumerable<Assembly> assemblies)
+            => serviceCollection.AddRepositories(repositoryInterfaceType, assemblies?.ToArray());
 
         /// <summary>
         /// <para>Register all `interface contract` + `concrete implementation` combos found in given assemblies.</para>
@@ -51,7 +51,7 @@ namespace CoreSharp.EntityFramework.Extensions
         /// <para>If multiple implementations are found, only the one with the `I{Name}Repository` and `{Name}Repository` convention is registered.</para>
         /// <para>If multiple implementations are found and none has a proper name, then none is registered.</para>
         /// </summary>
-        public static IServiceCollection RegisterRepositories(this IServiceCollection serviceCollection, Type repositoryInterfaceType, params Assembly[] assemblies)
+        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, Type repositoryInterfaceType, params Assembly[] assemblies)
         {
             _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
             _ = assemblies ?? throw new ArgumentNullException(nameof(assemblies));
@@ -94,16 +94,15 @@ namespace CoreSharp.EntityFramework.Extensions
                     else
                         return true;
                 }).ToArray();
-                var implementationsCount = implementations.Length;
 
                 //If single implementation, register it 
-                if (implementationsCount == 1)
+                if (implementations.Length == 1)
                 {
                     serviceCollection.AddScoped(contract, implementations[0]);
                 }
 
                 //If multiple implementations
-                else if (implementationsCount > 1)
+                else if (implementations.Length > 1)
                 {
                     //Local functions
                     static string GetGenericTypeBaseName(string genericName) =>
