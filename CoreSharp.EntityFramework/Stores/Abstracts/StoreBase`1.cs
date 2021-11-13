@@ -1,13 +1,13 @@
 ﻿using CoreSharp.EntityFramework.Models.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Abstracts;
-using CoreSharp.EntityFramework.Store.Interfaces;
+using CoreSharp.EntityFramework.Stores.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreSharp.EntityFramework.Store.Abstracts
+namespace CoreSharp.EntityFramework.Stores.Abstracts
 {
+    /// <inheritdoc cref="IStore{TEntity}" />
     public abstract class StoreBase<TEntity> : RepositoryBase<TEntity>, IStore<TEntity>
         where TEntity : class, IEntity
     {
@@ -35,12 +35,6 @@ namespace CoreSharp.EntityFramework.Store.Abstracts
         {
             await base.RemoveAsync(entity, cancellationToken);
             await Context.SaveChangesAsync(cancellationToken);
-        }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-            Context?.Dispose();
         }
     }
 }

@@ -11,9 +11,11 @@ using System.Threading.Tasks;
 namespace CoreSharp.EntityFramework.Repositories.Interfaces
 {
     /// <summary>
-    /// Suggested implementation with <see cref="RepositoryBase{TKey}"/>.
+    /// Repository interface used for transactional querying.
+    /// Used with <see cref="IUnitOfWork"/> for commiting transactions.
+    /// Suggested implementation base with <see cref="RepositoryBase{TEntity}"/>.
     /// </summary>
-    /// <typeparam name="TEntity">Suggested implementation with <see cref="EntityBase{TKey}"/>.</typeparam>
+    /// <typeparam name="TEntity">Suggested implementation base with <see cref="EntityBase{TKey}"/>.</typeparam>
     public interface IRepository<TEntity>
         where TEntity : class, IEntity
     {
@@ -21,7 +23,7 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         /// <summary>
         /// Get single entity by given key.
         /// </summary>
-        /// <param name="key">Value to match.</param>
+        /// <param name="key">Primary key to match.</param>
         /// <param name="navigation">Optional argument to build query.</param>
         Task<TEntity> GetAsync(
             object key,

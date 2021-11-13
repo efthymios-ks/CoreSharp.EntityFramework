@@ -176,9 +176,9 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
         //Methods
         public async Task<IEnumerable<Teacher>> Handle(AddTeacherCommand request, CancellationToken cancellationToken)
         {
-            await _schoolUnitOfWork.Teachers.AddAsync(request.Teacher, cancellationToken);
+            var createdTeacher = await _schoolUnitOfWork.Teachers.AddAsync(request.Teacher, cancellationToken);
             await _schoolUnitOfWork.CommitAsync(cancellationToken);
-            return request.Teacher;
+            return createdTeacher;
         }
     }
 }
@@ -226,7 +226,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models
 ### 3. Create a `Store` interface. 
 Inherit from `IStore<TEntity>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Store/Interfaces/IStore%601.cs). 
 ```
-using CoreSharp.EntityFramework.Repositories.Interfaces;
+using CoreSharp.EntityFramework.Stores.Interfaces;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores.Interfaces
 {
@@ -239,7 +239,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores.In
 ### 4. Implement the `Store`. 
 Inherit from `StoreBase<TEntity>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Store/Abstracts/StoreBase%601.cs). 
 ```
-using CoreSharp.EntityFramework.Repositories.Abstracts;
+using CoreSharp.EntityFramework.Stores.Abstracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores
@@ -247,7 +247,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores
     internal class TeacherStore : StoreBase<Teacher>, ITeacherStore
     {
         //Constructors
-        public TeacherStore(DbContext context) : base(context)
+        public TeacherStore(SchoolDbContext schoolDbContext) : base(schoolDbContext)
         {
         }        
         
@@ -308,8 +308,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
         //Methods
         public async Task<Teacher> Handle(AddTeacherCommand request, CancellationToken cancellationToken)
         { 
-            await _teacherStore.AddAsync(request.Teacher, cancellationToken); 
-            return request.Teacher;
+            var createdTeacher = await _teacherStore.AddAsync(request.Teacher, cancellationToken); 
+            return createdTeacher;
         }
     }
 }

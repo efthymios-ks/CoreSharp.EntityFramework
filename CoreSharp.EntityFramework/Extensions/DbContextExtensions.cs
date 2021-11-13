@@ -12,7 +12,8 @@ namespace CoreSharp.EntityFramework.Extensions
     public static class DbContextExtensions
     {
         /// <summary>
-        /// Rolls back and  erase all data modifications made.
+        /// Rolls back and erase all data
+        /// modifications made in active transaction.
         /// </summary>
         public static async Task RollbackAsync(this DbContext dbContext, CancellationToken cancellationToken = default)
         {

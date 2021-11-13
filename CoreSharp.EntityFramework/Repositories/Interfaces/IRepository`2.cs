@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Interfaces
 {
+    /// <inheritdoc />
     public interface IRepository<TEntity, TKey> : IRepository<TEntity>
         where TEntity : class, IEntity<TKey>
     {

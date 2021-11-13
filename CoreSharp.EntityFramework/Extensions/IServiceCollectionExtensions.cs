@@ -1,5 +1,5 @@
 ﻿using CoreSharp.EntityFramework.Repositories.Interfaces;
-using CoreSharp.EntityFramework.Store.Interfaces;
+using CoreSharp.EntityFramework.Stores.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
