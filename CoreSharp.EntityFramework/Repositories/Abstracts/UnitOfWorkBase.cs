@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Abstracts
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IUnitOfWork"/>
     public abstract class UnitOfWorkBase : IUnitOfWork
     {
         //Constructors

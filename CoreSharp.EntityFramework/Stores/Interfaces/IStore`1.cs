@@ -1,5 +1,7 @@
-﻿using CoreSharp.EntityFramework.Models.Interfaces;
+﻿using CoreSharp.EntityFramework.Models.Abstracts;
+using CoreSharp.EntityFramework.Models.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Interfaces;
+using CoreSharp.EntityFramework.Stores.Abstracts;
 
 namespace CoreSharp.EntityFramework.Stores.Interfaces
 {
@@ -8,7 +10,9 @@ namespace CoreSharp.EntityFramework.Stores.Interfaces
     /// All queries are executed when called without the
     /// need of commiting, meaning that transactions are
     /// not supported.
+    /// Suggested implementation base with <see cref="StoreBase{TEntity}"/>.
     /// </summary>
+    /// <typeparam name="TEntity">Suggested implementation base with <see cref="EntityBase{TKey}"/>.</typeparam>
     public interface IStore<TEntity> : IRepository<TEntity>
         where TEntity : class, IEntity
     {
