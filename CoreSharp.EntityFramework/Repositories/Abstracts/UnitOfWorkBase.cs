@@ -31,5 +31,11 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             GC.SuppressFinalize(this);
             Context.Dispose();
         }
+
+        public virtual async ValueTask DisposeAsync()
+        {
+            GC.SuppressFinalize(this);
+            await Context.DisposeAsync();
+        }
     }
 }

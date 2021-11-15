@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Interfaces
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork : IDisposable, IAsyncDisposable
     {
         //Methods 
         /// <inheritdoc cref="DbContext.SaveChangesAsync(CancellationToken)" />
