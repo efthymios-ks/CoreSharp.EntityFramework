@@ -17,7 +17,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWor
         }
 
         //Properties
-        public ICourseRepository Courses => _courses ??= new CourseRepository(Context);
-        public ITeacherRepository Teachers => _teachers ??= new TeacherRepository(Context);
+        public ICourseRepository Courses => _courses ??= new CourseRepository(Context as SchoolDbContext);
+        public ITeacherRepository Teachers => _teachers ??= new TeacherRepository(Context as SchoolDbContext);
     }
 }

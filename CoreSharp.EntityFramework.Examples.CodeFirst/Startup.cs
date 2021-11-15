@@ -1,7 +1,5 @@
 ﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork.Interfaces;
-using CoreSharp.EntityFramework.Extensions;
+using CoreSharp.EntityFramework.Examples.CodeFirst.Extensions;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,11 +17,14 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
 
             //1. Add DbContext 
             serviceCollection.AddScoped<SchoolDbContext>();
-            //2. Add UnitOfWork 
-            serviceCollection.AddScoped<ISchoolUnitOfWork, SchoolUnitOfWork>();
-            //3. Add Repositories
-            serviceCollection.AddRepositories(typeof(SchoolDbContext).Assembly);
-            //4. Optionally, Add IMediatR
+
+            //2a. Add Repositories or...
+            serviceCollection.AddAppRepositories();
+
+            //2b. Add Stores  
+            serviceCollection.AddAppStores();
+
+            //3. Optionally, Add IMediatR
             serviceCollection.AddMediatR(typeof(MediatR.AssemblyReferenceHook));
 
             return serviceCollection.BuildServiceProvider();

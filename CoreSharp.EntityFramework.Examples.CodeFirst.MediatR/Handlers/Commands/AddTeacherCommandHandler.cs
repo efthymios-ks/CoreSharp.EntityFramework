@@ -22,11 +22,11 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
         //Methods
         public async Task<Teacher> Handle(AddTeacherCommand request, CancellationToken cancellationToken)
         {
-            _ = request.Teacher ?? throw new NullReferenceException($"{nameof(Teacher)} cannot be null.");
+            _ = request.Teacher ?? throw new NullReferenceException($"{nameof(request.Teacher)} cannot be null.");
 
-            var teacher = await _schoolUnitOfWork.Teachers.AddAsync(request.Teacher, cancellationToken);
+            var createdTeacher = await _schoolUnitOfWork.Teachers.AddAsync(request.Teacher, cancellationToken);
             await _schoolUnitOfWork.CommitAsync(cancellationToken);
-            return teacher;
+            return createdTeacher;
         }
     }
 }

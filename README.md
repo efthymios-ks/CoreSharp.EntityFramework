@@ -74,7 +74,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositor
     internal class TeacherRepository : RepositoryBase<Teacher>, ITeacherRepository
     {
         //Constructors
-        public TeacherRepository(DbContext context) : base(context)
+        public TeacherRepository(SchoolDbContext schoolDbContext) : base(schoolDbContext)
         {
         }        
         
@@ -121,7 +121,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWor
         }
 
         //Properties
-        public ITeacherRepository Teachers => _teachers ??= new TeacherRepository(Context);
+        public ITeacherRepository Teachers => _teachers ??= new TeacherRepository(Context as SchoolDbContext);
     }
 }
 ```
@@ -146,12 +146,12 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
             //1. Add DbContext 
             serviceCollection.AddDbContext<SchoolDbContext>();
             
-            //2. Add UnitOfWork 
-            serviceCollection.AddScoped<ISchoolUnitOfWork, SchoolUnitOfWork>();
-            
-            //3. Add Repositories
+            //2. Add Repositories
             serviceCollection.AddRepositories(typeof(SchoolDbContext).Assembly);
 
+            //3. Add UnitOfWork 
+            serviceCollection.AddScoped<ISchoolUnitOfWork, SchoolUnitOfWork>();
+            
             return serviceCollection.BuildServiceProvider();
         }
     }
@@ -197,13 +197,11 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
     {
         //Methods
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            _ = modelBuilder ?? throw new ArgumentNullException(nameof(modelBuilder));
-
+        { 
             //Always call base method 
             base.OnModelCreating(modelBuilder);
             
-            //Other configurations 
+            //Other configurations... 
         }
     }
 }
@@ -294,22 +292,22 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
 ``` 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
 {
-    public class AddTeacherCommandHandler : IRequestHandler<AddTeacherCommand, Teacher>
+    public class UpdateTeacherCommandHandler : IRequestHandler<UpdateTeacherCommand, Teacher>
     {
         //Fields
         private readonly ITeacherStore _teacherStore;
 
         //Constructors
-        public AddTeacherCommandHandler(ITeacherStore teacherStore)
+        public UpdateTeacherCommandHandler(ITeacherStore teacherStore)
         {
             _teacherStore = teacherStore ?? throw new ArgumentNullException(nameof(teacherStore));
         }
 
         //Methods
-        public async Task<Teacher> Handle(AddTeacherCommand request, CancellationToken cancellationToken)
+        public async Task<Teacher> Handle(UpdateTeacherCommand request, CancellationToken cancellationToken)
         { 
-            var createdTeacher = await _teacherStore.AddAsync(request.Teacher, cancellationToken); 
-            return createdTeacher;
+            var updatedTeacher = await _teacherStore.UpdateAsync(request.Teacher, cancellationToken);
+            return updatedTeacher;
         }
     }
 }

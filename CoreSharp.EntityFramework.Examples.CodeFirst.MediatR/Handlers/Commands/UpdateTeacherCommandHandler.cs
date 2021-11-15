@@ -1,5 +1,5 @@
 ﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork.Interfaces;
+using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores.Interfaces;
 using CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Commands;
 using MediatR;
 using System;
@@ -11,22 +11,21 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
     public class UpdateTeacherCommandHandler : IRequestHandler<UpdateTeacherCommand, Teacher>
     {
         //Fields
-        private readonly ISchoolUnitOfWork _schoolUnitOfWork;
+        private readonly ITeacherStore _teacherStore;
 
         //Constructors
-        public UpdateTeacherCommandHandler(ISchoolUnitOfWork schoolUnitOfWork)
+        public UpdateTeacherCommandHandler(ITeacherStore teacherStore)
         {
-            _schoolUnitOfWork = schoolUnitOfWork ?? throw new ArgumentNullException(nameof(schoolUnitOfWork));
+            _teacherStore = teacherStore ?? throw new ArgumentNullException(nameof(teacherStore));
         }
 
         //Methods
         public async Task<Teacher> Handle(UpdateTeacherCommand request, CancellationToken cancellationToken)
         {
-            _ = request.Teacher ?? throw new NullReferenceException($"{nameof(Teacher)} cannot be null.");
+            _ = request.Teacher ?? throw new NullReferenceException($"{nameof(request.Teacher)} cannot be null.");
 
-            var teacher = await _schoolUnitOfWork.Teachers.UpdateAsync(request.Teacher, cancellationToken);
-            await _schoolUnitOfWork.CommitAsync(cancellationToken);
-            return teacher;
+            var updatedTeacher = await _teacherStore.UpdateAsync(request.Teacher, cancellationToken);
+            return updatedTeacher;
         }
     }
 }
