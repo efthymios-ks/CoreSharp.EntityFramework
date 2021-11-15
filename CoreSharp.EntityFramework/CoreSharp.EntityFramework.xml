@@ -4,6 +4,17 @@
         <name>CoreSharp.EntityFramework</name>
     </assembly>
     <members>
+        <member name="T:CoreSharp.EntityFramework.Extensions.DbContextExtensions">
+            <summary>
+            <see cref="T:Microsoft.EntityFrameworkCore.DbContext"/> extensions.
+            </summary>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.DbContextExtensions.RollbackAsync(Microsoft.EntityFrameworkCore.DbContext,System.Threading.CancellationToken)">
+            <summary>
+            Rolls back and erases all data
+            modifications made in active transaction.
+            </summary>
+        </member>
         <member name="T:CoreSharp.EntityFramework.Extensions.EntityTypeBuilderExtensions">
             <summary>
             <see cref="T:Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder`1"/> extensions.
@@ -43,6 +54,27 @@
             <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
         </member>
         <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddInterfaces(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type)" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type)">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddInterfaces(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddInterfaces(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])">
             <summary>
             <para>Register all `interface contract` + `concrete implementation` combos found in given assemblies.</para>
             <para>If single implementation is found, then it is registered regardless.</para>
@@ -93,27 +125,43 @@
         </member>
         <member name="T:CoreSharp.EntityFramework.Models.Concrete.EnumShadowEntity`1">
             <summary>
-            Enum shadow entity used table relationships.
+            <see cref="T:System.Enum"/> shadow entity used for table relationships.
             </summary>
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Models.Interfaces.IKeyedEntity">
+            <summary>
+            Interface for entities with primary key.
+            </summary>
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Models.Interfaces.IKeyedEntity`1">
+            <inheritdoc />
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Repositories.Abstracts.RepositoryBase`2">
+            <inheritdoc />
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Repositories.Abstracts.UnitOfWorkBase">
+            <inheritdoc cref="T:CoreSharp.EntityFramework.Repositories.Interfaces.IUnitOfWork"/>
         </member>
         <member name="T:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1">
             <summary>
-            Suggested implementation with <see cref="T:CoreSharp.EntityFramework.Repositories.Abstracts.RepositoryBase`1"/>.
+            Repository interface used for transactional querying.
+            Used with <see cref="T:CoreSharp.EntityFramework.Repositories.Interfaces.IUnitOfWork"/> for commiting transactions.
+            Suggested implementation base with <see cref="T:CoreSharp.EntityFramework.Repositories.Abstracts.RepositoryBase`1"/>.
             </summary>
-            <typeparam name="TEntity">Suggested implementation with <see cref="T:CoreSharp.EntityFramework.Models.Abstracts.EntityBase`1"/>.</typeparam>
+            <typeparam name="TEntity">Suggested implementation base with <see cref="T:CoreSharp.EntityFramework.Models.Abstracts.EntityBase`1"/>.</typeparam>
         </member>
         <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.GetAsync(System.Object,System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)">
             <summary>
             Get single entity by given key.
             </summary>
-            <param name="key">Value to match.</param>
-            <param name="navigation">Optional argument to build query.</param> 
+            <param name="key">Primary key to match.</param>
+            <param name="navigation">Optional argument to build query.</param>
         </member>
         <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.GetAsync(System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)">
             <summary>
             Get all entities.
             </summary>
-            <param name="navigation">Optional argument to build query.</param> 
+            <param name="navigation">Optional argument to build query.</param>
         </member>
         <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.AddAsync(`0,System.Threading.CancellationToken)">
             <inheritdoc cref="M:Microsoft.EntityFrameworkCore.DbContext.AddAsync``1(``0,System.Threading.CancellationToken)" />
@@ -124,8 +172,36 @@
         <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.RemoveAsync(`0,System.Threading.CancellationToken)">
             <inheritdoc cref="M:Microsoft.EntityFrameworkCore.DbContext.Remove``1(``0)" />
         </member>
+        <member name="T:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`2">
+            <inheritdoc />
+        </member>
         <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`2.GetAsync(`1,System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)">
             <inheritdoc cref="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.GetAsync(System.Object,System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IUnitOfWork.CommitAsync(System.Threading.CancellationToken)">
+            <inheritdoc cref="M:Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(System.Threading.CancellationToken)" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IUnitOfWork.RollbackAsync(System.Threading.CancellationToken)">
+            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.DbContextExtensions.RollbackAsync(Microsoft.EntityFrameworkCore.DbContext,System.Threading.CancellationToken)" />
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Stores.Abstracts.StoreBase`1">
+            <inheritdoc cref="T:CoreSharp.EntityFramework.Stores.Interfaces.IStore`1" />
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Stores.Abstracts.StoreBase`2">
+            <inheritdoc />
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Stores.Interfaces.IStore`1">
+            <summary>
+            Store interface used for single entity querying.
+            All queries are executed when called without the
+            need of commiting, meaning that transactions are
+            not supported.
+            Suggested implementation base with <see cref="T:CoreSharp.EntityFramework.Stores.Abstracts.StoreBase`1"/>.
+            </summary>
+            <typeparam name="TEntity">Suggested implementation base with <see cref="T:CoreSharp.EntityFramework.Models.Abstracts.EntityBase`1"/>.</typeparam>
+        </member>
+        <member name="T:CoreSharp.EntityFramework.Stores.Interfaces.IStore`2">
+            <inheritdoc />
         </member>
     </members>
 </doc>
