@@ -1,5 +1,6 @@
 ﻿using CoreSharp.EntityFramework.Repositories.Interfaces;
 using CoreSharp.EntityFramework.Stores.Interfaces;
+using CoreSharp.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -93,16 +94,35 @@ namespace CoreSharp.EntityFramework.Extensions
                 throw new ArgumentException($"{nameof(interfaceBaseType)} ({interfaceBaseType.FullName}) must be an interface.", nameof(interfaceBaseType));
 
             //Get all contracts 
-            var contracts = assemblies.SelectMany(a => a.GetTypes()).Where(t =>
+            var contracts = assemblies.SelectMany(assembly => assembly.GetTypes()).Where(type =>
             {
+                //Check for matching type, excluding generic type
+                static bool InterfaceTypeMatches(Type leftType, Type rightType)
+                {
+                    _ = leftType ?? throw new ArgumentNullException(nameof(leftType));
+                    _ = rightType ?? throw new ArgumentNullException(nameof(rightType));
+
+                    if (leftType.Assembly != rightType.Assembly)
+                        return false;
+                    else if (leftType.Namespace != rightType.Namespace)
+                        return false;
+                    else if (leftType.Name != rightType.Name)
+                        return false;
+                    else
+                        return true;
+                }
+
                 //Already registered, ignore 
-                if (serviceCollection.Any(s => s.ServiceType == t))
+                if (serviceCollection.Any(service => service.ServiceType == type))
                     return false;
                 //Not an interface, ignore 
-                else if (!t.IsInterface)
+                else if (!type.IsInterface)
                     return false;
                 //Doesn't implement base interface, ignore
-                else if (t.GetInterface(interfaceBaseType.FullName) is null)
+                else if (type.GetInterface(interfaceBaseType.FullName) is null)
+                    return false;
+                //Found interface is not inherited directly
+                else if (!type.GetDirectInterfaces().Any(directInterface => InterfaceTypeMatches(directInterface, interfaceBaseType)))
                     return false;
                 //Else take 
                 else
@@ -139,25 +159,25 @@ namespace CoreSharp.EntityFramework.Extensions
                 else if (implementations.Length > 1)
                 {
                     //Local functions
-                    static string GetGenericTypeBaseName(string genericName) =>
-                        genericName[..genericName.LastIndexOf('`')];
-                    static string TrimGenericTypeName(Type genericType, string name = null)
+                    static string GetGenericTypeBaseName(Type genericType, string name = null)
                     {
                         _ = genericType ?? throw new ArgumentNullException(nameof(genericType));
                         name ??= genericType.Name;
 
                         if (genericType.IsGenericType)
-                            name = GetGenericTypeBaseName(name);
+                            name = TrimGenericTypeName(name);
 
                         return name;
                     }
+                    static string TrimGenericTypeName(string genericName) =>
+                        genericName[..genericName.LastIndexOf('`')];
 
                     //Get contract name 
                     var trimmedContractName = Regex.Match(contract.Name, InterfaceContractRegexExp).Groups["Name"].Value;
-                    trimmedContractName = TrimGenericTypeName(contract, trimmedContractName);
+                    trimmedContractName = GetGenericTypeBaseName(contract, trimmedContractName);
 
                     //Register only if there is a single one with the correct name convention
-                    var sameNameImplementation = Array.Find(implementations, i => TrimGenericTypeName(i) == trimmedContractName);
+                    var sameNameImplementation = Array.Find(implementations, i => GetGenericTypeBaseName(i) == trimmedContractName);
                     if (sameNameImplementation is not null)
                         serviceCollection.AddScoped(contract, sameNameImplementation);
                 }

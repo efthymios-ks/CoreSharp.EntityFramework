@@ -136,9 +136,6 @@
         <member name="T:CoreSharp.EntityFramework.Models.Interfaces.IKeyedEntity`1">
             <inheritdoc />
         </member>
-        <member name="T:CoreSharp.EntityFramework.Repositories.Abstracts.RepositoryBase`2">
-            <inheritdoc />
-        </member>
         <member name="T:CoreSharp.EntityFramework.Repositories.Abstracts.UnitOfWorkBase">
             <inheritdoc cref="T:CoreSharp.EntityFramework.Repositories.Interfaces.IUnitOfWork"/>
         </member>
@@ -172,12 +169,6 @@
         <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.RemoveAsync(`0,System.Threading.CancellationToken)">
             <inheritdoc cref="M:Microsoft.EntityFrameworkCore.DbContext.Remove``1(``0)" />
         </member>
-        <member name="T:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`2">
-            <inheritdoc />
-        </member>
-        <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`2.GetAsync(`1,System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)">
-            <inheritdoc cref="M:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1.GetAsync(System.Object,System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)"/>
-        </member>
         <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IUnitOfWork.CommitAsync(System.Threading.CancellationToken)">
             <inheritdoc cref="M:Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(System.Threading.CancellationToken)" />
         </member>
@@ -186,9 +177,6 @@
         </member>
         <member name="T:CoreSharp.EntityFramework.Stores.Abstracts.StoreBase`1">
             <inheritdoc cref="T:CoreSharp.EntityFramework.Stores.Interfaces.IStore`1" />
-        </member>
-        <member name="T:CoreSharp.EntityFramework.Stores.Abstracts.StoreBase`2">
-            <inheritdoc />
         </member>
         <member name="T:CoreSharp.EntityFramework.Stores.Interfaces.IStore`1">
             <summary>
@@ -199,9 +187,6 @@
             Suggested implementation base with <see cref="T:CoreSharp.EntityFramework.Stores.Abstracts.StoreBase`1"/>.
             </summary>
             <typeparam name="TEntity">Suggested implementation base with <see cref="T:CoreSharp.EntityFramework.Models.Abstracts.EntityBase`1"/>.</typeparam>
-        </member>
-        <member name="T:CoreSharp.EntityFramework.Stores.Interfaces.IStore`2">
-            <inheritdoc />
         </member>
     </members>
 </doc>
