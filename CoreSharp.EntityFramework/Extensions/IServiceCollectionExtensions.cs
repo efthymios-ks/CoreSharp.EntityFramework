@@ -97,19 +97,27 @@ namespace CoreSharp.EntityFramework.Extensions
             var contracts = assemblies.SelectMany(assembly => assembly.GetTypes()).Where(type =>
             {
                 //Check for matching type, excluding generic type
-                static bool InterfaceTypeMatches(Type leftType, Type rightType)
+                static bool TypeMatches(Type leftType, Type rightType)
                 {
                     _ = leftType ?? throw new ArgumentNullException(nameof(leftType));
                     _ = rightType ?? throw new ArgumentNullException(nameof(rightType));
 
-                    if (leftType.Assembly != rightType.Assembly)
+                    static bool TypeFullNameMatches(Type leftType, Type rightType)
+                    {
+                        _ = leftType ?? throw new ArgumentNullException(nameof(leftType));
+                        _ = rightType ?? throw new ArgumentNullException(nameof(rightType));
+
+                        return leftType.FullName == rightType.FullName;
+                    }
+
+                    if (leftType.IsGenericType && !rightType.IsGenericType)
                         return false;
-                    else if (leftType.Namespace != rightType.Namespace)
+                    else if (!leftType.IsGenericType && rightType.IsGenericType)
                         return false;
-                    else if (leftType.Name != rightType.Name)
-                        return false;
+                    else if (leftType.IsGenericType && rightType.IsGenericType)
+                        return TypeFullNameMatches(leftType.GetGenericTypeDefinition(), rightType.GetGenericTypeDefinition());
                     else
-                        return true;
+                        return TypeFullNameMatches(leftType, rightType);
                 }
 
                 //Already registered, ignore 
@@ -122,7 +130,7 @@ namespace CoreSharp.EntityFramework.Extensions
                 else if (type.GetInterface(interfaceBaseType.FullName) is null)
                     return false;
                 //Found interface is not inherited directly
-                else if (!type.GetDirectInterfaces().Any(directInterface => InterfaceTypeMatches(directInterface, interfaceBaseType)))
+                else if (!type.GetDirectInterfaces().Any(directInterface => TypeMatches(directInterface, interfaceBaseType)))
                     return false;
                 //Else take 
                 else
