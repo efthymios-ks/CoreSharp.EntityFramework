@@ -71,7 +71,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories
 {
-    internal class TeacherRepository : RepositoryBase<Teacher>, ITeacherRepository
+    public class TeacherRepository : RepositoryBase<Teacher>, ITeacherRepository
     {
         //Constructors
         public TeacherRepository(SchoolDbContext schoolDbContext) : base(schoolDbContext)
@@ -242,7 +242,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores
 {
-    internal class TeacherStore : StoreBase<Teacher>, ITeacherStore
+    public class TeacherStore : StoreBase<Teacher>, ITeacherStore
     {
         //Constructors
         public TeacherStore(SchoolDbContext schoolDbContext) : base(schoolDbContext)
