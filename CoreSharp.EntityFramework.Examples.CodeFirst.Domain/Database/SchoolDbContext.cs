@@ -1,5 +1,4 @@
-﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Configurations;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models;
+﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models;
 using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Extensions;
 using CoreSharp.EntityFramework.Extensions;
 using CoreSharp.EntityFramework.Models.Abstracts;
@@ -45,10 +44,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
         {
             _ = modelBuilder ?? throw new ArgumentNullException(nameof(modelBuilder));
 
-            modelBuilder.ApplyConfiguration(new TeacherConfiguration());
-            modelBuilder.ApplyConfiguration(new StudentConfiguration());
-            modelBuilder.ApplyConfiguration(new StudentAddressConfiguration());
-            modelBuilder.ApplyConfiguration(new CourseConfiguration());
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(SchoolDbContext).Assembly);
         }
     }
 }
