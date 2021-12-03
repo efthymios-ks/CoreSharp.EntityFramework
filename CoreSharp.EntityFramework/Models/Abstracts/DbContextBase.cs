@@ -23,37 +23,37 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
             base.OnModelCreating(modelBuilder);
 
             //Trackable entities
-            foreach (var trackableEntity in modelBuilder.Model.GetEntityTypes(typeof(ITrackableEntity)))
+            foreach (var trackableEntity in modelBuilder.Model.GetEntityTypes(typeof(ITrackedEntity)))
             {
                 var trackableEntityBuilder = modelBuilder.Entity(trackableEntity.Name);
 
                 //DateCreatedUtc
                 var dateCreatedProperty = trackableEntityBuilder
-                    .Property(nameof(ITrackableEntity.DateCreatedUtc)) as PropertyBuilder<DateTime>;
+                    .Property(nameof(ITrackedEntity.DateCreatedUtc)) as PropertyBuilder<DateTime>;
                 dateCreatedProperty.HasUtcConversion();
 
                 //DateModifiedUtc
                 var dateModifiedProperty = trackableEntityBuilder
-                    .Property(nameof(ITrackableEntity.DateModifiedUtc)) as PropertyBuilder<DateTime?>;
+                    .Property(nameof(ITrackedEntity.DateModifiedUtc)) as PropertyBuilder<DateTime?>;
                 dateModifiedProperty.HasUtcConversion();
             }
         }
 
         private void UpdateTrackableEntities()
         {
-            var trackableEntries = ChangeTracker.Entries().Where(e => e.Entity is ITrackableEntity);
-            foreach (var trackableEntry in trackableEntries)
+            var trackedEntries = ChangeTracker.Entries().Where(e => e.Entity is ITrackedEntity);
+            foreach (var trackedEntry in trackedEntries)
             {
-                var trackableEntity = trackableEntry.Entity as ITrackableEntity;
-                switch (trackableEntry.State)
+                var trackedEntity = trackedEntry.Entity as ITrackedEntity;
+                switch (trackedEntry.State)
                 {
                     case EntityState.Added:
-                        trackableEntity.DateCreatedUtc = DateTime.UtcNow;
-                        trackableEntry.Property(nameof(ITrackableEntity.DateModifiedUtc)).IsModified = false;
+                        trackedEntity.DateCreatedUtc = DateTime.UtcNow;
+                        trackedEntry.Property(nameof(ITrackedEntity.DateModifiedUtc)).IsModified = false;
                         break;
                     case EntityState.Modified:
-                        trackableEntity.DateModifiedUtc = DateTime.UtcNow;
-                        trackableEntry.Property(nameof(ITrackableEntity.DateCreatedUtc)).IsModified = false;
+                        trackedEntity.DateModifiedUtc = DateTime.UtcNow;
+                        trackedEntry.Property(nameof(ITrackedEntity.DateCreatedUtc)).IsModified = false;
                         break;
                 }
             }

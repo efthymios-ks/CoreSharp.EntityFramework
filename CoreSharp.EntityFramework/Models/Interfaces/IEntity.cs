@@ -1,6 +1,6 @@
 ﻿namespace CoreSharp.EntityFramework.Models.Interfaces
 {
-    public interface IEntity : IKeyedEntity, ITrackableEntity
+    public interface IEntity : IKeyedEntity, ITrackedEntity
     {
     }
 }

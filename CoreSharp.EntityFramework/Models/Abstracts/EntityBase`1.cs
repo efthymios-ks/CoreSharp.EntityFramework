@@ -15,6 +15,11 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         [Newtonsoft.Json.JsonIgnore]
         private DateTime? _dateCreatedUtc;
 
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        private DateTime? _dateModifiedUtc;
+
         //Properties
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         [System.Text.Json.Serialization.JsonIgnore]
@@ -32,14 +37,26 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         object IKeyedEntity.Id { get; set; }
 
         [DataType(DataType.DateTime)]
+        [Newtonsoft.Json.JsonConverter(typeof(UtcDateTimeConverter))]
         public DateTime DateCreatedUtc
         {
             get => _dateCreatedUtc ?? DateTime.UtcNow;
-            set => _dateCreatedUtc = value;
+            set => _dateCreatedUtc = TimeZoneInfo.ConvertTimeToUtc(value);
         }
 
         [DataType(DataType.DateTime)]
-        public DateTime? DateModifiedUtc { get; set; }
+        [Newtonsoft.Json.JsonConverter(typeof(UtcDateTimeConverter))]
+        public DateTime? DateModifiedUtc
+        {
+            get => _dateModifiedUtc;
+            set
+            {
+                if (value is null)
+                    _dateModifiedUtc = null;
+                else
+                    _dateModifiedUtc = TimeZoneInfo.ConvertTimeToUtc(value.Value);
+            }
+        }
 
         //Methods 
         public override string ToString() => $"{Id}";
