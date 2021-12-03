@@ -12,9 +12,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
     {
         //Constructors
         protected UnitOfWorkBase(DbContext dbContext)
-        {
-            Context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-        }
+            => Context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
         //Properties
         protected DbContext Context { get; }
@@ -33,9 +31,6 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         }
 
         public virtual async ValueTask DisposeAsync()
-        {
-            GC.SuppressFinalize(this);
-            await Context.DisposeAsync();
-        }
+            => await Context.DisposeAsync();
     }
 }
