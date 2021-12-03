@@ -22,6 +22,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Extensions
             _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
 
             serviceCollection.AddRepositories(typeof(SchoolDbContext).Assembly);
+            serviceCollection.AddExtendedRepositories(typeof(SchoolDbContext).Assembly);
             serviceCollection.AddScoped<ISchoolUnitOfWork, SchoolUnitOfWork>();
 
             return serviceCollection;

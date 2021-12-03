@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Stores.Abstracts
 {
-    /// <inheritdoc cref="IStore{TEntity}" />
     public abstract class StoreBase<TEntity> : RepositoryBase<TEntity>, IStore<TEntity>
         where TEntity : class, IEntity
     {

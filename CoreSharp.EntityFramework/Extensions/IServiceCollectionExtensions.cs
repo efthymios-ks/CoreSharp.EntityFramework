@@ -22,63 +22,71 @@ namespace CoreSharp.EntityFramework.Extensions
         //Properties
         private static Type DefaultRepositoryInterfaceType
             => typeof(IRepository<>);
-
         private static Type DefaultStoreInterfaceType
             => typeof(IStore<>);
-
+        private static Type DefaultExtendedRepositoryInterfaceType
+            => typeof(IExtendedRepository<>);
+        private static Type DefaultExtendedStoreInterfaceType
+            => typeof(IExtendedStore<>);
         private static string InterfaceContractRegexExp
             => $"^{InterfacePrefix}{InterfaceGroupRegexExp}$";
 
         //Methods 
-        //Repositories 
-        /// <inheritdoc cref="AddRepositories(IServiceCollection, Type)" />
+        #region Repositories
+        /// <inheritdoc cref="AddRepositories(IServiceCollection, Assembly[])" />
         public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection)
-            => serviceCollection.AddRepositories(DefaultRepositoryInterfaceType);
+            => serviceCollection.AddRepositories(Assembly.GetEntryAssembly());
 
-        /// <inheritdoc cref="AddRepositories(IServiceCollection, Type, Assembly[])" />
-        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, Type repositoryInterfaceType)
-            => serviceCollection.AddRepositories(repositoryInterfaceType, Assembly.GetEntryAssembly());
-
-        /// <inheritdoc cref="AddRepositories(IServiceCollection, Type, Assembly[])" />
+        /// <inheritdoc cref="AddRepositories(IServiceCollection, Assembly[])" />
         public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
-            => serviceCollection.AddRepositories(DefaultRepositoryInterfaceType, assemblies?.ToArray());
-
-        /// <inheritdoc cref="AddRepositories(IServiceCollection, Type, Assembly[])" />
-        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, params Assembly[] assembly)
-            => serviceCollection.AddRepositories(DefaultRepositoryInterfaceType, assembly);
-
-        /// <inheritdoc cref="AddRepositories(IServiceCollection, Type, Assembly[])" />
-        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, Type repositoryInterfaceType, IEnumerable<Assembly> assemblies)
-            => serviceCollection.AddRepositories(repositoryInterfaceType, assemblies?.ToArray());
+            => serviceCollection.AddRepositories(assemblies?.ToArray());
 
         /// <inheritdoc cref="AddInterfaces(IServiceCollection, Type, Assembly[])" />
-        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, Type repositoryInterfaceType, params Assembly[] assemblies)
-            => serviceCollection.AddInterfaces(repositoryInterfaceType, assemblies);
+        public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, params Assembly[] assemblies)
+            => serviceCollection.AddInterfaces(DefaultRepositoryInterfaceType, assemblies);
+        #endregion
 
-        //Stores 
-        /// <inheritdoc cref="AddStores(IServiceCollection, Type)" />
+        #region Stores
+        /// <inheritdoc cref="AddStores(IServiceCollection, Assembly[])" />
         public static IServiceCollection AddStores(this IServiceCollection serviceCollection)
-            => serviceCollection.AddStores(DefaultStoreInterfaceType);
+            => serviceCollection.AddStores(Assembly.GetEntryAssembly());
 
-        /// <inheritdoc cref="AddStores(IServiceCollection, Type, Assembly[])" />
-        public static IServiceCollection AddStores(this IServiceCollection serviceCollection, Type storeInterfaceType)
-            => serviceCollection.AddStores(storeInterfaceType, Assembly.GetEntryAssembly());
-
-        /// <inheritdoc cref="AddStores(IServiceCollection, Type, Assembly[])" />
+        /// <inheritdoc cref="AddStores(IServiceCollection, Assembly[])" />
         public static IServiceCollection AddStores(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
-            => serviceCollection.AddStores(DefaultStoreInterfaceType, assemblies?.ToArray());
-
-        /// <inheritdoc cref="AddStores(IServiceCollection, Type, Assembly[])" />
-        public static IServiceCollection AddStores(this IServiceCollection serviceCollection, params Assembly[] assembly)
-            => serviceCollection.AddStores(DefaultStoreInterfaceType, assembly);
-
-        /// <inheritdoc cref="AddStores(IServiceCollection, Type, Assembly[])" />
-        public static IServiceCollection AddStores(this IServiceCollection serviceCollection, Type storeInterfaceType, IEnumerable<Assembly> assemblies)
-            => serviceCollection.AddStores(storeInterfaceType, assemblies?.ToArray());
+            => serviceCollection.AddStores(assemblies?.ToArray());
 
         /// <inheritdoc cref="AddInterfaces(IServiceCollection, Type, Assembly[])" />
-        public static IServiceCollection AddStores(this IServiceCollection serviceCollection, Type storeInterfaceType, params Assembly[] assemblies)
-            => serviceCollection.AddInterfaces(storeInterfaceType, assemblies);
+        public static IServiceCollection AddStores(this IServiceCollection serviceCollection, params Assembly[] assemblies)
+            => serviceCollection.AddInterfaces(DefaultStoreInterfaceType, assemblies);
+        #endregion
+
+        #region Extended Repositories
+        /// <inheritdoc cref="AddExtendedRepositories(IServiceCollection, Assembly[])" />
+        public static IServiceCollection AddExtendedRepositories(this IServiceCollection serviceCollection)
+            => serviceCollection.AddExtendedRepositories(Assembly.GetEntryAssembly());
+
+        /// <inheritdoc cref="AddExtendedRepositories(IServiceCollection, Assembly[])" />
+        public static IServiceCollection AddExtendedRepositories(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
+            => serviceCollection.AddExtendedRepositories(assemblies?.ToArray());
+
+        /// <inheritdoc cref="AddInterfaces(IServiceCollection, Type, Assembly[])" />
+        public static IServiceCollection AddExtendedRepositories(this IServiceCollection serviceCollection, params Assembly[] assemblies)
+            => serviceCollection.AddInterfaces(DefaultExtendedRepositoryInterfaceType, assemblies);
+        #endregion
+
+        #region Extended Stores
+        /// <inheritdoc cref="AddExtendedStores(IServiceCollection, Assembly[])" />
+        public static IServiceCollection AddExtendedStores(this IServiceCollection serviceCollection)
+            => serviceCollection.AddExtendedStores(Assembly.GetEntryAssembly());
+
+        /// <inheritdoc cref="AddExtendedStores(IServiceCollection, Assembly[])" />
+        public static IServiceCollection AddExtendedStores(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
+            => serviceCollection.AddExtendedStores(assemblies?.ToArray());
+
+        /// <inheritdoc cref="AddInterfaces(IServiceCollection, Type, Assembly[])" />
+        public static IServiceCollection AddExtendedStores(this IServiceCollection serviceCollection, params Assembly[] assemblies)
+            => serviceCollection.AddInterfaces(DefaultExtendedStoreInterfaceType, assemblies);
+        #endregion
 
         /// <summary>
         /// <para>Register all `interface contract` + `concrete implementation` combos found in given assemblies.</para>

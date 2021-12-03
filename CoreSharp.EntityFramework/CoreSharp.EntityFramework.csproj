@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<Version>1.0.6</Version>
+		<Version>1.1.0</Version>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
 		<Authors>Efthymios Koktsidis</Authors>
@@ -13,7 +13,9 @@
 		<RepositoryUrl>https://github.com/efthymios-ks/CoreSharp.EntityFramework</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>EF, Entity Framework, Database</PackageTags>
-		<PackageReleaseNotes>-Fixed IStore support.</PackageReleaseNotes>
+		<PackageReleaseNotes>-Interfaces, Added `IExtendedRepository`.
+-Interfaces, Added `IExtendedStore`.
+-Code clean-up.</PackageReleaseNotes>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageIconUrl />
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
