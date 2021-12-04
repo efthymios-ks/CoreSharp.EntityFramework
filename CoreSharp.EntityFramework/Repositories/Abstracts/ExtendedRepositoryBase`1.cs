@@ -44,5 +44,14 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             foreach (var entity in entities)
                 await RemoveAsync(entity, cancellationToken);
         }
+
+        public virtual async Task RemoveByKeyAsync(object key, CancellationToken cancellationToken = default)
+        {
+            _ = key ?? throw new ArgumentNullException(nameof(key));
+
+            var entity = await GetAsync(key, cancellationToken: cancellationToken);
+            _ = entity ?? throw new KeyNotFoundException($"Could not find entity with key=`{key}`.");
+            await base.RemoveAsync(entity, cancellationToken);
+        }
     }
 }

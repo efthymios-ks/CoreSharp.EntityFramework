@@ -43,18 +43,14 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             return await query.ToArrayAsync(cancellationToken);
         }
 
-        public virtual async Task<TEntity> AddAsync(
-            TEntity entity,
-            CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
 
             return (await Table.AddAsync(entity, cancellationToken)).Entity;
         }
 
-        public virtual async Task<TEntity> UpdateAsync(
-            TEntity entity,
-            CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
 
@@ -65,9 +61,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             return entity;
         }
 
-        public virtual async Task RemoveAsync(
-            TEntity entity,
-            CancellationToken cancellationToken = default)
+        public virtual async Task RemoveAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
 

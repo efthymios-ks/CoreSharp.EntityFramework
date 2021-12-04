@@ -1,5 +1,4 @@
 ﻿using CoreSharp.EntityFramework.Models.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,13 +10,16 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         where TEntity : class, IEntity
     {
         //Methods 
-        /// <inheritdoc cref="DbContext.AddAsync{TEntity}(TEntity, CancellationToken)" />
+        /// <inheritdoc cref="IRepository{TEntity}.AddAsync(TEntity, CancellationToken)" />
         Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
 
-        /// <inheritdoc cref="DbContext.Update{TEntity}(TEntity)" />
+        /// <inheritdoc cref="IRepository{TEntity}.UpdateAsync(TEntity, CancellationToken)" />
         Task<IEnumerable<TEntity>> UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
 
-        /// <inheritdoc cref="DbContext.Remove{TEntity}(TEntity)" />
+        /// <inheritdoc cref="IRepository{TEntity}.RemoveAsync(TEntity, CancellationToken)" />
         Task RemoveAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+
+        /// <inheritdoc cref="IRepository{TEntity}.RemoveAsync(TEntity, CancellationToken)" />
+        Task RemoveByKeyAsync(object key, CancellationToken cancellationToken = default);
     }
 }
