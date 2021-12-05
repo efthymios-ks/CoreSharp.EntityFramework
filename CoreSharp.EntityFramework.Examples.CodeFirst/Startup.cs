@@ -2,6 +2,7 @@
 using CoreSharp.EntityFramework.Examples.CodeFirst.Extensions;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst
 {
@@ -11,7 +12,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
     internal static class Startup
     {
         //Methods 
-        public static ServiceProvider ConfigureServices()
+        public static IServiceProvider ConfigureServices()
         {
             var serviceCollection = new ServiceCollection();
 
