@@ -1,6 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Models.Concrete;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pluralize.NET.Core;
 using System;
 using System.Linq;
 
@@ -11,6 +12,19 @@ namespace CoreSharp.EntityFramework.Extensions
     /// </summary>
     public static class ModelBuilderExtensions
     {
+        //Fields
+        private static Pluralizer _pluralizer;
+
+        //Methods
+        /// <inheritdoc cref="HasEnum{TEnum}(ModelBuilder, string)" />
+        public static ModelBuilder HasEnum<TEnum>(this ModelBuilder builder) where TEnum : Enum
+        {
+            _pluralizer ??= new Pluralizer();
+            var enumName = typeof(TEnum).Name;
+            var tableName = _pluralizer.Pluralize(enumName);
+            return builder.HasEnum<TEnum>(tableName);
+        }
+
         /// <summary>
         /// Configure and seed <see cref="Enum"/> to database table.
         /// </summary>
@@ -22,7 +36,6 @@ namespace CoreSharp.EntityFramework.Extensions
 
             builder.ConfigureEnum<TEnum>(tableName);
             builder.SeedEnum<TEnum>();
-
             return builder;
         }
 

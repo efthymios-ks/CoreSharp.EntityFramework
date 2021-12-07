@@ -36,8 +36,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
         {
             _ = modelBuilder ?? throw new ArgumentNullException(nameof(modelBuilder));
 
-            modelBuilder.HasEnum<TeacherType>("TeacherTypes");
-            modelBuilder.HasEnum<CourseField>("CourseFields");
+            modelBuilder.HasEnum<TeacherType>();
+            modelBuilder.HasEnum<CourseField>();
         }
 
         private static void ConfigureModels(ModelBuilder modelBuilder)
