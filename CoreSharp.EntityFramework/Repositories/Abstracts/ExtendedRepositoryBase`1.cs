@@ -3,6 +3,7 @@ using CoreSharp.EntityFramework.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,6 +53,14 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             var entity = await GetAsync(key, cancellationToken: cancellationToken);
             _ = entity ?? throw new KeyNotFoundException($"Could not find entity with key=`{key}`.");
             await base.RemoveAsync(entity, cancellationToken);
+        }
+
+        public virtual async Task<bool> ExistsAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default)
+        {
+            navigation ??= q => q;
+            IQueryable<TEntity> NavigateOne(IQueryable<TEntity> queryable) => navigation(queryable).Take(1);
+            var items = await GetAsync(NavigateOne, cancellationToken);
+            return items.Any();
         }
     }
 }

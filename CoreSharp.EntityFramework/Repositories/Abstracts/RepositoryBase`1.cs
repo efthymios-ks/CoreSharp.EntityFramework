@@ -73,10 +73,9 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         {
             _ = table ?? throw new ArgumentNullException(nameof(table));
 
+            navigation ??= q => q;
             var query = table.AsQueryable();
-            if (navigation is not null)
-                query = navigation(query);
-            return query;
+            return navigation(query);
         }
     }
 }

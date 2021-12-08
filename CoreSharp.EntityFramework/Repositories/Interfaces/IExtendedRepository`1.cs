@@ -1,5 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Models.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,5 +23,10 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
 
         /// <inheritdoc cref="IRepository{TEntity}.RemoveAsync(TEntity, CancellationToken)" />
         Task RemoveByKeyAsync(object key, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Check if the subquery returns one or more records.
+        /// </summary>
+        Task<bool> ExistsAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default);
     }
 }
