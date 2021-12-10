@@ -59,6 +59,7 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         }
 
         //Methods 
-        public override string ToString() => $"{Id}";
+        public override string ToString()
+            => $"{Id}";
     }
 }

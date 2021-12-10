@@ -2,7 +2,6 @@
 using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork.Interfaces;
 using CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Queries;
 using MediatR;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,9 +15,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Queries
 
         //Constructors
         public GetTeachersQueryHandler(ISchoolUnitOfWork schoolUnitOfWork)
-        {
-            _schoolUnitOfWork = schoolUnitOfWork ?? throw new ArgumentNullException(nameof(schoolUnitOfWork));
-        }
+            => _schoolUnitOfWork = schoolUnitOfWork;
 
         //Methods
         public async Task<IEnumerable<Teacher>> Handle(GetTeachersQuery request, CancellationToken cancellationToken)

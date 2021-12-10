@@ -8,9 +8,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Commands
     {
         //Constructors
         public AddTeacherCommand(Teacher teacher)
-        {
-            Teacher = teacher ?? throw new ArgumentNullException(nameof(teacher));
-        }
+            => Teacher = teacher ?? throw new ArgumentNullException(nameof(teacher));
 
         //Properties
         public Teacher Teacher { get; }

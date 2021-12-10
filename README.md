@@ -24,10 +24,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
     {
         //Methods
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            _ = modelBuilder ?? throw new ArgumentNullException(nameof(modelBuilder));
-
-            //Always call base method 
+        { 
+            //Always call base method first
             base.OnModelCreating(modelBuilder);
             
             //Other configurations 
@@ -139,7 +137,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
     internal static class Startup
     {
         //Methods 
-        public static ServiceProvider ConfigureServices()
+        public static IServiceProvider ConfigureServices()
         {
             var serviceCollection = new ServiceCollection();
 
@@ -169,9 +167,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
 
         //Constructors
         public AddTeacherQueryHandler(ISchoolUnitOfWork schoolUnitOfWork)
-        {
-            _schoolUnitOfWork = schoolUnitOfWork ?? throw new ArgumentNullException(nameof(schoolUnitOfWork));
-        }
+            => _schoolUnitOfWork = schoolUnitOfWork;
 
         //Methods
         public async Task<IEnumerable<Teacher>> Handle(AddTeacherCommand request, CancellationToken cancellationToken)
@@ -198,7 +194,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
         //Methods
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         { 
-            //Always call base method 
+            //Always call base method first 
             base.OnModelCreating(modelBuilder);
             
             //Other configurations... 
@@ -272,7 +268,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
     internal static class Startup
     {
         //Methods 
-        public static ServiceProvider ConfigureServices()
+        public static IServiceProvider ConfigureServices()
         {
             var serviceCollection = new ServiceCollection();
 
@@ -299,16 +295,11 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
 
         //Constructors
         public UpdateTeacherCommandHandler(ITeacherStore teacherStore)
-        {
-            _teacherStore = teacherStore ?? throw new ArgumentNullException(nameof(teacherStore));
-        }
+            => _teacherStore = teacherStore;
 
         //Methods
         public async Task<Teacher> Handle(UpdateTeacherCommand request, CancellationToken cancellationToken)
-        { 
-            var updatedTeacher = await _teacherStore.UpdateAsync(request.Teacher, cancellationToken);
-            return updatedTeacher;
-        }
+            => await _teacherStore.UpdateAsync(request.Teacher, cancellationToken);
     }
 }
 ```

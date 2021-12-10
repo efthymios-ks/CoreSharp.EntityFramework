@@ -17,9 +17,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
 
         //Constructors
         public RemoveTeacherCoursesCommandHandler(ISchoolUnitOfWork schoolUnitOfWork)
-        {
-            _schoolUnitOfWork = schoolUnitOfWork ?? throw new ArgumentNullException(nameof(schoolUnitOfWork));
-        }
+            => _schoolUnitOfWork = schoolUnitOfWork;
 
         //Methods
         public async Task<Teacher> Handle(RemoveTeacherCoursesCommand request, CancellationToken cancellationToken)
@@ -28,14 +26,14 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
             if (teacher is null)
                 throw new ArgumentOutOfRangeException($"{nameof(Teacher)} with {nameof(Teacher.Id)}=`{request.TeacherId}` not found.");
 
-            if (teacher.Courses.Any())
-            {
-                foreach (var course in teacher.Courses)
-                    await _schoolUnitOfWork.Courses.RemoveAsync(course, cancellationToken);
-                teacher.Courses.Clear();
-                await _schoolUnitOfWork.Teachers.UpdateAsync(teacher, cancellationToken);
-                await _schoolUnitOfWork.CommitAsync(cancellationToken);
-            }
+            if (!teacher.Courses.Any())
+                return teacher;
+
+            foreach (var course in teacher.Courses)
+                await _schoolUnitOfWork.Courses.RemoveAsync(course, cancellationToken);
+            teacher.Courses.Clear();
+            await _schoolUnitOfWork.Teachers.UpdateAsync(teacher, cancellationToken);
+            await _schoolUnitOfWork.CommitAsync(cancellationToken);
             return teacher;
         }
     }

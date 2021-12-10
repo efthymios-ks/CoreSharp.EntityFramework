@@ -9,9 +9,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Queries
     {
         //Constructors
         public GetTeacherByIdQuery(Guid teacherId)
-        {
-            TeacherId = teacherId;
-        }
+            => TeacherId = teacherId;
 
         //Properties
         public Guid TeacherId { get; }

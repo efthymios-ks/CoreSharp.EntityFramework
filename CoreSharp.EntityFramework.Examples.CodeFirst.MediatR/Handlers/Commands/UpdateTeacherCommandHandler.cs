@@ -15,17 +15,14 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
 
         //Constructors
         public UpdateTeacherCommandHandler(ITeacherStore teacherStore)
-        {
-            _teacherStore = teacherStore ?? throw new ArgumentNullException(nameof(teacherStore));
-        }
+            => _teacherStore = teacherStore;
 
         //Methods
         public async Task<Teacher> Handle(UpdateTeacherCommand request, CancellationToken cancellationToken)
         {
             _ = request.Teacher ?? throw new NullReferenceException($"{nameof(request.Teacher)} cannot be null.");
 
-            var updatedTeacher = await _teacherStore.UpdateAsync(request.Teacher, cancellationToken);
-            return updatedTeacher;
+            return await _teacherStore.UpdateAsync(request.Teacher, cancellationToken);
         }
     }
 }

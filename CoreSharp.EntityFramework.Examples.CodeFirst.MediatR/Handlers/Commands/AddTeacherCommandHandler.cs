@@ -15,9 +15,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
 
         //Constructors
         public AddTeacherCommandHandler(ISchoolUnitOfWork schoolUnitOfWork)
-        {
-            _schoolUnitOfWork = schoolUnitOfWork ?? throw new ArgumentNullException(nameof(schoolUnitOfWork));
-        }
+            => _schoolUnitOfWork = schoolUnitOfWork;
 
         //Methods
         public async Task<Teacher> Handle(AddTeacherCommand request, CancellationToken cancellationToken)

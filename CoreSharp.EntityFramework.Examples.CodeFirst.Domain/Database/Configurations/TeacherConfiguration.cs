@@ -8,6 +8,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Configura
 {
     internal class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
     {
+        //Constructors
         public void Configure(EntityTypeBuilder<Teacher> builder)
         {
             _ = builder ?? throw new ArgumentNullException(nameof(builder));

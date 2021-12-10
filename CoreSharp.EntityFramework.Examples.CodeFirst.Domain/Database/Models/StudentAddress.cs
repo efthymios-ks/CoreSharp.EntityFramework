@@ -3,7 +3,7 @@ using System;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models
 {
-    public class StudentAddress : BaseAddress
+    public class StudentAddress : AddressBase
     {
         //Properties
         public Guid StudentId { get; set; }

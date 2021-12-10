@@ -8,9 +8,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Commands
     {
         //Constructors
         public RemoveTeacherCoursesCommand(Guid teacherId)
-        {
-            TeacherId = teacherId;
-        }
+            => TeacherId = teacherId;
 
         //Properties
         public Guid TeacherId { get; }
