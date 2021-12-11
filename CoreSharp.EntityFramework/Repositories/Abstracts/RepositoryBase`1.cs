@@ -31,7 +31,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         {
             _ = key ?? throw new ArgumentNullException(nameof(key));
 
-            var query = NavigateTable(Table, navigation);
+            var query = NavigateTable(navigation);
             return await query.SingleOrDefaultAsync(i => Equals(i.Id, key), cancellationToken);
         }
 
@@ -39,7 +39,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
             CancellationToken cancellationToken = default)
         {
-            var query = NavigateTable(Table, navigation);
+            var query = NavigateTable(navigation);
             return await query.ToArrayAsync(cancellationToken);
         }
 
@@ -69,12 +69,10 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             await Task.CompletedTask;
         }
 
-        private static IQueryable<TEntity> NavigateTable(DbSet<TEntity> table, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation)
+        protected IQueryable<TEntity> NavigateTable(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation)
         {
-            _ = table ?? throw new ArgumentNullException(nameof(table));
-
             navigation ??= q => q;
-            var query = table.AsQueryable();
+            var query = Table.AsQueryable();
             return navigation(query);
         }
     }

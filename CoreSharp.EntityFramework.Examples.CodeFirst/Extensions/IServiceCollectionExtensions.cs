@@ -36,6 +36,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Extensions
             _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
 
             serviceCollection.AddStores(typeof(SchoolDbContext).Assembly);
+            serviceCollection.AddExtendedStores(typeof(SchoolDbContext).Assembly);
 
             return serviceCollection;
         }

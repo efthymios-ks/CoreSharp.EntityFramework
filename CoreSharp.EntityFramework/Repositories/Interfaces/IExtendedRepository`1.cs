@@ -1,4 +1,5 @@
 ﻿using CoreSharp.EntityFramework.Models.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,5 +29,8 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         /// Check if the subquery returns one or more records.
         /// </summary>
         Task<bool> ExistsAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default);
+
+        /// <inheritdoc cref="EntityFrameworkQueryableExtensions.CountAsync{TSource}(IQueryable{TSource}, CancellationToken)" />
+        Task<long> CountAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default);
     }
 }

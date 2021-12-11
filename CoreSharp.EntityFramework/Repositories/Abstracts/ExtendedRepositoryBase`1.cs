@@ -62,5 +62,12 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             var items = await GetAsync(NavigateOne, cancellationToken);
             return items.Any();
         }
+
+        public virtual async Task<long> CountAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default)
+        {
+            navigation ??= q => q;
+            var query = NavigateTable(navigation);
+            return await query.LongCountAsync(cancellationToken);
+        }
     }
 }

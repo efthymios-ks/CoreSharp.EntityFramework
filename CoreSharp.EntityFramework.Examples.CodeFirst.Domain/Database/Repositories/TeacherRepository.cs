@@ -4,7 +4,7 @@ using CoreSharp.EntityFramework.Repositories.Abstracts;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories
 {
-    public class TeacherRepository : RepositoryBase<Teacher>, ITeacherRepository
+    public class TeacherRepository : ExtendedRepositoryBase<Teacher>, ITeacherRepository
     {
         //Constructors
         public TeacherRepository(SchoolDbContext schoolDbContext) : base(schoolDbContext)
