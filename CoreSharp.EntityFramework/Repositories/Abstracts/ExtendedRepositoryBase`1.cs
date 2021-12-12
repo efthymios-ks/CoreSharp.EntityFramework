@@ -1,5 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Models.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Interfaces;
+using CoreSharp.Extensions;
+using CoreSharp.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -68,6 +70,18 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             navigation ??= q => q;
             var query = NavigateTable(navigation);
             return await query.LongCountAsync(cancellationToken);
+        }
+
+        public virtual async Task<Page<TEntity>> PaginateAsync(int pageNumber, int pageSize, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default)
+        {
+            if (pageNumber < 0)
+                throw new ArgumentOutOfRangeException(nameof(pageNumber));
+            else if (pageSize < 1)
+                throw new ArgumentOutOfRangeException(nameof(pageSize));
+
+            navigation ??= q => q;
+            var query = NavigateTable(navigation);
+            return await query.PaginateAsync(pageNumber, pageSize, cancellationToken);
         }
     }
 }

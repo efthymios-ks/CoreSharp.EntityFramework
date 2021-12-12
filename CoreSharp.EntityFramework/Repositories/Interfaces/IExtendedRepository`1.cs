@@ -1,4 +1,5 @@
 ﻿using CoreSharp.EntityFramework.Models.Interfaces;
+using CoreSharp.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -32,5 +33,10 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
 
         /// <inheritdoc cref="EntityFrameworkQueryableExtensions.CountAsync{TSource}(IQueryable{TSource}, CancellationToken)" />
         Task<long> CountAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Return paged entity collection.
+        /// </summary>
+        Task<Page<TEntity>> PaginateAsync(int pageNumber, int pageSize, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default);
     }
 }
