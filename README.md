@@ -119,7 +119,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWor
         }
 
         //Properties
-        public ITeacherRepository Teachers => _teachers ??= new TeacherRepository(Context as SchoolDbContext);
+        public ITeacherRepository Teachers 
+            => _teachers ??= new TeacherRepository(Context as SchoolDbContext);
     }
 }
 ```
