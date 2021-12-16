@@ -31,6 +31,9 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         }
 
         public virtual async ValueTask DisposeAsync()
-            => await Context.DisposeAsync();
+        {
+            GC.SuppressFinalize(this);
+            await Context.DisposeAsync();
+        }
     }
 }

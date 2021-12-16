@@ -1,7 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Models.Interfaces;
 using CoreSharp.EntityFramework.Stores.Interfaces;
 using CoreSharp.Extensions;
-using CoreSharp.Models;
+using CoreSharp.Models.Pages;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -48,7 +48,7 @@ namespace CoreSharp.EntityFramework.Stores.Abstracts
                 await RemoveAsync(entity, cancellationToken);
         }
 
-        public async Task RemoveByKeyAsync(object key, CancellationToken cancellationToken = default)
+        public virtual async Task RemoveByKeyAsync(object key, CancellationToken cancellationToken = default)
         {
             _ = key ?? throw new ArgumentNullException(nameof(key));
 
@@ -57,7 +57,7 @@ namespace CoreSharp.EntityFramework.Stores.Abstracts
             await RemoveAsync(entity, cancellationToken);
         }
 
-        public async Task<bool> ExistsAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> ExistsAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default)
         {
             navigation ??= q => q;
             IQueryable<TEntity> NavigateOne(IQueryable<TEntity> queryable) => navigation(queryable).Take(1);
@@ -72,7 +72,7 @@ namespace CoreSharp.EntityFramework.Stores.Abstracts
             return await query.LongCountAsync(cancellationToken);
         }
 
-        public virtual async Task<Page<TEntity>> PaginateAsync(int pageNumber, int pageSize, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default)
+        public virtual async Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default)
         {
             if (pageNumber < 0)
                 throw new ArgumentOutOfRangeException(nameof(pageNumber));
@@ -81,7 +81,7 @@ namespace CoreSharp.EntityFramework.Stores.Abstracts
 
             navigation ??= q => q;
             var query = NavigateTable(navigation);
-            return await query.PaginateAsync(pageNumber, pageSize, cancellationToken);
+            return await query.GetPageAsync(pageNumber, pageSize, cancellationToken);
         }
     }
 }

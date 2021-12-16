@@ -162,6 +162,14 @@
             Check if the subquery returns one or more records.
             </summary>
         </member>
+        <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IExtendedRepository`1.CountAsync(System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)">
+            <inheritdoc cref="M:Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.CountAsync``1(System.Linq.IQueryable{``0},System.Threading.CancellationToken)" />
+        </member>
+        <member name="M:CoreSharp.EntityFramework.Repositories.Interfaces.IExtendedRepository`1.GetPageAsync(System.Int32,System.Int32,System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{`0}},System.Threading.CancellationToken)">
+            <summary>
+            Return paged entity collection.
+            </summary>
+        </member>
         <member name="T:CoreSharp.EntityFramework.Repositories.Interfaces.IRepository`1">
             <summary>
             Repository interface used for transactional querying.

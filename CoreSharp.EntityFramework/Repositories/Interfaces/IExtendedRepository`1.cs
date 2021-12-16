@@ -1,5 +1,5 @@
 ﻿using CoreSharp.EntityFramework.Models.Interfaces;
-using CoreSharp.Models;
+using CoreSharp.Models.Pages;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -37,6 +37,6 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         /// <summary>
         /// Return paged entity collection.
         /// </summary>
-        Task<Page<TEntity>> PaginateAsync(int pageNumber, int pageSize, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default);
+        Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default);
     }
 }
