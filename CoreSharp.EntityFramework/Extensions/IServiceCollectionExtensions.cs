@@ -174,10 +174,13 @@ namespace CoreSharp.EntityFramework.Extensions
                 //If multiple implementations
                 else if (implementations.Length > 1)
                 {
-                    //Local functions
                     static string GetGenericTypeBaseName(Type genericType, string name = null)
                     {
                         _ = genericType ?? throw new ArgumentNullException(nameof(genericType));
+
+                        static string TrimGenericTypeName(string genericName) =>
+                            genericName[..genericName.LastIndexOf('`')];
+
                         name ??= genericType.Name;
 
                         if (genericType.IsGenericType)
@@ -185,8 +188,6 @@ namespace CoreSharp.EntityFramework.Extensions
 
                         return name;
                     }
-                    static string TrimGenericTypeName(string genericName) =>
-                        genericName[..genericName.LastIndexOf('`')];
 
                     //Get contract name 
                     var trimmedContractName = Regex.Match(contract.Name, InterfaceContractRegexExp).Groups["Name"].Value;

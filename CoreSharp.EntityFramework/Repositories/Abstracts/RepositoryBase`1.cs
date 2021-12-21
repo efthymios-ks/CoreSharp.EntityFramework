@@ -24,7 +24,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         protected DbSet<TEntity> Table { get; }
 
         //Methods 
-        public async virtual Task<TEntity> GetAsync(
+        public virtual async Task<TEntity> GetAsync(
             object key,
             Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
             CancellationToken cancellationToken = default)

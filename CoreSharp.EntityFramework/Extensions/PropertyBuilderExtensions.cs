@@ -28,7 +28,7 @@ namespace CoreSharp.EntityFramework.Extensions
 
             var converter = new ValueConverter<TProperty, string>(
                 app => app.ToJson(settings),
-                db => db.ToEntity<TProperty>(settings));
+                db => db.FromJson<TProperty>(settings));
 
             var comparer = new ValueComparer<TProperty>(
                 (left, right) => left.ToJson(settings) == right.ToJson(settings),
