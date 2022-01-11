@@ -9,10 +9,6 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Configura
     {
         //Constructors
         public void Configure(EntityTypeBuilder<StudentAddress> builder)
-        {
-            _ = builder ?? throw new ArgumentNullException(nameof(builder));
-
-            //builder.ToTable("StudentAddresses"); 
-        }
+            => _ = builder ?? throw new ArgumentNullException(nameof(builder));//builder.ToTable("StudentAddresses"); 
     }
 }
