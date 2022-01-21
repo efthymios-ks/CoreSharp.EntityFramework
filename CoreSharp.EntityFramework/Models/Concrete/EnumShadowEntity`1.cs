@@ -6,7 +6,8 @@ namespace CoreSharp.EntityFramework.Models.Concrete
     /// <summary>
     /// <see cref="Enum"/> shadow entity used for table relationships.
     /// </summary>
-    public sealed class EnumShadowEntity<TEnum> where TEnum : Enum
+    public sealed class EnumShadowEntity<TEnum>
+        where TEnum : Enum
     {
         //Constructors
         public EnumShadowEntity()

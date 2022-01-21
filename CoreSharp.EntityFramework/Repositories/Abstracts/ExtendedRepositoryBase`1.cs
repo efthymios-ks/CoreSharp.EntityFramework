@@ -15,7 +15,8 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         where TEntity : class, IEntity
     {
         //Constructors
-        protected ExtendedRepositoryBase(DbContext dbContext) : base(dbContext)
+        protected ExtendedRepositoryBase(DbContext dbContext)
+            : base(dbContext)
         {
         }
 

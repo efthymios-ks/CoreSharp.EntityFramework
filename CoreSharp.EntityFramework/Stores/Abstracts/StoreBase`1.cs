@@ -12,7 +12,8 @@ namespace CoreSharp.EntityFramework.Stores.Abstracts
         where TEntity : class, IEntity
     {
         //Constructors
-        protected StoreBase(DbContext dbContext) : base(dbContext)
+        protected StoreBase(DbContext dbContext)
+            : base(dbContext)
         {
         }
 

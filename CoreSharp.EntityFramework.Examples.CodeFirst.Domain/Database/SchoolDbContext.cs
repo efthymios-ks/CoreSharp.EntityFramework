@@ -17,9 +17,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
 
         //Methods
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder
-                .ConfigureSchoolDbContext(Configuration.ConnectionString)
-                .EnableSensitiveDataLogging();
+            => optionsBuilder.ConfigureSchoolDbContext(Configuration.ConnectionString)
+                             .EnableSensitiveDataLogging();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

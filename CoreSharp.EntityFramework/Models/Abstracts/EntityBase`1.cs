@@ -49,13 +49,7 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         public DateTime? DateModifiedUtc
         {
             get => _dateModifiedUtc;
-            set
-            {
-                if (value is null)
-                    _dateModifiedUtc = null;
-                else
-                    _dateModifiedUtc = TimeZoneInfo.ConvertTimeToUtc(value.Value);
-            }
+            set => _dateModifiedUtc = value is null ? null : TimeZoneInfo.ConvertTimeToUtc(value.Value);
         }
 
         //Methods 

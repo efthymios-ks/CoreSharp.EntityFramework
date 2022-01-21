@@ -27,10 +27,9 @@ namespace CoreSharp.EntityFramework.Extensions
             _ = propertySelector ?? throw new ArgumentNullException(nameof(propertySelector));
 
             var enumPropertyName = propertySelector.GetMemberName();
-            return builder
-                     .HasOne<EnumShadowEntity<TEnum>>()
-                     .WithMany()
-                     .HasForeignKey(enumPropertyName);
+            return builder.HasOne<EnumShadowEntity<TEnum>>()
+                          .WithMany()
+                          .HasForeignKey(enumPropertyName);
         }
 
         /// <summary>
@@ -45,9 +44,8 @@ namespace CoreSharp.EntityFramework.Extensions
             _ = builder ?? throw new ArgumentNullException(nameof(builder));
             _ = propertySelector ?? throw new ArgumentNullException(nameof(propertySelector));
 
-            return builder
-                     .Property(propertySelector)
-                     .HasJsonConversion();
+            return builder.Property(propertySelector)
+                          .HasJsonConversion();
         }
     }
 }

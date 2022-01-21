@@ -7,7 +7,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores
     public class TeacherStore : StoreBase<Teacher>, ITeacherStore
     {
         //Constructors
-        public TeacherStore(SchoolDbContext schoolDbContext) : base(schoolDbContext)
+        public TeacherStore(SchoolDbContext schoolDbContext)
+            : base(schoolDbContext)
         {
         }
     }

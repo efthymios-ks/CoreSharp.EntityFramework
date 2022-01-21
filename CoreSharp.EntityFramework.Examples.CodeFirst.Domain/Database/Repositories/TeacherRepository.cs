@@ -7,7 +7,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositor
     public class TeacherRepository : ExtendedRepositoryBase<Teacher>, ITeacherRepository
     {
         //Constructors
-        public TeacherRepository(SchoolDbContext schoolDbContext) : base(schoolDbContext)
+        public TeacherRepository(SchoolDbContext schoolDbContext)
+            : base(schoolDbContext)
         {
         }
     }
