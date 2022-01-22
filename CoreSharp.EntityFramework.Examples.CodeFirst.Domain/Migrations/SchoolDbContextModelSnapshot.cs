@@ -7,7 +7,7 @@ using System;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Migrations
 {
-    [DbContext(typeof(SchoolDbContext))]
+    [DbContext(typeof(AppDbContext))]
     partial class SchoolDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

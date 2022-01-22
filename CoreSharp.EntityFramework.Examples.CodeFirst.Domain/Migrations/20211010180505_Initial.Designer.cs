@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Migrations
 {
-    [DbContext(typeof(SchoolDbContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20211010180505_Initial")]
     partial class Initial
     {

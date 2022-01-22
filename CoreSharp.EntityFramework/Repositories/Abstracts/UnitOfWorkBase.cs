@@ -2,6 +2,7 @@
 using CoreSharp.EntityFramework.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             => Context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
         //Properties
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         protected DbContext Context { get; }
 
         //Methods   

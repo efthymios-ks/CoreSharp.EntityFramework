@@ -8,7 +8,7 @@ using System;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Migrations
 {
-    [DbContext(typeof(SchoolDbContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20211011135932_AddFieldsToCourse")]
     partial class AddFieldsToCourse
     {

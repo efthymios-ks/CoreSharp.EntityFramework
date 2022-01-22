@@ -21,9 +21,9 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Extensions
         {
             _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
 
-            serviceCollection.AddRepositories(typeof(SchoolDbContext).Assembly);
-            serviceCollection.AddExtendedRepositories(typeof(SchoolDbContext).Assembly);
-            serviceCollection.AddScoped<ISchoolUnitOfWork, SchoolUnitOfWork>();
+            serviceCollection.AddRepositories(typeof(AppDbContext).Assembly);
+            serviceCollection.AddExtendedRepositories(typeof(AppDbContext).Assembly);
+            serviceCollection.AddScoped<IAppUnitOfWork, AppUnitOfWork>();
 
             return serviceCollection;
         }
@@ -35,8 +35,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Extensions
         {
             _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
 
-            serviceCollection.AddStores(typeof(SchoolDbContext).Assembly);
-            serviceCollection.AddExtendedStores(typeof(SchoolDbContext).Assembly);
+            serviceCollection.AddStores(typeof(AppDbContext).Assembly);
+            serviceCollection.AddExtendedStores(typeof(AppDbContext).Assembly);
 
             return serviceCollection;
         }

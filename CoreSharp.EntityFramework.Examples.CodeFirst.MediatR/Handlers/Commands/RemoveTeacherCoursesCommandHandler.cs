@@ -13,10 +13,10 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
     public class RemoveTeacherCoursesCommandHandler : IRequestHandler<RemoveTeacherCoursesCommand, Teacher>
     {
         //Fields 
-        private readonly ISchoolUnitOfWork _schoolUnitOfWork;
+        private readonly IAppUnitOfWork _schoolUnitOfWork;
 
         //Constructors
-        public RemoveTeacherCoursesCommandHandler(ISchoolUnitOfWork schoolUnitOfWork)
+        public RemoveTeacherCoursesCommandHandler(IAppUnitOfWork schoolUnitOfWork)
             => _schoolUnitOfWork = schoolUnitOfWork;
 
         //Methods

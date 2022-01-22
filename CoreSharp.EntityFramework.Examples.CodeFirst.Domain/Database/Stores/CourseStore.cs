@@ -7,7 +7,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores
     public class CourseStore : StoreBase<Course>, ICourseStore
     {
         //Constructors 
-        public CourseStore(SchoolDbContext schoolDbContext)
+        public CourseStore(AppDbContext schoolDbContext)
             : base(schoolDbContext)
         {
         }

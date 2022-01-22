@@ -5,20 +5,22 @@ using CoreSharp.EntityFramework.Repositories.Abstracts;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork
 {
-    public class SchoolUnitOfWork : UnitOfWorkBase, ISchoolUnitOfWork
+    public class AppUnitOfWork : UnitOfWorkBase, IAppUnitOfWork
     {
         //Fields 
-        private ICourseRepository _courses = null;
-        private ITeacherRepository _teachers = null;
+        private ICourseRepository _courses;
+        private ITeacherRepository _teachers;
 
         //Constructors
-        public SchoolUnitOfWork(SchoolDbContext schoolDbContext)
+        public AppUnitOfWork(AppDbContext schoolDbContext)
             : base(schoolDbContext)
         {
         }
 
         //Properties
-        public ICourseRepository Courses => _courses ??= new CourseRepository(Context as SchoolDbContext);
-        public ITeacherRepository Teachers => _teachers ??= new TeacherRepository(Context as SchoolDbContext);
+        public ICourseRepository Courses
+            => _courses ??= new CourseRepository(Context as AppDbContext);
+        public ITeacherRepository Teachers
+            => _teachers ??= new TeacherRepository(Context as AppDbContext);
     }
 }

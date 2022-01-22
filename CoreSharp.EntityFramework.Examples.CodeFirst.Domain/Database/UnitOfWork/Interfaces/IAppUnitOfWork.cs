@@ -3,10 +3,10 @@ using CoreSharp.EntityFramework.Repositories.Interfaces;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork.Interfaces
 {
-    public interface ISchoolUnitOfWork : IUnitOfWork
+    public interface IAppUnitOfWork : IUnitOfWork
     {
         //Properties
-        public ICourseRepository Courses { get; }
-        public ITeacherRepository Teachers { get; }
+        ICourseRepository Courses { get; }
+        ITeacherRepository Teachers { get; }
     }
 }

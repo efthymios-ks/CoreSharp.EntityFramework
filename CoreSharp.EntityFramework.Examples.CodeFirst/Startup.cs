@@ -17,7 +17,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
             var serviceCollection = new ServiceCollection();
 
             //1. Add DbContext. 
-            serviceCollection.AddScoped<SchoolDbContext>();
+            serviceCollection.AddScoped<AppDbContext>();
 
             //2a. Add Repositories or...
             serviceCollection.AddAppRepositories();

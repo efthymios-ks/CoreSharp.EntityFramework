@@ -11,10 +11,10 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
     public class AddTeacherCommandHandler : IRequestHandler<AddTeacherCommand, Teacher>
     {
         //Fields
-        private readonly ISchoolUnitOfWork _schoolUnitOfWork;
+        private readonly IAppUnitOfWork _schoolUnitOfWork;
 
         //Constructors
-        public AddTeacherCommandHandler(ISchoolUnitOfWork schoolUnitOfWork)
+        public AddTeacherCommandHandler(IAppUnitOfWork schoolUnitOfWork)
             => _schoolUnitOfWork = schoolUnitOfWork;
 
         //Methods

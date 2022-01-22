@@ -10,10 +10,10 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Queries
     public class GetTeacherByIdQueryHandler : IRequestHandler<GetTeacherByIdQuery, Teacher>
     {
         //Fields
-        private readonly ISchoolUnitOfWork _schoolUnitOfWork;
+        private readonly IAppUnitOfWork _schoolUnitOfWork;
 
         //Constructors
-        public GetTeacherByIdQueryHandler(ISchoolUnitOfWork schoolUnitOfWork)
+        public GetTeacherByIdQueryHandler(IAppUnitOfWork schoolUnitOfWork)
             => _schoolUnitOfWork = schoolUnitOfWork;
 
         //Methods

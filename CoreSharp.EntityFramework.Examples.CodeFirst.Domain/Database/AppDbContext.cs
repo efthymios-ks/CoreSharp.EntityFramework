@@ -7,7 +7,7 @@ using System;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
 {
-    public class SchoolDbContext : DbContextBase
+    public class AppDbContext : DbContextBase
     {
         //Properties
         public DbSet<Teacher> Teachers { get; set; }
@@ -43,7 +43,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
         {
             _ = modelBuilder ?? throw new ArgumentNullException(nameof(modelBuilder));
 
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(SchoolDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         }
     }
 }

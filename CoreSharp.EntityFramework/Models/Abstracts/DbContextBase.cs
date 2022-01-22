@@ -23,9 +23,10 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
             base.OnModelCreating(modelBuilder);
 
             //Trackable entities
-            foreach (var trackableEntity in modelBuilder.Model.GetEntityTypes(typeof(ITrackedEntity)))
+            var trackedEntities = modelBuilder.Model.GetEntityTypes(typeof(ITrackedEntity));
+            foreach (var trackedEntity in trackedEntities)
             {
-                var trackableEntityBuilder = modelBuilder.Entity(trackableEntity.Name);
+                var trackableEntityBuilder = modelBuilder.Entity(trackedEntity.Name);
 
                 //DateCreatedUtc
                 var dateCreatedProperty = trackableEntityBuilder
@@ -41,7 +42,8 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
 
         private void UpdateTrackableEntities()
         {
-            var trackedEntries = ChangeTracker.Entries().Where(e => e.Entity is ITrackedEntity);
+            var trackedEntries = ChangeTracker.Entries()
+                                              .Where(e => e.Entity is ITrackedEntity);
             foreach (var trackedEntry in trackedEntries)
             {
                 var trackedEntity = trackedEntry.Entity as ITrackedEntity;
