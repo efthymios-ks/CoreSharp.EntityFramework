@@ -34,7 +34,7 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         [NotMapped]
         [System.Text.Json.Serialization.JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
-        object IKeyedEntity.Id { get; set; }
+        object IUniqueEntity.Id { get; set; }
 
         [DataType(DataType.DateTime)]
         [Newtonsoft.Json.JsonConverter(typeof(UtcDateTimeConverter))]

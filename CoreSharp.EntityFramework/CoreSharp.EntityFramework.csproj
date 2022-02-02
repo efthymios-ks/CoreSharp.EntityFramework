@@ -13,7 +13,8 @@
 		<RepositoryUrl>https://github.com/efthymios-ks/CoreSharp.EntityFramework</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>EF, Entity Framework, Database</PackageTags>
-		<PackageReleaseNotes>-Code clean-up.</PackageReleaseNotes>
+		<PackageReleaseNotes>-Code clean-up.
+-Models, Interfaces, Renamed `IKeyedEntity` to `IUniqueEntity`.</PackageReleaseNotes>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageIconUrl />
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>

@@ -45,7 +45,7 @@
             <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])" />
         </member>
         <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])">
-            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddInterfaces(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+            <inheritdoc cref="M:CoreSharp.Extensions.IServiceCollectionExtensions.AddServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
         </member>
         <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])" />
@@ -54,7 +54,7 @@
             <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])" />
         </member>
         <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])">
-            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddInterfaces(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+            <inheritdoc cref="M:CoreSharp.Extensions.IServiceCollectionExtensions.AddServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
         </member>
         <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddExtendedRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddExtendedRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])" />
@@ -63,7 +63,7 @@
             <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddExtendedRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])" />
         </member>
         <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddExtendedRepositories(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])">
-            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddInterfaces(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
+            <inheritdoc cref="M:CoreSharp.Extensions.IServiceCollectionExtensions.AddServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
         </member>
         <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddExtendedStores(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddExtendedStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])" />
@@ -72,15 +72,7 @@
             <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddExtendedStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])" />
         </member>
         <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddExtendedStores(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])">
-            <inheritdoc cref="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddInterfaces(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
-        </member>
-        <member name="M:CoreSharp.EntityFramework.Extensions.IServiceCollectionExtensions.AddInterfaces(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])">
-            <summary>
-            <para>Register all `interface contract` + `concrete implementation` combos found in given assemblies.</para>
-            <para>If single implementation is found, then it is registered regardless.</para>
-            <para>If multiple implementations are found, only the one with the `I{Name}Repository` and `{Name}Repository` convention is registered.</para>
-            <para>If multiple implementations are found and none has a proper name, then none is registered.</para>
-            </summary>
+            <inheritdoc cref="M:CoreSharp.Extensions.IServiceCollectionExtensions.AddServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type,System.Reflection.Assembly[])" />
         </member>
         <member name="T:CoreSharp.EntityFramework.Extensions.ModelBuilderExtensions">
             <summary>
@@ -131,13 +123,13 @@
             <see cref="T:System.Enum"/> shadow entity used for table relationships.
             </summary>
         </member>
-        <member name="T:CoreSharp.EntityFramework.Models.Interfaces.IKeyedEntity">
+        <member name="T:CoreSharp.EntityFramework.Models.Interfaces.IUniqueEntity">
             <summary>
             Interface for entities with primary key.
             </summary>
         </member>
-        <member name="T:CoreSharp.EntityFramework.Models.Interfaces.IKeyedEntity`1">
-            <inheritdoc />
+        <member name="T:CoreSharp.EntityFramework.Models.Interfaces.IUniqueEntity`1">
+            <inheritdoc cref="T:CoreSharp.EntityFramework.Models.Interfaces.IUniqueEntity"/>
         </member>
         <member name="T:CoreSharp.EntityFramework.Repositories.Abstracts.UnitOfWorkBase">
             <inheritdoc cref="T:CoreSharp.EntityFramework.Repositories.Interfaces.IUnitOfWork"/>

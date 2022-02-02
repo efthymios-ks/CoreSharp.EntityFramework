@@ -3,7 +3,7 @@
     /// <summary>
     /// Interface for entities with primary key.
     /// </summary>
-    public interface IKeyedEntity
+    public interface IUniqueEntity
     {
         //Properties 
         object Id { get; set; }
