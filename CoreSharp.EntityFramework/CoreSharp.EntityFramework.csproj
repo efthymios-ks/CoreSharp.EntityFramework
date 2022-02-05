@@ -14,7 +14,8 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>EF, Entity Framework, Database</PackageTags>
 		<PackageReleaseNotes>-Code clean-up.
--Models, Interfaces, Renamed `IKeyedEntity` to `IUniqueEntity`.</PackageReleaseNotes>
+-Models, Interfaces, Renamed `IKeyedEntity` to `IUniqueEntity`.
+-Interfaces, IExtendedRepository, Addd `Exists(id)` method.</PackageReleaseNotes>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageIconUrl />
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>

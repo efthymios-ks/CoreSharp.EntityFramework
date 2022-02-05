@@ -58,6 +58,14 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             await base.RemoveAsync(entity, cancellationToken);
         }
 
+        public virtual async Task<bool> ExistsAsync(object key, CancellationToken cancellationToken = default)
+        {
+            _ = key ?? throw new ArgumentNullException(nameof(key));
+
+            var item = await GetAsync(key, cancellationToken: cancellationToken);
+            return item != null;
+        }
+
         public virtual async Task<bool> ExistsAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default)
         {
             navigation ??= q => q;
