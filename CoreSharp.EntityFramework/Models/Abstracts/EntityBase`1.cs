@@ -1,4 +1,5 @@
 ﻿using CoreSharp.EntityFramework.Models.Interfaces;
+using CoreSharp.Models.Newtonsoft.Converters;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

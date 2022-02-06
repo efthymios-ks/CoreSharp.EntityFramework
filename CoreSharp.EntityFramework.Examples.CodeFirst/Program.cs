@@ -18,11 +18,11 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
             var mediatR = services.GetRequiredService<IMediator>();
 
             //Get first teacher
-            var getTeachersQuery = new GetTeachersQuery
+            var query = new GetTeachersQuery
             {
                 Navigation = q => q.Include(t => t.Courses)
             };
-            var teacher = (await mediatR.Send(getTeachersQuery)).FirstOrDefault();
+            var teacher = (await mediatR.Send(query)).FirstOrDefault();
 
             //Create one, if none 
             if (teacher is null)

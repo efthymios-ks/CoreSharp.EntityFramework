@@ -1,6 +1,6 @@
-﻿using CoreSharp.EntityFramework.Models.Interfaces;
+﻿using CoreSharp.EntityFramework.Extensions;
+using CoreSharp.EntityFramework.Models.Interfaces;
 using CoreSharp.EntityFramework.Stores.Interfaces;
-using CoreSharp.Extensions;
 using CoreSharp.Models.Pages;
 using Microsoft.EntityFrameworkCore;
 using System;

@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <Authors>Efthymios Koktsidis</Authors>
-    <Product>Efthymios Koktsidis</Product>
-  </PropertyGroup>
+	<PropertyGroup Label="Package">
+		<TargetFramework>net5.0</TargetFramework>
+		<Authors>Efthymios Koktsidis</Authors>
+		<Product>Efthymios Koktsidis</Product>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MediatR" Version="9.0.0" />
-  </ItemGroup>
+	<ItemGroup Label="Package references">
+		<PackageReference Include="MediatR" Version="9.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CoreSharp.EntityFramework.Examples.CodeFirst.Domain\CoreSharp.EntityFramework.Examples.CodeFirst.Domain.csproj" />
-  </ItemGroup>
+	<ItemGroup Label="Project references">
+		<ProjectReference Include="..\CoreSharp.EntityFramework.Examples.CodeFirst.Domain\CoreSharp.EntityFramework.Examples.CodeFirst.Domain.csproj" />
+	</ItemGroup>
 
 </Project>
