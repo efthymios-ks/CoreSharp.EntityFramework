@@ -15,20 +15,22 @@ namespace CoreSharp.EntityFramework.Extensions
     public static class PropertyBuilderExtensions
     {
         /// <inheritdoc cref="HasJsonConversion{TProperty}(PropertyBuilder{TProperty}, JsonSerializerSettings)"/>
-        public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder) where TProperty : class
+        public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder)
+            where TProperty : class
             => builder.HasJsonConversion(DefaultJsonSettings.Instance);
 
         /// <summary>
         /// Convert a property from and to json for database storage.
         /// </summary>
-        public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder, JsonSerializerSettings settings) where TProperty : class
+        public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder, JsonSerializerSettings settings)
+            where TProperty : class
         {
             _ = builder ?? throw new ArgumentNullException(nameof(builder));
             _ = settings ?? throw new ArgumentNullException(nameof(settings));
 
             var converter = new ValueConverter<TProperty, string>(
-                app => app.ToJson(settings),
-                db => db.FromJson<TProperty>(settings));
+                appValue => appValue.ToJson(settings),
+                dbValue => dbValue.FromJson<TProperty>(settings));
 
             var comparer = new ValueComparer<TProperty>(
                 (left, right) => left.ToJson(settings) == right.ToJson(settings),
@@ -48,8 +50,8 @@ namespace CoreSharp.EntityFramework.Extensions
             _ = builder ?? throw new ArgumentNullException(nameof(builder));
 
             var converter = new ValueConverter<DateTime, DateTime>(
-                app => app.ToUniversalTime(),
-                db => TimeZoneInfo.ConvertTimeToUtc(db, TimeZoneInfo.Utc)
+                appValue => appValue.ToUniversalTime(),
+                dbValue => TimeZoneInfo.ConvertTimeToUtc(dbValue, TimeZoneInfo.Utc)
             );
 
             var comparer = new ValueComparer<DateTime>(
@@ -73,8 +75,8 @@ namespace CoreSharp.EntityFramework.Extensions
             _ = builder ?? throw new ArgumentNullException(nameof(builder));
 
             var converter = new ValueConverter<DateTime?, DateTime?>(
-                app => app == null ? null : app.Value.ToUniversalTime(),
-                db => db == null ? null : TimeZoneInfo.ConvertTimeToUtc(db.Value, TimeZoneInfo.Utc)
+                appValue => appValue == null ? null : appValue.Value.ToUniversalTime(),
+                dbValue => dbValue == null ? null : TimeZoneInfo.ConvertTimeToUtc(dbValue.Value, TimeZoneInfo.Utc)
             );
 
             var comparer = new ValueComparer<DateTime?>(

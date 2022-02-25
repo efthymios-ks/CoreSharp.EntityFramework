@@ -1,5 +1,5 @@
 ﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork.Interfaces;
+using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWorks.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;

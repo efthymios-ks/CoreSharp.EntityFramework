@@ -1,6 +1,6 @@
 ﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork.Interfaces;
+using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWorks;
+using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWorks.Interfaces;
 using CoreSharp.EntityFramework.Extensions;
 using CoreSharp.EntityFramework.Repositories.Interfaces;
 using CoreSharp.EntityFramework.Stores.Interfaces;

@@ -26,15 +26,15 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
             var trackedEntities = modelBuilder.Model.GetEntityTypes(typeof(ITrackedEntity));
             foreach (var trackedEntity in trackedEntities)
             {
-                var trackableEntityBuilder = modelBuilder.Entity(trackedEntity.Name);
+                var trackedEntityBuilder = modelBuilder.Entity(trackedEntity.Name);
 
                 //DateCreatedUtc
-                var dateCreatedProperty = trackableEntityBuilder
+                var dateCreatedProperty = trackedEntityBuilder
                     .Property(nameof(ITrackedEntity.DateCreatedUtc)) as PropertyBuilder<DateTime>;
                 dateCreatedProperty.HasUtcConversion();
 
                 //DateModifiedUtc
-                var dateModifiedProperty = trackableEntityBuilder
+                var dateModifiedProperty = trackedEntityBuilder
                     .Property(nameof(ITrackedEntity.DateModifiedUtc)) as PropertyBuilder<DateTime?>;
                 dateModifiedProperty.HasUtcConversion();
             }

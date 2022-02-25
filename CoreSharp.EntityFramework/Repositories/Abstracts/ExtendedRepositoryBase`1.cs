@@ -1,7 +1,6 @@
 ﻿using CoreSharp.EntityFramework.Extensions;
 using CoreSharp.EntityFramework.Models.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Interfaces;
-using CoreSharp.Extensions;
 using CoreSharp.Models.Pages;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -63,16 +62,16 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         {
             _ = key ?? throw new ArgumentNullException(nameof(key));
 
-            var item = await GetAsync(key, cancellationToken: cancellationToken);
-            return item != null;
+            var foundItem = await GetAsync(key, cancellationToken: cancellationToken);
+            return foundItem is not null;
         }
 
         public virtual async Task<bool> ExistsAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default)
         {
             navigation ??= q => q;
             IQueryable<TEntity> NavigateOne(IQueryable<TEntity> queryable) => navigation(queryable).Take(1);
-            var items = await GetAsync(NavigateOne, cancellationToken);
-            return items.Any();
+            var foundItems = await GetAsync(NavigateOne, cancellationToken);
+            return foundItems.Any();
         }
 
         public virtual async Task<long> CountAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default)

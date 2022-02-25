@@ -1,9 +1,9 @@
 ﻿using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories;
 using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories.Interfaces;
-using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork.Interfaces;
+using CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWorks.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Abstracts;
 
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork
+namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWorks
 {
     public class AppUnitOfWork : UnitOfWorkBase, IAppUnitOfWork
     {

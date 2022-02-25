@@ -20,7 +20,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
 {
-    public class SchoolDbContext : DbContextBase
+    public class AppDbContext : DbContextBase
     {
         //Methods
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -91,9 +91,9 @@ Inherit from `IUnitOfWork` [(link)](https://github.com/efthymios-ks/CoreSharp.En
 ``` 
 using CoreSharp.EntityFramework.Repositories.Interfaces;
 
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork.Interfaces
+namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWorks.Interfaces
 {
-    public interface ISchoolUnitOfWork : IUnitOfWork
+    public interface IAppUnitOfWork : IUnitOfWork
     {
         //Properties
         public ITeacherRepository Teachers { get; }
@@ -106,9 +106,9 @@ Implement with `UnitOfWorkBase` [(link)](https://github.com/efthymios-ks/CoreSha
 ``` 
 using CoreSharp.EntityFramework.Repositories.Abstracts;
 
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWork
+namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWorks
 {
-    public class SchoolUnitOfWork : UnitOfWorkBase, ISchoolUnitOfWork
+    public class AppUnitOfWork : UnitOfWorkBase, IAppUnitOfWork
     {
         //Fields 
         private ITeacherRepository _teachers = null;
@@ -143,7 +143,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
             var serviceCollection = new ServiceCollection();
 
             //1. Add DbContext 
-            serviceCollection.AddDbContext<SchoolDbContext>();
+            serviceCollection.AddDbContext<AppDbContext>();
             
             //2. Add Repositories
             serviceCollection.AddRepositories(typeof(SchoolDbContext).Assembly);
@@ -161,20 +161,32 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
 ``` 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
 {
-    public class AddTeacherQueryHandler : IRequestHandler<AddTeacherCommand, Teacher>
+    public class AddTeacherCommand : IRequest<Teacher>
+    {
+        //Constructors
+        public AddTeacherCommand(Teacher teacher)
+            => Teacher = teacher ?? throw new ArgumentNullException(nameof(teacher));
+
+        //Properties
+        public Teacher Teacher { get; }
+    }
+
+    public class AddTeacherCommandHandler : IRequestHandler<AddTeacherCommand, Teacher>
     {
         //Fields
-        private readonly ISchoolUnitOfWork _schoolUnitOfWork;
+        private readonly IAppUnitOfWork _appUnitOfWork;
 
         //Constructors
-        public AddTeacherQueryHandler(ISchoolUnitOfWork schoolUnitOfWork)
-            => _schoolUnitOfWork = schoolUnitOfWork;
+        public AddTeacherCommandHandler(IAppUnitOfWork appUnitOfWork)
+            => _appUnitOfWork = appUnitOfWork;
 
         //Methods
-        public async Task<IEnumerable<Teacher>> Handle(AddTeacherCommand request, CancellationToken cancellationToken)
+        public async Task<Teacher> Handle(AddTeacherCommand request, CancellationToken cancellationToken)
         {
-            var createdTeacher = await _schoolUnitOfWork.Teachers.AddAsync(request.Teacher, cancellationToken);
-            await _schoolUnitOfWork.CommitAsync(cancellationToken);
+            _ = request.Teacher ?? throw new NullReferenceException($"{nameof(request.Teacher)} cannot be null.");
+
+            var createdTeacher = await _appUnitOfWork.Teachers.AddAsync(request.Teacher, cancellationToken);
+            await _appUnitOfWork.CommitAsync(cancellationToken);
             return createdTeacher;
         }
     }
@@ -190,7 +202,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
 {
-    public class SchoolDbContext : DbContextBase
+    public class AppDbContext : DbContextBase
     {
         //Methods
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -242,7 +254,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores
     public class TeacherStore : StoreBase<Teacher>, ITeacherStore
     {
         //Constructors
-        public TeacherStore(SchoolDbContext schoolDbContext) : base(schoolDbContext)
+        public TeacherStore(AppDbContext appDbContext) 
+            : base(appDbContext)
         {
         }        
         
@@ -274,7 +287,7 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
             var serviceCollection = new ServiceCollection();
 
             //1. Add DbContext 
-            serviceCollection.AddDbContext<SchoolDbContext>();
+            serviceCollection.AddDbContext<AppDbContext>();
             
             //2. Add Stores
             serviceCollection.AddStores(typeof(SchoolDbContext).Assembly);
@@ -289,6 +302,16 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst
 ``` 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
 {
+     public class UpdateTeacherCommand : IRequest<Teacher>
+    {
+        //Constructors
+        public UpdateTeacherCommand(Teacher teacher)
+            => Teacher = teacher ?? throw new ArgumentNullException(nameof(teacher));
+
+        //Properties
+        public Teacher Teacher { get; }
+    }
+
     public class UpdateTeacherCommandHandler : IRequestHandler<UpdateTeacherCommand, Teacher>
     {
         //Fields
@@ -300,7 +323,11 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
 
         //Methods
         public async Task<Teacher> Handle(UpdateTeacherCommand request, CancellationToken cancellationToken)
-            => await _teacherStore.UpdateAsync(request.Teacher, cancellationToken);
+        {
+            _ = request.Teacher ?? throw new NullReferenceException($"{nameof(request.Teacher)} cannot be null.");
+
+            return await _teacherStore.UpdateAsync(request.Teacher, cancellationToken);
+        }
     }
 }
 ```

@@ -4,6 +4,8 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
+using JsonNet = Newtonsoft.Json;
+using TextJson = System.Text.Json;
 
 namespace CoreSharp.EntityFramework.Models.Abstracts
 {
@@ -12,19 +14,19 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
     {
         //Fields 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [System.Text.Json.Serialization.JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
+        [TextJson.Serialization.JsonIgnore]
+        [JsonNet.JsonIgnore]
         private DateTime? _dateCreatedUtc;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [System.Text.Json.Serialization.JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
+        [TextJson.Serialization.JsonIgnore]
+        [JsonNet.JsonIgnore]
         private DateTime? _dateModifiedUtc;
 
         //Properties
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [System.Text.Json.Serialization.JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
+        [TextJson.Serialization.JsonIgnore]
+        [JsonNet.JsonIgnore]
         private string DebuggerDisplay => ToString();
 
         [Key]
@@ -33,12 +35,12 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         [NotMapped]
-        [System.Text.Json.Serialization.JsonIgnore]
-        [Newtonsoft.Json.JsonIgnore]
+        [TextJson.Serialization.JsonIgnore]
+        [JsonNet.JsonIgnore]
         object IUniqueEntity.Id { get; set; }
 
         [DataType(DataType.DateTime)]
-        [Newtonsoft.Json.JsonConverter(typeof(UtcDateTimeConverter))]
+        [JsonNet.JsonConverter(typeof(UtcDateTimeConverter))]
         public DateTime DateCreatedUtc
         {
             get => _dateCreatedUtc ?? DateTime.UtcNow;
@@ -46,7 +48,7 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         }
 
         [DataType(DataType.DateTime)]
-        [Newtonsoft.Json.JsonConverter(typeof(UtcDateTimeConverter))]
+        [JsonNet.JsonConverter(typeof(UtcDateTimeConverter))]
         public DateTime? DateModifiedUtc
         {
             get => _dateModifiedUtc;
