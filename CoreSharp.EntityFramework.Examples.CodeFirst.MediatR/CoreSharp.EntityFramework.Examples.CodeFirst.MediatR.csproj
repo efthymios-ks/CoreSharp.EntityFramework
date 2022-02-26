@@ -11,7 +11,7 @@
 	</ItemGroup>
 
 	<ItemGroup Label="Project references">
-		<ProjectReference Include="..\CoreSharp.EntityFramework.Examples.CodeFirst.Domain\CoreSharp.EntityFramework.Examples.CodeFirst.Domain.csproj" />
+		<ProjectReference Include="..\CoreSharp.EntityFramework.Examples.CodeFirst.Domain\CoreSharp.EntityFramework.Examples.CodeFirst.Domain.csproj" PrivateAssets="None"/>
 	</ItemGroup>
 
 </Project>
