@@ -1,7 +1,7 @@
-﻿using CoreSharp.EntityFramework.Models.Interfaces;
+﻿using CoreSharp.EntityFramework.Delegates;
+using CoreSharp.EntityFramework.Models.Interfaces;
 using CoreSharp.Models.Pages;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -34,14 +34,14 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         /// <summary>
         /// Check if the subquery returns one or more records.
         /// </summary>
-        Task<bool> ExistsAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default);
+        Task<bool> ExistsAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default);
 
         /// <inheritdoc cref="EntityFrameworkQueryableExtensions.CountAsync{TSource}(IQueryable{TSource}, CancellationToken)" />
-        Task<long> CountAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default);
+        Task<long> CountAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Return paged entity collection.
         /// </summary>
-        Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default);
+        Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Query<TEntity> navigation = null, CancellationToken cancellationToken = default);
     }
 }

@@ -1,4 +1,5 @@
-﻿using CoreSharp.EntityFramework.Models.Interfaces;
+﻿using CoreSharp.EntityFramework.Delegates;
+using CoreSharp.EntityFramework.Models.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,7 +27,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         //Methods 
         public virtual async Task<TEntity> GetAsync(
             object key,
-            Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
+            Query<TEntity> navigation = null,
             CancellationToken cancellationToken = default)
         {
             _ = key ?? throw new ArgumentNullException(nameof(key));
@@ -36,7 +37,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         }
 
         public virtual async Task<IEnumerable<TEntity>> GetAsync(
-            Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
+            Query<TEntity> navigation = null,
             CancellationToken cancellationToken = default)
         {
             var query = NavigateTable(navigation);
@@ -69,7 +70,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             await Task.CompletedTask;
         }
 
-        protected IQueryable<TEntity> NavigateTable(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation)
+        protected IQueryable<TEntity> NavigateTable(Query<TEntity> navigation)
         {
             navigation ??= q => q;
             var query = Table.AsQueryable();

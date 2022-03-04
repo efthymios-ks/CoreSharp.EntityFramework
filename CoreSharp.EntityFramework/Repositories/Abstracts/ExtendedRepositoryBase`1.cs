@@ -1,4 +1,5 @@
-﻿using CoreSharp.EntityFramework.Extensions;
+﻿using CoreSharp.EntityFramework.Delegates;
+using CoreSharp.EntityFramework.Extensions;
 using CoreSharp.EntityFramework.Models.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Interfaces;
 using CoreSharp.Models.Pages;
@@ -66,7 +67,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             return foundItem is not null;
         }
 
-        public virtual async Task<bool> ExistsAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> ExistsAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
         {
             navigation ??= q => q;
             IQueryable<TEntity> NavigateOne(IQueryable<TEntity> queryable) => navigation(queryable).Take(1);
@@ -74,14 +75,14 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             return foundItems.Any();
         }
 
-        public virtual async Task<long> CountAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default)
+        public virtual async Task<long> CountAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
         {
             navigation ??= q => q;
             var query = NavigateTable(navigation);
             return await query.LongCountAsync(cancellationToken);
         }
 
-        public virtual async Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null, CancellationToken cancellationToken = default)
+        public virtual async Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
         {
             if (pageNumber < 0)
                 throw new ArgumentOutOfRangeException(nameof(pageNumber));

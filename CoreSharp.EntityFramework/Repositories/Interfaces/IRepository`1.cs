@@ -1,10 +1,9 @@
-﻿using CoreSharp.EntityFramework.Models.Abstracts;
+﻿using CoreSharp.EntityFramework.Delegates;
+using CoreSharp.EntityFramework.Models.Abstracts;
 using CoreSharp.EntityFramework.Models.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Abstracts;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,7 +26,7 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         /// <param name="navigation">Optional argument to build query.</param>
         Task<TEntity> GetAsync(
             object key,
-            Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
+            Query<TEntity> navigation = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -35,7 +34,7 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         /// </summary>
         /// <param name="navigation">Optional argument to build query.</param>
         Task<IEnumerable<TEntity>> GetAsync(
-            Func<IQueryable<TEntity>, IQueryable<TEntity>> navigation = null,
+            Query<TEntity> navigation = null,
             CancellationToken cancellationToken = default);
 
         /// <inheritdoc cref="DbContext.AddAsync{TEntity}(TEntity, CancellationToken)" />
