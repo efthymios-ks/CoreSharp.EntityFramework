@@ -82,6 +82,40 @@ namespace CoreSharp.EntityFramework.Stores.Abstracts
             return await query.LongCountAsync(cancellationToken);
         }
 
+        public virtual async Task<TEntity> AddOrUpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+        {
+            _ = entity ?? throw new ArgumentNullException(nameof(entity));
+
+            if (await ExistsAsync(entity.Id, cancellationToken))
+                return await UpdateAsync(entity, cancellationToken);
+            else
+                return await AddAsync(entity, cancellationToken);
+        }
+
+        public virtual async Task<IEnumerable<TEntity>> AddOrUpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        {
+            _ = entities ?? throw new ArgumentNullException(nameof(entities));
+
+            //Get all id in single query 
+            var idsToLookFor = entities.Select(e => e.Id);
+            var entitiesFound = await GetAsync(q => q.Where(e => idsToLookFor.Contains(e.Id))
+                                                     .AsNoTracking(), cancellationToken);
+            bool EntityExists(TEntity entity)
+                => entitiesFound.Any(e => Equals(e.Id, entity.Id));
+
+            //Save entities
+            var result = new HashSet<TEntity>();
+            foreach (var entity in entities)
+            {
+                var savedEntity = EntityExists(entity)
+                                ? await UpdateAsync(entity, cancellationToken)
+                                : await AddAsync(entity, cancellationToken);
+                result.Add(savedEntity);
+            }
+
+            return result;
+        }
+
         public virtual async Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
         {
             if (pageNumber < 0)

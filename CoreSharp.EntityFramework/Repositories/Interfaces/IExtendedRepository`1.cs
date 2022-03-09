@@ -39,6 +39,17 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         /// <inheritdoc cref="EntityFrameworkQueryableExtensions.CountAsync{TSource}(IQueryable{TSource}, CancellationToken)" />
         Task<long> CountAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default);
 
+        /// <inheritdoc cref="AddOrUpdateAsync(IEnumerable{TEntity}, CancellationToken)"/>
+        Task<TEntity> AddOrUpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Adds or updates entities by key when
+        /// <see cref="DbContext.SaveChangesAsync(CancellationToken)"/> is called.
+        /// Equivalent to an "upsert" operation from database terminology.
+        /// This method can useful when seeding data using migrations.
+        /// </summary>
+        Task<IEnumerable<TEntity>> AddOrUpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+
         /// <summary>
         /// Return paged entity collection.
         /// </summary>

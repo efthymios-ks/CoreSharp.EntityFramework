@@ -27,11 +27,16 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         [TextJson.Serialization.JsonIgnore]
         [JsonNet.JsonIgnore]
-        private string DebuggerDisplay => ToString();
+        private string DebuggerDisplay
+            => ToString();
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public TKey Id { get; set; }
+        public TKey Id
+        {
+            get => (TKey)(this as IUniqueEntity).Id;
+            set => (this as IUniqueEntity).Id = value;
+        }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         [NotMapped]
