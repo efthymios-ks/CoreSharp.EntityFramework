@@ -10,14 +10,21 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
     public abstract class DbContextBase : DbContext
     {
         //Constructors
+        protected DbContextBase(DbContextOptions options)
+            : base(options)
+            => OnConstruct();
+
         protected DbContextBase()
-            => SavingChanges += SavingChangesEventHandler;
+            => OnConstruct();
 
         //Events
         private void SavingChangesEventHandler(object sender, SavingChangesEventArgs e)
             => UpdateTrackableEntities();
 
         //Methods
+        private void OnConstruct()
+            => SavingChanges += SavingChangesEventHandler;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

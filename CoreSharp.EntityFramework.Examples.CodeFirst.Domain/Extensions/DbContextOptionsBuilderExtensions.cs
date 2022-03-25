@@ -9,11 +9,12 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Extensions
     internal static class DbContextOptionsBuilderExtensions
     {
         //Methods
-        public static DbContextOptionsBuilder ConfigureSchoolDbContext(this DbContextOptionsBuilder optionsBuilder, string connectionString)
+        public static DbContextOptionsBuilder ConfigureSql(this DbContextOptionsBuilder optionsBuilder)
         {
             _ = optionsBuilder ?? throw new ArgumentNullException(nameof(optionsBuilder));
 
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseSqlServer(Configuration.SqlConnectionString);
+            optionsBuilder.EnableSensitiveDataLogging();
 
             return optionsBuilder;
         }
