@@ -1,5 +1,8 @@
 # CoreSharp.EntityFramework 
 
+[![Nuget](https://img.shields.io/nuget/v/CoreSharp.EntityFramework)](https://www.nuget.org/packages/CoreSharp.EntityFramework/)
+[![Nuget](https://img.shields.io/nuget/dt/CoreSharp.EntityFramework)](https://www.nuget.org/packages/CoreSharp.EntityFramework/)
+
 ## Description 
 `CoreSharp.EntityFramework` contains a set of interfaces, abstracts and model bases for the commonest Entity Framework use scenarios. 
 
@@ -7,9 +10,6 @@
 - Interfaces for `Entity`, `Repository`, `UnitOfWork` and `Store`. 
 - Abstract base implementations for `Entity`, `Repository`, `UnitOfWork` and `Store`. 
 - Various extensions for `enum`, conversions, `DbContext` etc. 
-
-## Installation 
-Install via [nuget](https://www.nuget.org/packages/CoreSharp.EntityFramework/).
 
 ## Steps for `UnitOfWork` scenario 
 ### 1. Create database specific `DbContext`. 
