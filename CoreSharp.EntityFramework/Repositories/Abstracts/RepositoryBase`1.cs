@@ -22,13 +22,12 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
 
         //Properties 
         protected DbContext Context { get; }
+
         protected DbSet<TEntity> Table { get; }
 
         //Methods 
-        public virtual async Task<TEntity> GetAsync(
-            object key,
-            Query<TEntity> navigation = null,
-            CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> GetAsync(object key, Query<TEntity> navigation = null,
+                                                    CancellationToken cancellationToken = default)
         {
             _ = key ?? throw new ArgumentNullException(nameof(key));
 
@@ -36,9 +35,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             return await query.SingleOrDefaultAsync(i => Equals(i.Id, key), cancellationToken);
         }
 
-        public virtual async Task<IEnumerable<TEntity>> GetAsync(
-            Query<TEntity> navigation = null,
-            CancellationToken cancellationToken = default)
+        public virtual async Task<IEnumerable<TEntity>> GetAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
         {
             var query = NavigateTable(navigation);
             return await query.ToArrayAsync(cancellationToken);
@@ -48,15 +45,15 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
 
-            return (await Table.AddAsync(entity, cancellationToken)).Entity;
+            await Table.AddAsync(entity, cancellationToken);
+            return entity;
         }
 
         public virtual async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
 
-            Table.Attach(entity);
-            Context.Entry(entity).State = EntityState.Modified;
+            Table.Update(entity);
             await Task.CompletedTask;
 
             return entity;

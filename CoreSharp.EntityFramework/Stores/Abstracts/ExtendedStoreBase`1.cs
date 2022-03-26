@@ -26,59 +26,62 @@ namespace CoreSharp.EntityFramework.Stores.Abstracts
         {
             _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
-            var result = new HashSet<TEntity>();
-            foreach (var entity in entities)
-                result.Add(await AddAsync(entity, cancellationToken));
-            return result;
+            //Mutate reference to allow EF to write back auto-generated id 
+            var mutatedEntities = entities.ToArray();
+            await Table.AddRangeAsync(mutatedEntities, cancellationToken);
+            await Context.SaveChangesAsync(cancellationToken);
+            return mutatedEntities;
         }
 
         public virtual async Task<IEnumerable<TEntity>> UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
             _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
-            var result = new HashSet<TEntity>();
-            foreach (var entity in entities)
-                result.Add(await UpdateAsync(entity, cancellationToken));
-            return result;
+            await Task.CompletedTask;
+            Table.UpdateRange(entities);
+            await Context.SaveChangesAsync(cancellationToken);
+            return entities;
         }
 
         public virtual async Task RemoveAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
             _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
-            foreach (var entity in entities)
-                await RemoveAsync(entity, cancellationToken);
+            await Task.CompletedTask;
+            Table.RemoveRange(entities);
+            await Context.SaveChangesAsync(cancellationToken);
         }
 
-        public virtual async Task RemoveByKeyAsync(object key, CancellationToken cancellationToken = default)
+        public virtual async Task RemoveAsync(object key, CancellationToken cancellationToken = default)
         {
             _ = key ?? throw new ArgumentNullException(nameof(key));
 
             var entity = await GetAsync(key, cancellationToken: cancellationToken);
             _ = entity ?? throw new KeyNotFoundException($"Could not find entity with key=`{key}`.");
-            await RemoveAsync(entity, cancellationToken);
+            await base.RemoveAsync(entity, cancellationToken);
         }
 
         public virtual async Task<bool> ExistsAsync(object key, CancellationToken cancellationToken = default)
         {
             _ = key ?? throw new ArgumentNullException(nameof(key));
 
-            var item = await GetAsync(key, cancellationToken: cancellationToken);
-            return item != null;
+            return await ExistsAsync(q => q.Where(e => Equals(e.Id, key)), cancellationToken);
         }
 
         public virtual async Task<bool> ExistsAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
         {
-            navigation ??= q => q;
-            IQueryable<TEntity> NavigateOne(IQueryable<TEntity> queryable) => navigation(queryable).Take(1);
-            var items = await GetAsync(NavigateOne, cancellationToken);
-            return items.Any();
+            var query = NavigateTable(navigation);
+            var foundIds = await query.Select(e => e.Id)
+                                      .Take(1)
+                                      .AsNoTracking()
+                                      .ToArrayAsync(cancellationToken);
+            return foundIds.Length > 0;
         }
 
         public virtual async Task<long> CountAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
         {
             navigation ??= q => q;
-            var query = NavigateTable(navigation);
+            var query = NavigateTable(navigation).AsNoTracking();
             return await query.LongCountAsync(cancellationToken);
         }
 
@@ -97,23 +100,21 @@ namespace CoreSharp.EntityFramework.Stores.Abstracts
             _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
             //Get all id in single query 
-            var idsToLookFor = entities.Select(e => e.Id);
-            var entitiesFound = await GetAsync(q => q.Where(e => idsToLookFor.Contains(e.Id))
-                                                     .AsNoTracking(), cancellationToken);
+            var idsToLookFor = entities.Select(e => e.Id)
+                                       .Distinct();
+            var idsFound = await Table.Where(e => idsToLookFor.Contains(e.Id))
+                                      .Select(e => e.Id)
+                                      .AsNoTracking()
+                                      .ToArrayAsync(cancellationToken);
             bool EntityExists(TEntity entity)
-                => entitiesFound.Any(e => Equals(e.Id, entity.Id));
+                => Array.Exists(idsFound, id => Equals(id, entity.Id));
 
-            //Save entities
-            var result = new HashSet<TEntity>();
-            foreach (var entity in entities)
-            {
-                var savedEntity = EntityExists(entity)
-                                ? await UpdateAsync(entity, cancellationToken)
-                                : await AddAsync(entity, cancellationToken);
-                result.Add(savedEntity);
-            }
-
-            return result;
+            //Save entities in batches 
+            var entitiesToUpdate = entities.Where(EntityExists);
+            var entitiesToAdd = entities.Except(entitiesToUpdate);
+            var entitiesAdded = await AddAsync(entitiesToAdd, cancellationToken);
+            var entitiesUpdated = await UpdateAsync(entitiesToUpdate, cancellationToken);
+            return entitiesAdded.Concat(entitiesUpdated);
         }
 
         public virtual async Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Query<TEntity> navigation = null, CancellationToken cancellationToken = default)

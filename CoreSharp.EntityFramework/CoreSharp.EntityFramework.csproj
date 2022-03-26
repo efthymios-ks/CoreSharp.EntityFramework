@@ -13,7 +13,8 @@
 		<RepositoryUrl>https://github.com/efthymios-ks/CoreSharp.EntityFramework</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>EF, Entity Framework, Database</PackageTags>
-		<PackageReleaseNotes>-Models, Abstracts, DbContextBase, Overloaded constructor.</PackageReleaseNotes>
+		<PackageReleaseNotes>-Models, Abstracts, DbContextBase, Overloaded constructor. 
+-Interfaces, ExtendedRepository, Optimized `AddOrUpdate`. </PackageReleaseNotes>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageIconUrl />
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>

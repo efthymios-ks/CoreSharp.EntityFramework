@@ -24,7 +24,7 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         Task RemoveAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
 
         /// <inheritdoc cref="IRepository{TEntity}.RemoveAsync(TEntity, CancellationToken)" />
-        Task RemoveByKeyAsync(object key, CancellationToken cancellationToken = default);
+        Task RemoveAsync(object key, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Check any entity exists with given id.

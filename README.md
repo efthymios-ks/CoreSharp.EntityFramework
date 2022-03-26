@@ -72,7 +72,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositor
     public class TeacherRepository : RepositoryBase<Teacher>, ITeacherRepository
     {
         //Constructors
-        public TeacherRepository(SchoolDbContext schoolDbContext) : base(schoolDbContext)
+        public TeacherRepository(SchoolDbContext schoolDbContext) 
+            : base(schoolDbContext)
         {
         }        
         
@@ -114,7 +115,8 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWor
         private ITeacherRepository _teachers = null;
 
         //Constructors
-        public SchoolUnitOfWork(SchoolDbContext schoolDbContext) : base(schoolDbContext)
+        public SchoolUnitOfWork(SchoolDbContext schoolDbContext) 
+            : base(schoolDbContext)
         {
         }
 
