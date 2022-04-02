@@ -23,7 +23,7 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         [JsonNet.JsonIgnore]
         private DateTime? _dateModifiedUtc;
 
-        //Properties
+        //Properties 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         [TextJson.Serialization.JsonIgnore]
         [JsonNet.JsonIgnore]
@@ -34,7 +34,7 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public TKey Id
         {
-            get => (TKey)(this as IUniqueEntity).Id;
+            get => (this as IUniqueEntity).Id is TKey key ? key : default;
             set => (this as IUniqueEntity).Id = value;
         }
 
@@ -42,7 +42,7 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         [NotMapped]
         [TextJson.Serialization.JsonIgnore]
         [JsonNet.JsonIgnore]
-        object IUniqueEntity.Id { get; set; }
+        object IUniqueEntity.Id { get; set; } = default(TKey);
 
         [DataType(DataType.DateTime)]
         [JsonNet.JsonConverter(typeof(UtcDateTimeConverter))]

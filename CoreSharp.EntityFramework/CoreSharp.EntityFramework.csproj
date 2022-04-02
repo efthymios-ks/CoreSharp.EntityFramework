@@ -13,8 +13,9 @@
 		<RepositoryUrl>https://github.com/efthymios-ks/CoreSharp.EntityFramework</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>EF, Entity Framework, Database</PackageTags>
-		<PackageReleaseNotes>-Models, Abstracts, DbContextBase, Overloaded constructor. 
--Interfaces, ExtendedRepository, Optimized `AddOrUpdate`. </PackageReleaseNotes>
+		<PackageReleaseNotes>-Models, Abstracts, DbContextBase, Overloaded constructor.
+-Interfaces, ExtendedRepository, Optimized `AddOrUpdate`.
+-Models, EntityBase`1, Fixed id issue.</PackageReleaseNotes>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageIconUrl />
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
