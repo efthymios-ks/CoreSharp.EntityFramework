@@ -27,27 +27,21 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         {
             _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
-            //Mutate reference to allow EF to write back auto-generated id 
-            var mutatedEntities = entities.ToArray();
-            await Table.AddRangeAsync(mutatedEntities, cancellationToken);
-            return mutatedEntities;
+            return await Table.AddManyAsync(entities, cancellationToken);
         }
 
         public virtual async Task<IEnumerable<TEntity>> UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
             _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
-            await Task.CompletedTask;
-            Table.UpdateRange(entities);
-            return entities;
+            return await Table.UpdateManyAsync(entities);
         }
 
         public virtual async Task RemoveAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
             _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
-            await Task.CompletedTask;
-            Table.RemoveRange(entities);
+            await Table.RemoveManyAsync(entities);
         }
 
         public virtual async Task RemoveAsync(object key, CancellationToken cancellationToken = default)
@@ -97,22 +91,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         {
             _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
-            //Get all id in single query 
-            var idsToLookFor = entities.Select(e => e.Id)
-                                       .Distinct();
-            var idsFound = await Table.Where(e => idsToLookFor.Contains(e.Id))
-                                      .Select(e => e.Id)
-                                      .AsNoTracking()
-                                      .ToArrayAsync(cancellationToken);
-            bool EntityExists(TEntity entity)
-                => Array.Exists(idsFound, id => Equals(id, entity.Id));
-
-            //Save entities in batches 
-            var entitiesToUpdate = entities.Where(EntityExists);
-            var entitiesToAdd = entities.Except(entitiesToUpdate);
-            var entitiesAdded = await AddAsync(entitiesToAdd, cancellationToken);
-            var entitiesUpdated = await UpdateAsync(entitiesToUpdate, cancellationToken);
-            return entitiesAdded.Concat(entitiesUpdated);
+            return await Table.AddOrUpdateManyAsync(entities, cancellationToken);
         }
 
         public virtual async Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
