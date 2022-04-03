@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CoreSharp.EntityFramework.Extensions
 {
     /// <summary>
-    /// <see cref="DbSet{TEntity}"/> extensions.
+    /// <see cref="DbSet{TEntity}"/> internal extensions.
     /// </summary>
     internal static class DbSetExtensions
     {

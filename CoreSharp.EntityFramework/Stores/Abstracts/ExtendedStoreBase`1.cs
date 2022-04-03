@@ -76,7 +76,6 @@ namespace CoreSharp.EntityFramework.Stores.Abstracts
 
         public virtual async Task<long> CountAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
         {
-            navigation ??= q => q;
             var query = NavigateTable(navigation).AsNoTracking();
             return await query.LongCountAsync(cancellationToken);
         }
@@ -107,7 +106,6 @@ namespace CoreSharp.EntityFramework.Stores.Abstracts
             else if (pageSize < 1)
                 throw new ArgumentOutOfRangeException(nameof(pageSize));
 
-            navigation ??= q => q;
             var query = NavigateTable(navigation);
             return await query.GetPageAsync(pageNumber, pageSize, cancellationToken);
         }

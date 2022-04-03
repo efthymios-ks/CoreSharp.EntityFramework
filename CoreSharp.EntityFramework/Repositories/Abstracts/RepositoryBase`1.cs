@@ -54,9 +54,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
 
             Table.Update(entity);
-            await Task.CompletedTask;
-
-            return entity;
+            return await Task.FromResult(entity);
         }
 
         public virtual async Task RemoveAsync(TEntity entity, CancellationToken cancellationToken = default)
