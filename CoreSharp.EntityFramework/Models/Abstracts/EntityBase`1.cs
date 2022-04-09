@@ -1,11 +1,12 @@
 ﻿using CoreSharp.EntityFramework.Models.Interfaces;
-using CoreSharp.Models.Newtonsoft.Converters;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using JsonNet = Newtonsoft.Json;
+using JsonNetConverters = CoreSharp.Json.JsonNet.JsonConverters;
 using TextJson = System.Text.Json;
+using TextJsonConverters = CoreSharp.Json.TextJson.JsonConverters;
 
 namespace CoreSharp.EntityFramework.Models.Abstracts
 {
@@ -45,7 +46,8 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         object IUniqueEntity.Id { get; set; } = default(TKey);
 
         [DataType(DataType.DateTime)]
-        [JsonNet.JsonConverter(typeof(UtcDateTimeConverter))]
+        [JsonNet.JsonConverter(typeof(JsonNetConverters.UtcDateTimeJsonConverter))]
+        [TextJson.Serialization.JsonConverter(typeof(TextJsonConverters.UtcDateTimeJsonConverter))]
         public DateTime DateCreatedUtc
         {
             get => _dateCreatedUtc ?? DateTime.UtcNow;
@@ -53,7 +55,8 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         }
 
         [DataType(DataType.DateTime)]
-        [JsonNet.JsonConverter(typeof(UtcDateTimeConverter))]
+        [JsonNet.JsonConverter(typeof(JsonNetConverters.UtcDateTimeJsonConverter))]
+        [TextJson.Serialization.JsonConverter(typeof(TextJsonConverters.UtcDateTimeJsonConverter))]
         public DateTime? DateModifiedUtc
         {
             get => _dateModifiedUtc;

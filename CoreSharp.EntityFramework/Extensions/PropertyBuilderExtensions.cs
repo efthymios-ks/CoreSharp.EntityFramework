@@ -1,11 +1,11 @@
-﻿using CoreSharp.Extensions;
-using CoreSharp.Models.Newtonsoft.Settings;
+﻿using CoreSharp.Json.JsonNet;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Newtonsoft.Json;
 using System;
+using JsonNet = Newtonsoft.Json;
+using TextJson = System.Text.Json;
 
 namespace CoreSharp.EntityFramework.Extensions
 {
@@ -14,28 +14,59 @@ namespace CoreSharp.EntityFramework.Extensions
     /// </summary>
     public static class PropertyBuilderExtensions
     {
-        /// <inheritdoc cref="HasJsonConversion{TProperty}(PropertyBuilder{TProperty}, JsonSerializerSettings)"/>
+        /// <inheritdoc cref="HasJsonConversion{TProperty}(PropertyBuilder{TProperty}, JsonNet.JsonSerializerSettings)"/>
         public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder)
             where TProperty : class
-            => builder.HasJsonConversion(DefaultJsonSettings.Instance);
+            => builder.HasJsonConversion(JsonSettings.Default);
 
-        /// <summary>
-        /// Convert a property from and to json for database storage.
-        /// </summary>
-        public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder, JsonSerializerSettings settings)
+        /// <inheritdoc cref="HasJsonConversionInternal{TProperty}(PropertyBuilder{TProperty}, Func{TProperty, string}, Func{string, TProperty})"/>
+        public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder, TextJson.JsonSerializerOptions options)
+            where TProperty : class
+        {
+            _ = builder ?? throw new ArgumentNullException(nameof(builder));
+            _ = options ?? throw new ArgumentNullException(nameof(options));
+
+            string ToJson(TProperty property)
+              => TextJson.JsonSerializer.Serialize(property, options);
+
+            TProperty FromJson(string json)
+              => TextJson.JsonSerializer.Deserialize<TProperty>(json, options);
+
+            return builder.HasJsonConversionInternal(ToJson, FromJson);
+        }
+
+        /// <inheritdoc cref="HasJsonConversionInternal{TProperty}(PropertyBuilder{TProperty}, Func{TProperty, string}, Func{string, TProperty})"/>
+        public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder, JsonNet.JsonSerializerSettings settings)
             where TProperty : class
         {
             _ = builder ?? throw new ArgumentNullException(nameof(builder));
             _ = settings ?? throw new ArgumentNullException(nameof(settings));
 
+            string ToJson(TProperty property)
+              => JsonNet.JsonConvert.SerializeObject(property, settings);
+
+            TProperty FromJson(string json)
+              => JsonNet.JsonConvert.DeserializeObject<TProperty>(json, settings);
+
+            return builder.HasJsonConversionInternal(ToJson, FromJson);
+        }
+
+        /// <summary>
+        /// Convert a property from and to json for database storage.
+        /// </summary>
+        private static PropertyBuilder<TProperty> HasJsonConversionInternal<TProperty>(this PropertyBuilder<TProperty> builder,
+                                                                                       Func<TProperty, string> toJson,
+                                                                                       Func<string, TProperty> fromJson)
+            where TProperty : class
+        {
             var converter = new ValueConverter<TProperty, string>(
-                appValue => appValue.ToJson(settings),
-                dbValue => dbValue.FromJson<TProperty>(settings));
+                appValue => toJson(appValue),
+                dbValue => fromJson(dbValue));
 
             var comparer = new ValueComparer<TProperty>(
-                (left, right) => left.ToJson(settings) == right.ToJson(settings),
+                (left, right) => toJson(left) == toJson(right),
                 value => value == null ? 0 : value.GetHashCode(),
-                value => value.JsonClone(settings));
+                value => fromJson(toJson(value)));  //Clone 
 
             builder.HasConversion(converter);
             builder.Metadata.SetValueConverter(converter);
