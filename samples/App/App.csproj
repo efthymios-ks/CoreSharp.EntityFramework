@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup Label="Package">
+		<AssemblyName>CoreSharp.EntityFramework.Samples.App</AssemblyName>
+		<TargetFramework>net5.0</TargetFramework>
+		<ApplicationIcon />
+		<OutputType>Exe</OutputType>
+		<StartupObject />
+		<Authors>Efthymios Koktsidis</Authors>
+		<Company>Efthymios Koktsidis</Company>
+		<Product>Efthymios Koktsidis</Product>
+	</PropertyGroup>
+
+	<ItemGroup Label="Package references">
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.15">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Label="Project references">
+		<ProjectReference Include="..\..\src\CoreSharp.EntityFramework\CoreSharp.EntityFramework.csproj" />
+		<ProjectReference Include="..\Domain\Domain.csproj" />
+		<ProjectReference Include="..\MediatR\MediatR.csproj" />
+	</ItemGroup>
+
+</Project>

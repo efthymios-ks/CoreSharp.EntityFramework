@@ -1,20 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31727.386
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreSharp.EntityFramework", "CoreSharp.EntityFramework\CoreSharp.EntityFramework.csproj", "{2F4E5B4D-F3B5-4C9E-AD1D-8A641AF19ECE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreSharp.EntityFramework.Examples.CodeFirst", "CoreSharp.EntityFramework.Examples.CodeFirst\CoreSharp.EntityFramework.Examples.CodeFirst.csproj", "{130BA4BB-6CBF-41AF-A3F2-2791A6E3EADD}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreSharp.EntityFramework.Examples.CodeFirst.MediatR", "CoreSharp.EntityFramework.Examples.CodeFirst.MediatR\CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.csproj", "{D3CA2E97-5ED8-4633-B17C-AF32EE2D58B2}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreSharp.EntityFramework.Examples.CodeFirst.Domain", "CoreSharp.EntityFramework.Examples.CodeFirst.Domain\CoreSharp.EntityFramework.Examples.CodeFirst.Domain.csproj", "{C8A6DA27-205A-412C-9157-190B64E9662E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7E5F510A-D816-4B2C-BF64-0AFFEF2BC121}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8719FBED-019B-46AC-BCE3-05A441583B53}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{F8375870-0CED-4476-85A2-2F408396CFFF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreSharp.EntityFramework", "src\CoreSharp.EntityFramework\CoreSharp.EntityFramework.csproj", "{1ECCF573-2902-4F9C-BD4A-49412CB124E4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App", "samples\App\App.csproj", "{ADC49C81-4BC3-4E4B-93E0-DB0345C194FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "samples\Domain\Domain.csproj", "{F509CFBF-FC4B-4CE4-A9B3-1756450027C5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediatR", "samples\MediatR\MediatR.csproj", "{D5C808CE-734D-4035-B649-AFB6BF3EEE3E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,25 +26,31 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2F4E5B4D-F3B5-4C9E-AD1D-8A641AF19ECE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2F4E5B4D-F3B5-4C9E-AD1D-8A641AF19ECE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2F4E5B4D-F3B5-4C9E-AD1D-8A641AF19ECE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2F4E5B4D-F3B5-4C9E-AD1D-8A641AF19ECE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{130BA4BB-6CBF-41AF-A3F2-2791A6E3EADD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{130BA4BB-6CBF-41AF-A3F2-2791A6E3EADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{130BA4BB-6CBF-41AF-A3F2-2791A6E3EADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{130BA4BB-6CBF-41AF-A3F2-2791A6E3EADD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D3CA2E97-5ED8-4633-B17C-AF32EE2D58B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D3CA2E97-5ED8-4633-B17C-AF32EE2D58B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D3CA2E97-5ED8-4633-B17C-AF32EE2D58B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D3CA2E97-5ED8-4633-B17C-AF32EE2D58B2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C8A6DA27-205A-412C-9157-190B64E9662E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8A6DA27-205A-412C-9157-190B64E9662E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8A6DA27-205A-412C-9157-190B64E9662E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C8A6DA27-205A-412C-9157-190B64E9662E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ECCF573-2902-4F9C-BD4A-49412CB124E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ECCF573-2902-4F9C-BD4A-49412CB124E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ECCF573-2902-4F9C-BD4A-49412CB124E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ECCF573-2902-4F9C-BD4A-49412CB124E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADC49C81-4BC3-4E4B-93E0-DB0345C194FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADC49C81-4BC3-4E4B-93E0-DB0345C194FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADC49C81-4BC3-4E4B-93E0-DB0345C194FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADC49C81-4BC3-4E4B-93E0-DB0345C194FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F509CFBF-FC4B-4CE4-A9B3-1756450027C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F509CFBF-FC4B-4CE4-A9B3-1756450027C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F509CFBF-FC4B-4CE4-A9B3-1756450027C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F509CFBF-FC4B-4CE4-A9B3-1756450027C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5C808CE-734D-4035-B649-AFB6BF3EEE3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5C808CE-734D-4035-B649-AFB6BF3EEE3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5C808CE-734D-4035-B649-AFB6BF3EEE3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5C808CE-734D-4035-B649-AFB6BF3EEE3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1ECCF573-2902-4F9C-BD4A-49412CB124E4} = {8719FBED-019B-46AC-BCE3-05A441583B53}
+		{ADC49C81-4BC3-4E4B-93E0-DB0345C194FC} = {F8375870-0CED-4476-85A2-2F408396CFFF}
+		{F509CFBF-FC4B-4CE4-A9B3-1756450027C5} = {F8375870-0CED-4476-85A2-2F408396CFFF}
+		{D5C808CE-734D-4035-B649-AFB6BF3EEE3E} = {F8375870-0CED-4476-85A2-2F408396CFFF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1D4BB487-5570-493E-84C9-F81816E390FE}
