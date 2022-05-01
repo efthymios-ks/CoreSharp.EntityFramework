@@ -1,6 +1,6 @@
 ﻿using CoreSharp.EntityFramework.Delegates;
+using CoreSharp.EntityFramework.Entities.Interfaces;
 using CoreSharp.EntityFramework.Extensions;
-using CoreSharp.EntityFramework.Models.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Interfaces;
 using CoreSharp.Extensions;
 using CoreSharp.Models.Pages;
@@ -34,7 +34,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         {
             _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
-            return await Table.UpdateManyAsync(entities);
+            return await Table.AttachManyAsync(entities);
         }
 
         public virtual async Task RemoveAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
@@ -44,7 +44,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
             await Table.RemoveManyAsync(entities);
         }
 
-        public virtual async Task RemoveAsync(object key, CancellationToken cancellationToken = default)
+        public virtual async Task RemoveByAsync(object key, CancellationToken cancellationToken = default)
         {
             _ = key ?? throw new ArgumentNullException(nameof(key));
 
@@ -80,17 +80,16 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
 
-            if (await ExistsAsync(entity.Id, cancellationToken))
-                return await UpdateAsync(entity, cancellationToken);
-            else
-                return await AddAsync(entity, cancellationToken);
+            return await ExistsAsync(entity.Id, cancellationToken)
+                    ? await UpdateAsync(entity, cancellationToken)
+                    : await AddAsync(entity, cancellationToken);
         }
 
         public virtual async Task<IEnumerable<TEntity>> AddOrUpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
             _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
-            return await Table.AddOrUpdateManyAsync(entities, cancellationToken);
+            return await Table.AddOrAttachManyAsync(entities, cancellationToken);
         }
 
         public virtual async Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Query<TEntity> navigation = null, CancellationToken cancellationToken = default)

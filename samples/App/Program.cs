@@ -29,8 +29,15 @@ namespace CoreSharp.EntityFramework.Samples.App
             {
                 var command = new AddTeacherCommand(new()
                 {
-                    Name = "Efthymios"
+                    Name = "Efthymios Koktsidis"
                 });
+                teacher = await mediatR.Send(command);
+            }
+
+            //Update teacher 
+            {
+                teacher.Name = $"Efthymios ({DateTime.Now.Millisecond})";
+                var command = new UpdateTeacherCommand(teacher);
                 teacher = await mediatR.Send(command);
             }
 

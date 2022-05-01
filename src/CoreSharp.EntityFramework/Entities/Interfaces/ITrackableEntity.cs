@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace CoreSharp.EntityFramework.Models.Interfaces
+namespace CoreSharp.EntityFramework.Entities.Interfaces
 {
-    public interface ITrackedEntity
+    public interface ITrackableEntity
     {
         //Properties
         DateTime DateCreatedUtc { get; set; }

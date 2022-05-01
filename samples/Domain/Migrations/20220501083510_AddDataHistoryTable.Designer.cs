@@ -4,14 +4,16 @@ using CoreSharp.EntityFramework.Samples.Domain.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace CoreSharp.EntityFramework.Samples.App.Migrations
+namespace CoreSharp.EntityFramework.Samples.Domain.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class SchoolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220501083510_AddDataHistoryTable")]
+    partial class AddDataHistoryTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

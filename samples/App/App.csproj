@@ -13,7 +13,7 @@
 
 	<ItemGroup Label="Package references">
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.15">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.16">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<TreatAsUsed>true</TreatAsUsed>

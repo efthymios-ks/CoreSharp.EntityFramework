@@ -1,4 +1,4 @@
-﻿using CoreSharp.EntityFramework.Models.Interfaces;
+﻿using CoreSharp.EntityFramework.Entities.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Abstracts;
 using CoreSharp.EntityFramework.Stores.Interfaces;
 using Microsoft.EntityFrameworkCore;

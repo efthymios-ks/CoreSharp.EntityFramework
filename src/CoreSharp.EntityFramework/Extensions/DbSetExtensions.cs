@@ -1,4 +1,4 @@
-﻿using CoreSharp.EntityFramework.Models.Interfaces;
+﻿using CoreSharp.EntityFramework.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -25,13 +25,13 @@ namespace CoreSharp.EntityFramework.Extensions
             return mutatedEntities;
         }
 
-        public static async Task<IEnumerable<TEntity>> UpdateManyAsync<TEntity>(this DbSet<TEntity> dbSet, IEnumerable<TEntity> entities)
+        public static async Task<IEnumerable<TEntity>> AttachManyAsync<TEntity>(this DbSet<TEntity> dbSet, IEnumerable<TEntity> entities)
             where TEntity : class
         {
             _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
             _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
-            dbSet.UpdateRange(entities);
+            dbSet.AttachRange(entities);
             return await Task.FromResult(entities);
         }
 
@@ -45,7 +45,7 @@ namespace CoreSharp.EntityFramework.Extensions
             await Task.CompletedTask;
         }
 
-        public static async Task<IEnumerable<TEntity>> AddOrUpdateManyAsync<TEntity>(this DbSet<TEntity> dbSet, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        public static async Task<IEnumerable<TEntity>> AddOrAttachManyAsync<TEntity>(this DbSet<TEntity> dbSet, IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
             where TEntity : class, IEntity
         {
             _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
@@ -65,7 +65,7 @@ namespace CoreSharp.EntityFramework.Extensions
             var entitiesToUpdate = entities.Where(EntityExists);
             var entitiesToAdd = entities.Except(entitiesToUpdate);
             var entitiesAdded = await dbSet.AddManyAsync(entitiesToAdd, cancellationToken);
-            var entitiesUpdated = await dbSet.UpdateManyAsync(entitiesToUpdate);
+            var entitiesUpdated = await dbSet.AttachManyAsync(entitiesToUpdate);
             return entitiesAdded.Concat(entitiesUpdated);
         }
     }

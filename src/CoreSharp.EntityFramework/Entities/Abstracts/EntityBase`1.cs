@@ -1,4 +1,4 @@
-﻿using CoreSharp.EntityFramework.Models.Interfaces;
+﻿using CoreSharp.EntityFramework.Entities.Interfaces;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,7 +8,7 @@ using JsonNetConverters = CoreSharp.Json.JsonNet.JsonConverters;
 using TextJson = System.Text.Json;
 using TextJsonConverters = CoreSharp.Json.TextJson.JsonConverters;
 
-namespace CoreSharp.EntityFramework.Models.Abstracts
+namespace CoreSharp.EntityFramework.Entities.Abstracts
 {
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public abstract class EntityBase<TKey> : IEntity<TKey>
@@ -32,6 +32,7 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
             => ToString();
 
         [Key]
+        [Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public TKey Id
         {
@@ -46,6 +47,7 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         object IUniqueEntity.Id { get; set; } = default(TKey);
 
         [DataType(DataType.DateTime)]
+        [Column(Order = 1)]
         [JsonNet.JsonConverter(typeof(JsonNetConverters.UtcDateTimeJsonConverter))]
         [TextJson.Serialization.JsonConverter(typeof(TextJsonConverters.UtcDateTimeJsonConverter))]
         public DateTime DateCreatedUtc
@@ -55,6 +57,7 @@ namespace CoreSharp.EntityFramework.Models.Abstracts
         }
 
         [DataType(DataType.DateTime)]
+        [Column(Order = 2)]
         [JsonNet.JsonConverter(typeof(JsonNetConverters.UtcDateTimeJsonConverter))]
         [TextJson.Serialization.JsonConverter(typeof(TextJsonConverters.UtcDateTimeJsonConverter))]
         public DateTime? DateModifiedUtc

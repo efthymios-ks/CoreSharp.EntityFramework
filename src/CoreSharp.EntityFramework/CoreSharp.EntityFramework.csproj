@@ -2,7 +2,7 @@
 
 	<PropertyGroup Label="Package">
 		<TargetFramework>net5.0</TargetFramework>
-		<Version>5.0.5</Version>
+		<Version>5.0.6</Version>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
 		<Authors>Efthymios Koktsidis</Authors>
@@ -13,8 +13,7 @@
 		<RepositoryUrl>https://github.com/efthymios-ks/CoreSharp.EntityFramework</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>EF, Entity Framework, Database</PackageTags>
-		<PackageReleaseNotes>-Code clean-up.
--Packages update.	</PackageReleaseNotes>
+		<PackageReleaseNotes>-Models, DbContextBase, Added HistoryDbContext.</PackageReleaseNotes>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageIconUrl />
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -23,9 +22,9 @@
 	</PropertyGroup>
 
 	<ItemGroup Label="Package references">
-		<PackageReference Include="CoreSharp" Version="5.0.5" PrivateAssets="Compile" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.15" PrivateAssets="Compile" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.15" PrivateAssets="Compile" />
+		<PackageReference Include="CoreSharp" Version="5.0.9" PrivateAssets="Compile" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.16" PrivateAssets="Compile" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.16" PrivateAssets="Compile" />
 		<PackageReference Include="Pluralize.NET.Core" Version="1.0.0" PrivateAssets="Compile" />
 	</ItemGroup>
 

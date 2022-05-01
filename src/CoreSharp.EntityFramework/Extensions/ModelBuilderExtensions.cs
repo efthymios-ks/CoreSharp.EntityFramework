@@ -1,4 +1,4 @@
-﻿using CoreSharp.EntityFramework.Models.Concrete;
+﻿using CoreSharp.EntityFramework.Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pluralize.NET.Core;

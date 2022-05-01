@@ -1,4 +1,4 @@
-﻿namespace CoreSharp.EntityFramework.Models.Interfaces
+﻿namespace CoreSharp.EntityFramework.Entities.Interfaces
 {
     /// <summary>
     /// Interface for entities with primary key.

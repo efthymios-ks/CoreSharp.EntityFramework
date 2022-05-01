@@ -1,5 +1,5 @@
 ﻿using CoreSharp.EntityFramework.Delegates;
-using CoreSharp.EntityFramework.Models.Interfaces;
+using CoreSharp.EntityFramework.Entities.Interfaces;
 using CoreSharp.Models.Pages;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         Task RemoveAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
 
         /// <inheritdoc cref="IRepository{TEntity}.RemoveAsync(TEntity, CancellationToken)" />
-        Task RemoveAsync(object key, CancellationToken cancellationToken = default);
+        Task RemoveByAsync(object key, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Check any entity exists with given id.

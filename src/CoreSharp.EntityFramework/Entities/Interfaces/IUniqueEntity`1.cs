@@ -1,4 +1,4 @@
-﻿namespace CoreSharp.EntityFramework.Models.Interfaces
+﻿namespace CoreSharp.EntityFramework.Entities.Interfaces
 {
     /// <inheritdoc cref="IUniqueEntity"/>
     public interface IUniqueEntity<TKey> : IUniqueEntity

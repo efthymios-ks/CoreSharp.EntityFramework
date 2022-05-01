@@ -1,5 +1,5 @@
-﻿using CoreSharp.EntityFramework.Extensions;
-using CoreSharp.EntityFramework.Models.Abstracts;
+﻿using CoreSharp.EntityFramework.DbContexts.Abstracts;
+using CoreSharp.EntityFramework.Extensions;
 using CoreSharp.EntityFramework.Samples.Domain.Database.Models;
 using CoreSharp.EntityFramework.Samples.Domain.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +7,7 @@ using System;
 
 namespace CoreSharp.EntityFramework.Samples.Domain.Database
 {
-    public class AppDbContext : DbContextBase
+    public class AppDbContext : HistoryDbContextBase
     {
         //Properties
         public DbSet<Teacher> Teachers { get; set; }

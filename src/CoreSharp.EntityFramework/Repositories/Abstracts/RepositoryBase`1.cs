@@ -1,5 +1,5 @@
 ﻿using CoreSharp.EntityFramework.Delegates;
-using CoreSharp.EntityFramework.Models.Interfaces;
+using CoreSharp.EntityFramework.Entities.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -53,7 +53,7 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
         {
             _ = entity ?? throw new ArgumentNullException(nameof(entity));
 
-            Table.Update(entity);
+            Table.Attach(entity);
             return await Task.FromResult(entity);
         }
 
