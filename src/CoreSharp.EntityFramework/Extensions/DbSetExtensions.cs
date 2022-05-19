@@ -95,6 +95,54 @@ namespace CoreSharp.EntityFramework.Extensions
             return await dbSet.InternalAddOrUpdateManyAsync(entities, AddAction, UpdateAction, cancellationToken);
         }
 
+        public static async Task<IEnumerable<TEntity>> AddManyIfNotExistAsync<TEntity>(
+            this DbSet<TEntity> dbSet,
+            IEnumerable<TEntity> entities,
+            CancellationToken cancellationToken = default)
+            where TEntity : class, IEntity
+        {
+            _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
+            _ = entities ?? throw new ArgumentNullException(nameof(entities));
+
+            Task<IEnumerable<TEntity>> AddAction(IEnumerable<TEntity> entitiesToAdd)
+                => dbSet.AddManyAsync(entitiesToAdd, cancellationToken);
+            Task<IEnumerable<TEntity>> DiscardUpdateAction(IEnumerable<TEntity> entitiesToUpdate)
+                => Task.FromResult(Enumerable.Empty<TEntity>());
+            return await dbSet.InternalAddOrUpdateManyAsync(entities, AddAction, DiscardUpdateAction, cancellationToken);
+        }
+
+        public static async Task<IEnumerable<TEntity>> UpdateManyIfExistAsync<TEntity>(
+            this DbSet<TEntity> dbSet,
+            IEnumerable<TEntity> entities,
+            CancellationToken cancellationToken = default)
+            where TEntity : class, IEntity
+        {
+            _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
+            _ = entities ?? throw new ArgumentNullException(nameof(entities));
+
+            Task<IEnumerable<TEntity>> DiscardAddAction(IEnumerable<TEntity> entitiesToAdd)
+                => Task.FromResult(Enumerable.Empty<TEntity>());
+            Task<IEnumerable<TEntity>> UpdateAction(IEnumerable<TEntity> entitiesToUpdate)
+                => dbSet.UpdateManyAsync(entitiesToUpdate);
+            return await dbSet.InternalAddOrUpdateManyAsync(entities, DiscardAddAction, UpdateAction, cancellationToken);
+        }
+
+        public static async Task<IEnumerable<TEntity>> AttachManyIfExistAsync<TEntity>(
+            this DbSet<TEntity> dbSet,
+            IEnumerable<TEntity> entities,
+            CancellationToken cancellationToken = default)
+            where TEntity : class, IEntity
+        {
+            _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
+            _ = entities ?? throw new ArgumentNullException(nameof(entities));
+
+            Task<IEnumerable<TEntity>> DiscardAddAction(IEnumerable<TEntity> entitiesToAdd)
+                => Task.FromResult(Enumerable.Empty<TEntity>());
+            Task<IEnumerable<TEntity>> UpdateAction(IEnumerable<TEntity> entitiesToUpdate)
+                => dbSet.AttachManyAsync(entitiesToUpdate);
+            return await dbSet.InternalAddOrUpdateManyAsync(entities, DiscardAddAction, UpdateAction, cancellationToken);
+        }
+
         private static async Task<IEnumerable<TEntity>> InternalAddOrUpdateManyAsync<TEntity>(
             this DbSet<TEntity> dbSet,
             IEnumerable<TEntity> entities,

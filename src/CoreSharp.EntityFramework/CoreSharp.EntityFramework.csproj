@@ -13,7 +13,8 @@
 		<RepositoryUrl>https://github.com/efthymios-ks/CoreSharp.EntityFramework</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>EF, Entity Framework, Database</PackageTags>
-		<PackageReleaseNotes>-Models, DbContextBase, Added HistoryDbContext.</PackageReleaseNotes>
+		<PackageReleaseNotes>-Models, DbContextBase, Added HistoryDbContext.
+-Interfaces, Repositories, Extended, Added `AddIfNotExistAsync()` and `UpdateIfExistAsync()`.</PackageReleaseNotes>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageIconUrl />
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>

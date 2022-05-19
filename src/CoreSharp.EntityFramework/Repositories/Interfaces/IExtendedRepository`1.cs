@@ -50,6 +50,26 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces
         /// </summary>
         Task<IEnumerable<TEntity>> AddOrUpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
 
+        /// <inheritdoc cref="AddIfNotExistAsync(IEnumerable{TEntity}, CancellationToken)"/>
+        Task<TEntity> AddIfNotExistAsync(TEntity entity, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Add non existing entities.
+        /// Ignore existing.
+        /// <see cref="DbContext.SaveChangesAsync(CancellationToken)"/> is called.
+        /// </summary>
+        Task<IEnumerable<TEntity>> AddIfNotExistAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+
+        /// <inheritdoc cref="UpdateIfExistAsync(IEnumerable{TEntity}, CancellationToken)"/>
+        Task<TEntity> UpdateIfExistAsync(TEntity entity, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Update existing entities.
+        /// Ignore non existing.
+        /// <see cref="DbContext.SaveChangesAsync(CancellationToken)"/> is called.
+        /// </summary>
+        Task<IEnumerable<TEntity>> UpdateIfExistAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+
         /// <summary>
         /// Return paged entity collection.
         /// </summary>

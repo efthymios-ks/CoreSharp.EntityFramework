@@ -98,6 +98,25 @@ namespace CoreSharp.EntityFramework.Stores.Abstracts
             return finalEntities;
         }
 
+        public virtual async Task<TEntity> AddIfNotExistAsync(TEntity entity, CancellationToken cancellationToken = default)
+        {
+            var existing = await GetAsync(entity.Id, cancellationToken: cancellationToken);
+            return existing ?? await AddAsync(entity, cancellationToken);
+        }
+
+        public virtual async Task<IEnumerable<TEntity>> AddIfNotExistAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+            => await Table.AddManyIfNotExistAsync(entities, cancellationToken);
+
+        public virtual async Task<TEntity> UpdateIfExistAsync(TEntity entity, CancellationToken cancellationToken = default)
+        {
+            if (await ExistsAsync(entity.Id, cancellationToken))
+                entity = await UpdateAsync(entity, cancellationToken);
+            return entity;
+        }
+
+        public virtual async Task<IEnumerable<TEntity>> UpdateIfExistAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+            => await Table.AttachManyIfExistAsync(entities, cancellationToken);
+
         public virtual async Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
         {
             if (pageNumber < 0)
