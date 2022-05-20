@@ -106,7 +106,7 @@ namespace CoreSharp.EntityFramework.Extensions
 
             Task<IEnumerable<TEntity>> AddAction(IEnumerable<TEntity> entitiesToAdd)
                 => dbSet.AddManyAsync(entitiesToAdd, cancellationToken);
-            Task<IEnumerable<TEntity>> DiscardUpdateAction(IEnumerable<TEntity> entitiesToUpdate)
+            Task<IEnumerable<TEntity>> DiscardUpdateAction(IEnumerable<TEntity> _)
                 => Task.FromResult(Enumerable.Empty<TEntity>());
             return await dbSet.InternalAddOrUpdateManyAsync(entities, AddAction, DiscardUpdateAction, cancellationToken);
         }
@@ -120,7 +120,7 @@ namespace CoreSharp.EntityFramework.Extensions
             _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
             _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
-            Task<IEnumerable<TEntity>> DiscardAddAction(IEnumerable<TEntity> entitiesToAdd)
+            Task<IEnumerable<TEntity>> DiscardAddAction(IEnumerable<TEntity> _)
                 => Task.FromResult(Enumerable.Empty<TEntity>());
             Task<IEnumerable<TEntity>> UpdateAction(IEnumerable<TEntity> entitiesToUpdate)
                 => dbSet.UpdateManyAsync(entitiesToUpdate);
@@ -136,7 +136,7 @@ namespace CoreSharp.EntityFramework.Extensions
             _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
             _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
-            Task<IEnumerable<TEntity>> DiscardAddAction(IEnumerable<TEntity> entitiesToAdd)
+            Task<IEnumerable<TEntity>> DiscardAddAction(IEnumerable<TEntity> _)
                 => Task.FromResult(Enumerable.Empty<TEntity>());
             Task<IEnumerable<TEntity>> UpdateAction(IEnumerable<TEntity> entitiesToUpdate)
                 => dbSet.AttachManyAsync(entitiesToUpdate);

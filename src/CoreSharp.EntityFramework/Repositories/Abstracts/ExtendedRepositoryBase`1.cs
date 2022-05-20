@@ -94,22 +94,34 @@ namespace CoreSharp.EntityFramework.Repositories.Abstracts
 
         public virtual async Task<TEntity> AddIfNotExistAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
+            _ = entity ?? throw new ArgumentNullException(nameof(entity));
+
             var existing = await GetAsync(entity.Id, cancellationToken: cancellationToken);
             return existing ?? await AddAsync(entity, cancellationToken);
         }
 
         public virtual async Task<IEnumerable<TEntity>> AddIfNotExistAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
-            => await Table.AddManyIfNotExistAsync(entities, cancellationToken);
+        {
+            _ = entities ?? throw new ArgumentNullException(nameof(entities));
+
+            return await Table.AddManyIfNotExistAsync(entities, cancellationToken);
+        }
 
         public virtual async Task<TEntity> UpdateIfExistAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
+            _ = entity ?? throw new ArgumentNullException(nameof(entity));
+
             if (await ExistsAsync(entity.Id, cancellationToken))
                 entity = await UpdateAsync(entity, cancellationToken);
             return entity;
         }
 
         public virtual async Task<IEnumerable<TEntity>> UpdateIfExistAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
-            => await Table.AttachManyIfExistAsync(entities, cancellationToken);
+        {
+            _ = entities ?? throw new ArgumentNullException(nameof(entities));
+
+            return await Table.AttachManyIfExistAsync(entities, cancellationToken);
+        }
 
         public virtual async Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
         {
