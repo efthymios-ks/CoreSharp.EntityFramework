@@ -82,7 +82,7 @@ namespace CoreSharp.EntityFramework.DbContexts.Abstracts
                 return true;
             }
 
-            //If not valid entries detected, return. 
+            //If no valid entries detected, return. 
             var trackableEntries = ChangeTracker.Entries().Where(EntityEntryFilter);
             if (!trackableEntries.Any())
                 return;
@@ -150,7 +150,7 @@ namespace CoreSharp.EntityFramework.DbContexts.Abstracts
         {
             try
             {
-                //Check temporary changes with temporary propertries only 
+                //Check temporary changes with temporary propertries only. 
                 var temporaryChanges = _temporaryChanges?.Where(c => c.TemporaryProperties.Count > 0);
                 temporaryChanges ??= Enumerable.Empty<TemporaryEntityChange>();
                 foreach (var temporaryChange in temporaryChanges)
