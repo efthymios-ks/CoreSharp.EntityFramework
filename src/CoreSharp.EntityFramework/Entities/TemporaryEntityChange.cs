@@ -9,10 +9,10 @@ namespace CoreSharp.EntityFramework.Entities
     /// <summary>
     /// For internal, temporary use only.
     /// </summary>
-    internal class EntityChangeEntry
+    internal class TemporaryEntityChange
     {
         //Constructors
-        public EntityChangeEntry(EntityEntry entry)
+        public TemporaryEntityChange(EntityEntry entry)
         {
             Entry = entry;
             TableName = Entry.Metadata.GetTableName();

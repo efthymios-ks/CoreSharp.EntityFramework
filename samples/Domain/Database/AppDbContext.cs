@@ -7,7 +7,7 @@ using System;
 
 namespace CoreSharp.EntityFramework.Samples.Domain.Database
 {
-    public class AppDbContext : HistoryDbContextBase
+    public class AppDbContext : TrackableDbContextBase
     {
         //Properties
         public DbSet<Teacher> Teachers { get; set; }
@@ -21,8 +21,6 @@ namespace CoreSharp.EntityFramework.Samples.Domain.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            _ = modelBuilder ?? throw new ArgumentNullException(nameof(modelBuilder));
-
             //Always call base method 
             base.OnModelCreating(modelBuilder);
 
@@ -32,17 +30,11 @@ namespace CoreSharp.EntityFramework.Samples.Domain.Database
 
         private static void ConfigureEnums(ModelBuilder modelBuilder)
         {
-            _ = modelBuilder ?? throw new ArgumentNullException(nameof(modelBuilder));
-
             modelBuilder.HasEnum<TeacherType>();
             modelBuilder.HasEnum<CourseField>();
         }
 
         private static void ConfigureModels(ModelBuilder modelBuilder)
-        {
-            _ = modelBuilder ?? throw new ArgumentNullException(nameof(modelBuilder));
-
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-        }
+            => modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 }

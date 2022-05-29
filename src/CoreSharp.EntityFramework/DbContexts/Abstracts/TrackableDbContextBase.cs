@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.DbContexts.Abstracts
 {
-    public abstract class HistoryDbContextBase : DbContextBase
+    public abstract class TrackableDbContextBase : DbContextBase
     {
         //Fields
-        private EntityChangeEntry[] _changeEntries;
+        private TemporaryEntityChange[] _temporaryChanges;
 
         //Constructors
-        protected HistoryDbContextBase(DbContextOptions options)
+        protected TrackableDbContextBase(DbContextOptions options)
             : base(options)
         {
         }
 
-        protected HistoryDbContextBase()
+        protected TrackableDbContextBase()
         {
         }
 
@@ -29,42 +29,46 @@ namespace CoreSharp.EntityFramework.DbContexts.Abstracts
         public DbSet<EntityChange> DataChanges { get; set; }
 
         //Methods 
-        public override int SaveChanges()
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             OnBeforeSaveChanges();
-            var count = base.SaveChanges();
-            OnAfterSaveChangesAsync(default).GetAwaiter().GetResult();
+            var count = base.SaveChanges(acceptAllChangesOnSuccess);
+            OnAfterSaveChanges(acceptAllChangesOnSuccess);
             return count;
         }
 
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
             OnBeforeSaveChanges();
-            var count = await base.SaveChangesAsync(cancellationToken);
-            await OnAfterSaveChangesAsync(cancellationToken);
+            var count = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            await OnAfterSaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
             return count;
         }
 
         private void OnBeforeSaveChanges()
+            => CacheChangesBeforeSave();
+
+        private void OnAfterSaveChanges(bool acceptAllChangesOnSuccess)
         {
-            ChangeTracker.DetectChanges();
-            CacheChangesBeforeSave();
+            var changes = FinalizeAndGetChangesAfterSave();
+            DataChanges.AddRange(changes);
+            base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
-        private async Task OnAfterSaveChangesAsync(CancellationToken cancellationToken)
+        private async Task OnAfterSaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken)
         {
-            UpdateChangesAfterSave();
-
-            var changes = _changeEntries.Select(c => c.ToEntityChange());
-            _changeEntries = null;
-
+            var changes = FinalizeAndGetChangesAfterSave();
             await DataChanges.AddRangeAsync(changes, cancellationToken);
-            await base.SaveChangesAsync(cancellationToken);
+            await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
 
         private void CacheChangesBeforeSave()
         {
-            _changeEntries = Array.Empty<EntityChangeEntry>();
+            //Force scan for changes to be sure.
+            ChangeTracker.DetectChanges();
+
+            //Initialize with an empty array to avoid null reference exceptions.
+            _temporaryChanges = Array.Empty<TemporaryEntityChange>();
 
             static bool EntityEntryFilter(EntityEntry entry)
             {
@@ -78,11 +82,11 @@ namespace CoreSharp.EntityFramework.DbContexts.Abstracts
                 return true;
             }
 
+            //If not valid entries detected, return. 
             var trackableEntries = ChangeTracker.Entries().Where(EntityEntryFilter);
             if (!trackableEntries.Any())
                 return;
 
-            //Scan entries 
             static bool PropertyEntryFilter(PropertyEntry entry)
             {
                 var propertyName = entry.Metadata.Name;
@@ -94,13 +98,15 @@ namespace CoreSharp.EntityFramework.DbContexts.Abstracts
                 return true;
             }
 
-            var changes = new HashSet<EntityChangeEntry>();
+            //Scan entries 
+            var temporaryChange = new HashSet<TemporaryEntityChange>();
             foreach (var trackableEntry in trackableEntries)
             {
-                var change = new EntityChangeEntry(trackableEntry);
+                var change = new TemporaryEntityChange(trackableEntry);
 
                 //Scan properties 
-                foreach (var property in trackableEntry.Properties.Where(PropertyEntryFilter))
+                var properties = trackableEntry.Properties.Where(PropertyEntryFilter);
+                foreach (var property in properties)
                 {
                     var propertyName = property.Metadata.Name;
 
@@ -134,33 +140,44 @@ namespace CoreSharp.EntityFramework.DbContexts.Abstracts
                     }
                 }
 
-                changes.Add(change);
+                temporaryChange.Add(change);
             }
 
-            _changeEntries = changes.ToArray();
+            _temporaryChanges = temporaryChange.ToArray();
         }
 
-        private void UpdateChangesAfterSave()
+        private EntityChange[] FinalizeAndGetChangesAfterSave()
         {
-            if (_changeEntries == null)
-                return;
-
-            var temporaryEntries = _changeEntries.Where(c => c.TemporaryProperties.Count > 0);
-            foreach (var changeEntry in temporaryEntries)
+            try
             {
-                //Get the final value of the temporary properties
-                foreach (var property in changeEntry.TemporaryProperties.ToArray())
+                //Check temporary changes with temporary propertries only 
+                var temporaryChanges = _temporaryChanges?.Where(c => c.TemporaryProperties.Count > 0);
+                temporaryChanges ??= Enumerable.Empty<TemporaryEntityChange>();
+                foreach (var temporaryChange in temporaryChanges)
                 {
-                    var propertyName = property.Metadata.Name;
-                    var propertyValue = property.CurrentValue;
+                    //Get the final value of the temporary properties. 
+                    foreach (var property in temporaryChange.TemporaryProperties.ToArray())
+                    {
+                        var propertyName = property.Metadata.Name;
+                        var propertyValue = property.CurrentValue;
 
-                    if (property.Metadata.IsPrimaryKey())
-                        changeEntry.Keys[propertyName] = propertyValue;
-                    else
-                        changeEntry.NewState[propertyName] = propertyValue;
+                        if (property.Metadata.IsPrimaryKey())
+                            temporaryChange.Keys[propertyName] = propertyValue;
+                        else
+                            temporaryChange.NewState[propertyName] = propertyValue;
 
-                    changeEntry.TemporaryProperties.Remove(property);
+                        temporaryChange.TemporaryProperties.Remove(property);
+                    }
                 }
+
+                //Convert and return all temporary changes, regardless. 
+                return _temporaryChanges.Select(c => c.ToEntityChange())
+                                        .ToArray();
+            }
+            finally
+            {
+                //Always clear local temporary changes. 
+                _temporaryChanges = null;
             }
         }
     }
