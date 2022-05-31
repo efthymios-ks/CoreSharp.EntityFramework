@@ -18,7 +18,6 @@ namespace CoreSharp.EntityFramework.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        [DataType(DataType.DateTime)]
         [Column(Order = 1)]
         [JsonNet.JsonConverter(typeof(JsonNetConverters.UtcDateTimeJsonConverter))]
         [TextJson.Serialization.JsonConverter(typeof(TextJsonConverters.UtcDateTimeJsonConverter))]

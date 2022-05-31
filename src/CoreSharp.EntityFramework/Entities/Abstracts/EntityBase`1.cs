@@ -31,6 +31,12 @@ namespace CoreSharp.EntityFramework.Entities.Abstracts
         private string DebuggerDisplay
             => ToString();
 
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        [NotMapped]
+        [TextJson.Serialization.JsonIgnore]
+        [JsonNet.JsonIgnore]
+        object IUniqueEntity.Id { get; set; } = default(TKey);
+
         [Key]
         [Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -40,34 +46,33 @@ namespace CoreSharp.EntityFramework.Entities.Abstracts
             set => (this as IUniqueEntity).Id = value;
         }
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [NotMapped]
-        [TextJson.Serialization.JsonIgnore]
-        [JsonNet.JsonIgnore]
-        object IUniqueEntity.Id { get; set; } = default(TKey);
-
-        [DataType(DataType.DateTime)]
         [Column(Order = 1)]
         [JsonNet.JsonConverter(typeof(JsonNetConverters.UtcDateTimeJsonConverter))]
         [TextJson.Serialization.JsonConverter(typeof(TextJsonConverters.UtcDateTimeJsonConverter))]
         public DateTime DateCreatedUtc
         {
             get => _dateCreatedUtc ?? DateTime.UtcNow;
-            set => _dateCreatedUtc = TimeZoneInfo.ConvertTimeToUtc(value);
+            set => _dateCreatedUtc = SetDateTimeKindToUtc(value);
         }
 
-        [DataType(DataType.DateTime)]
         [Column(Order = 2)]
         [JsonNet.JsonConverter(typeof(JsonNetConverters.UtcDateTimeJsonConverter))]
         [TextJson.Serialization.JsonConverter(typeof(TextJsonConverters.UtcDateTimeJsonConverter))]
         public DateTime? DateModifiedUtc
         {
             get => _dateModifiedUtc;
-            set => _dateModifiedUtc = value is null ? null : TimeZoneInfo.ConvertTimeToUtc(value.Value);
+            set => _dateModifiedUtc = value is null ? null : SetDateTimeKindToUtc(value.Value);
         }
 
         //Methods 
         public override string ToString()
             => $"{Id}";
+
+        /// <summary>
+        /// Avoid <see cref="DateTime.SpecifyKind(DateTime, DateTimeKind)"/> which converts (and ruins) the value.
+        /// Use <see cref="TimeZoneInfo.ConvertTimeToUtc(DateTime)"/> which only sets the <see cref="DateTime.Kind"/>.
+        /// </summary>
+        private static DateTime SetDateTimeKindToUtc(DateTime dateTime)
+            => TimeZoneInfo.ConvertTimeToUtc(dateTime);
     }
 }
