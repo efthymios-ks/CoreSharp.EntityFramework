@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace CoreSharp.EntityFramework.Entities.Interfaces
+namespace CoreSharp.EntityFramework.Entities.Interfaces;
+
+public interface ITrackableEntity
 {
-    public interface ITrackableEntity
-    {
-        //Properties
-        DateTime DateCreatedUtc { get; set; }
-        DateTime? DateModifiedUtc { get; set; }
-    }
+    //Properties
+    DateTime DateCreatedUtc { get; set; }
+    DateTime? DateModifiedUtc { get; set; }
 }

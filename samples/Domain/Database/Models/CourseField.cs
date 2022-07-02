@@ -1,11 +1,10 @@
-﻿namespace CoreSharp.EntityFramework.Samples.Domain.Database.Models
+﻿namespace CoreSharp.EntityFramework.Samples.Domain.Database.Models;
+
+public enum CourseField
 {
-    public enum CourseField
-    {
-        ChemicalEngineering,
-        CivilEngineering,
-        ComputerEngineering,
-        ElectricalEngineering,
-        ElectronicEngineering
-    }
+    ChemicalEngineering,
+    CivilEngineering,
+    ComputerEngineering,
+    ElectricalEngineering,
+    ElectronicEngineering
 }

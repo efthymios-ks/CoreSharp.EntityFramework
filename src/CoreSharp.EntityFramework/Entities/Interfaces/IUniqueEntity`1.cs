@@ -1,9 +1,8 @@
-﻿namespace CoreSharp.EntityFramework.Entities.Interfaces
+﻿namespace CoreSharp.EntityFramework.Entities.Interfaces;
+
+/// <inheritdoc cref="IUniqueEntity"/>
+public interface IUniqueEntity<TKey> : IUniqueEntity
 {
-    /// <inheritdoc cref="IUniqueEntity"/>
-    public interface IUniqueEntity<TKey> : IUniqueEntity
-    {
-        //Properties 
-        new TKey Id { get; set; }
-    }
+    //Properties 
+    new TKey Id { get; set; }
 }

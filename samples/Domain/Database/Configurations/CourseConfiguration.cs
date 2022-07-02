@@ -4,21 +4,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace CoreSharp.EntityFramework.Samples.Domain.Database.Configurations
+namespace CoreSharp.EntityFramework.Samples.Domain.Database.Configurations;
+
+internal class CourseConfiguration : IEntityTypeConfiguration<Course>
 {
-    internal class CourseConfiguration : IEntityTypeConfiguration<Course>
+    //Constructors
+    public void Configure(EntityTypeBuilder<Course> builder)
     {
-        //Constructors
-        public void Configure(EntityTypeBuilder<Course> builder)
-        {
-            _ = builder ?? throw new ArgumentNullException(nameof(builder));
+        _ = builder ?? throw new ArgumentNullException(nameof(builder));
 
-            builder.Property(course => course.Name)
-                   .IsRequired()
-                   .HasMaxLength(100);
+        builder.Property(course => course.Name)
+               .IsRequired()
+               .HasMaxLength(100);
 
-            //Many-to-many enums
-            builder.HasEnums(course => course.Fields);
-        }
+        //Many-to-many enums
+        builder.HasEnums(course => course.Fields);
     }
 }

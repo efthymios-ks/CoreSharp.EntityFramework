@@ -7,38 +7,37 @@ using CoreSharp.EntityFramework.Stores.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace CoreSharp.EntityFramework.Samples.App.Extensions
+namespace CoreSharp.EntityFramework.Samples.App.Extensions;
+
+/// <summary>
+/// <see cref="IServiceCollection"/> extensions.
+/// </summary>
+internal static class IServiceCollectionExtensions
 {
     /// <summary>
-    /// <see cref="IServiceCollection"/> extensions.
+    /// Register all <see cref="IRepository{TEntity}"/> and <see cref="IUnitOfWork"/>.
     /// </summary>
-    internal static class IServiceCollectionExtensions
+    public static IServiceCollection AddAppRepositories(this IServiceCollection serviceCollection)
     {
-        /// <summary>
-        /// Register all <see cref="IRepository{TEntity}"/> and <see cref="IUnitOfWork"/>.
-        /// </summary>
-        public static IServiceCollection AddAppRepositories(this IServiceCollection serviceCollection)
-        {
-            _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
+        _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
 
-            serviceCollection.AddRepositories(typeof(AppDbContext).Assembly);
-            serviceCollection.AddExtendedRepositories(typeof(AppDbContext).Assembly);
-            serviceCollection.AddScoped<IAppUnitOfWork, AppUnitOfWork>();
+        serviceCollection.AddRepositories(typeof(AppDbContext).Assembly);
+        serviceCollection.AddExtendedRepositories(typeof(AppDbContext).Assembly);
+        serviceCollection.AddScoped<IAppUnitOfWork, AppUnitOfWork>();
 
-            return serviceCollection;
-        }
+        return serviceCollection;
+    }
 
-        /// <summary>
-        /// Register all <see cref="IStore{TEntity}"/>.
-        /// </summary>
-        public static IServiceCollection AddAppStores(this IServiceCollection serviceCollection)
-        {
-            _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
+    /// <summary>
+    /// Register all <see cref="IStore{TEntity}"/>.
+    /// </summary>
+    public static IServiceCollection AddAppStores(this IServiceCollection serviceCollection)
+    {
+        _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
 
-            serviceCollection.AddStores(typeof(AppDbContext).Assembly);
-            serviceCollection.AddExtendedStores(typeof(AppDbContext).Assembly);
+        serviceCollection.AddStores(typeof(AppDbContext).Assembly);
+        serviceCollection.AddExtendedStores(typeof(AppDbContext).Assembly);
 
-            return serviceCollection;
-        }
+        return serviceCollection;
     }
 }

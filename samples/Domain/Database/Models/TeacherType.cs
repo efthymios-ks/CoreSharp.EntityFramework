@@ -1,10 +1,9 @@
-﻿namespace CoreSharp.EntityFramework.Samples.Domain.Database.Models
+﻿namespace CoreSharp.EntityFramework.Samples.Domain.Database.Models;
+
+public enum TeacherType
 {
-    public enum TeacherType
-    {
-        Elementary,
-        MiddleSchool,
-        HighSchool,
-        SpecialEducation
-    }
+    Elementary,
+    MiddleSchool,
+    HighSchool,
+    SpecialEducation
 }
