@@ -1,6 +1,6 @@
 ﻿using CoreSharp.EntityFramework.Samples.Domain.Database.Models;
 using CoreSharp.EntityFramework.Samples.Domain.Database.Stores.Interfaces;
-using CoreSharp.EntityFramework.Stores.Abstracts;
+using CoreSharp.EntityFramework.Stores.Common;
 
 namespace CoreSharp.EntityFramework.Samples.Domain.Database.Stores
 {

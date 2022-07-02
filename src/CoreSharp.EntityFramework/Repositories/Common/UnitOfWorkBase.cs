@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreSharp.EntityFramework.Repositories.Abstracts
+namespace CoreSharp.EntityFramework.Repositories.Common
 {
     /// <inheritdoc cref="IUnitOfWork"/>
     public abstract class UnitOfWorkBase : IUnitOfWork

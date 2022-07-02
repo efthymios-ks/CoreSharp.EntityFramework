@@ -1,7 +1,7 @@
-﻿using CoreSharp.EntityFramework.Entities.Abstracts;
+﻿using CoreSharp.EntityFramework.Entities.Common;
 using CoreSharp.EntityFramework.Entities.Interfaces;
 using CoreSharp.EntityFramework.Repositories.Interfaces;
-using CoreSharp.EntityFramework.Stores.Abstracts;
+using CoreSharp.EntityFramework.Stores.Common;
 
 namespace CoreSharp.EntityFramework.Stores.Interfaces
 {

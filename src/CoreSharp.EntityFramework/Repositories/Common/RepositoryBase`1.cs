@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreSharp.EntityFramework.Repositories.Abstracts
+namespace CoreSharp.EntityFramework.Repositories.Common
 {
     public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
         where TEntity : class, IEntity

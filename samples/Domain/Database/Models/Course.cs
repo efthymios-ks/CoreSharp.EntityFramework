@@ -1,4 +1,4 @@
-﻿using CoreSharp.EntityFramework.Entities.Abstracts;
+﻿using CoreSharp.EntityFramework.Entities.Common;
 using System;
 using System.Collections.Generic;
 

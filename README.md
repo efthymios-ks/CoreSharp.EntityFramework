@@ -8,14 +8,14 @@
 
 ## Features 
 - Interfaces for `Entity`, `Repository`, `UnitOfWork` and `Store`. 
-- Abstract base implementations for `Entity`, `Repository`, `UnitOfWork` and `Store`. 
+- Common base implementations for `Entity`, `Repository`, `UnitOfWork` and `Store`. 
 - Various extensions for `enum`, conversions, `DbContext` etc. 
 
 ## Steps for `UnitOfWork` scenario 
 ### 1. Create database specific `DbContext`. 
-Implement with `DbContextBase` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Models/Abstracts/DbContextBase.cs). 
+Implement with `DbContextBase` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Models/Common/DbContextBase.cs). 
 ``` 
-using CoreSharp.EntityFramework.Models.Abstracts;
+using CoreSharp.EntityFramework.Models.Common;
 using Microsoft.EntityFrameworkCore; 
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
@@ -35,9 +35,9 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
 ``` 
 
 ### 2. Create an `Entity`. 
-Implement with `EntityBase<TKey>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Models/Abstracts/EntityBase%601.cs). 
+Implement with `EntityBase<TKey>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Models/Common/EntityBase%601.cs). 
 ``` 
-using CoreSharp.EntityFramework.Models.Abstracts; 
+using CoreSharp.EntityFramework.Models.Common; 
 using System;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models
@@ -62,9 +62,9 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositor
 ``` 
 
 ### 4. Implement the `Repository`. 
-Implement with `RepositoryBase<TEntity>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Repositories/Abstracts/RepositoryBase%601.cs). 
+Implement with `RepositoryBase<TEntity>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Repositories/Common/RepositoryBase%601.cs). 
 ``` 
-using CoreSharp.EntityFramework.Repositories.Abstracts;
+using CoreSharp.EntityFramework.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories
@@ -103,9 +103,9 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWor
 ```
 
 ### 6. Implement the `UnitOfWork`. 
-Implement with `UnitOfWorkBase` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Repositories/Abstracts/UnitOfWorkBase.cs). 
+Implement with `UnitOfWorkBase` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Repositories/Common/UnitOfWorkBase.cs). 
 ``` 
-using CoreSharp.EntityFramework.Repositories.Abstracts;
+using CoreSharp.EntityFramework.Repositories.Common;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWorks
 {
@@ -197,9 +197,9 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
 
 ## Steps for `Store` scenario 
 ### 1. Create database specific `DbContext`. 
-Implement with `DbContextBase` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Models/Abstracts/DbContextBase.cs). 
+Implement with `DbContextBase` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Models/Common/DbContextBase.cs). 
 ```
-using CoreSharp.EntityFramework.Models.Abstracts;
+using CoreSharp.EntityFramework.Models.Common;
 using Microsoft.EntityFrameworkCore; 
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
@@ -219,9 +219,9 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
 ```
 
 ### 2. Create an `Entity`. 
-Implement with `EntityBase<TKey>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Models/Abstracts/EntityBase%601.cs). 
+Implement with `EntityBase<TKey>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Models/Common/EntityBase%601.cs). 
 ```
-using CoreSharp.EntityFramework.Models.Abstracts; 
+using CoreSharp.EntityFramework.Models.Common; 
 using System;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models
@@ -246,9 +246,9 @@ namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores.In
 ```
 
 ### 4. Implement the `Store`. 
-Implement with `StoreBase<TEntity>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Stores/Abstracts/StoreBase%601.cs). 
+Implement with `StoreBase<TEntity>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Stores/Common/StoreBase%601.cs). 
 ```
-using CoreSharp.EntityFramework.Stores.Abstracts;
+using CoreSharp.EntityFramework.Stores.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores

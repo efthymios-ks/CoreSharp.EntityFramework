@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreSharp.EntityFramework.DbContexts.Abstracts
+namespace CoreSharp.EntityFramework.DbContexts.Common
 {
     public abstract class TrackableDbContextBase : DbContextBase
     {

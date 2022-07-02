@@ -8,7 +8,7 @@ using JsonNetConverters = CoreSharp.Json.JsonNet.JsonConverters;
 using TextJson = System.Text.Json;
 using TextJsonConverters = CoreSharp.Json.TextJson.JsonConverters;
 
-namespace CoreSharp.EntityFramework.Entities.Abstracts
+namespace CoreSharp.EntityFramework.Entities.Common
 {
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public abstract class EntityBase<TKey> : IEntity<TKey>

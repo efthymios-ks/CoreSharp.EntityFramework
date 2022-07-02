@@ -1,7 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Delegates;
-using CoreSharp.EntityFramework.Entities.Abstracts;
+using CoreSharp.EntityFramework.Entities.Common;
 using CoreSharp.EntityFramework.Entities.Interfaces;
-using CoreSharp.EntityFramework.Repositories.Abstracts;
+using CoreSharp.EntityFramework.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading;
