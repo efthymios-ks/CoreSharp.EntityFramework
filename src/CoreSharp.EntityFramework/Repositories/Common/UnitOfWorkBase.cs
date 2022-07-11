@@ -26,12 +26,6 @@ public abstract class UnitOfWorkBase : IUnitOfWork
     public virtual async Task RollbackAsync(CancellationToken cancellationToken = default)
         => await Context.RollbackAsync(cancellationToken);
 
-    public virtual void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        Context.Dispose();
-    }
-
     public virtual async ValueTask DisposeAsync()
     {
         GC.SuppressFinalize(this);

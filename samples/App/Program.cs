@@ -1,4 +1,5 @@
-﻿using CoreSharp.EntityFramework.Samples.MediatR.Commands;
+﻿using CoreSharp.EntityFramework.Samples.Domain.Database.Models;
+using CoreSharp.EntityFramework.Samples.MediatR.Commands;
 using CoreSharp.EntityFramework.Samples.MediatR.Queries;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -17,47 +18,57 @@ internal static class Program
         var services = Startup.ConfigureServices();
         var mediatR = services.GetRequiredService<IMediator>();
 
-        //Get first teacher
+        var teacher = await GetFirstTeacherAsync(mediatR);
+        if (teacher is null)
+            teacher = await CreateTeacherAsync(mediatR);
+        teacher = await UpdateTeacherAsync(mediatR, teacher);
+        teacher = await RemoveTeacherCoursesAsync(mediatR, teacher);
+        await AddTeacherCoursesAsync(mediatR, teacher);
+
+        Console.ReadLine();
+    }
+
+    private static async Task<Teacher> GetFirstTeacherAsync(IMediator mediatR)
+    {
         var query = new GetTeachersQuery
         {
             Navigation = q => q.Include(t => t.Courses)
         };
-        var teacher = (await mediatR.Send(query)).FirstOrDefault();
+        return (await mediatR.Send(query)).FirstOrDefault();
+    }
 
-        //Create one, if none 
-        if (teacher is null)
+    private static async Task<Teacher> CreateTeacherAsync(IMediator mediatR)
+    {
+        var command = new AddTeacherCommand(new()
         {
-            var command = new AddTeacherCommand(new()
-            {
-                Name = "Efthymios Koktsidis"
-            });
-            teacher = await mediatR.Send(command);
-        }
+            Name = "Efthymios Koktsidis"
+        });
+        return await mediatR.Send(command);
+    }
 
-        //Update teacher 
+    private static async Task<Teacher> UpdateTeacherAsync(IMediator mediatR, Teacher teacher)
+    {
+        teacher.Name = $"Efthymios ({DateTime.Now.Millisecond})";
+        var command = new UpdateTeacherCommand(teacher);
+        return await mediatR.Send(command);
+    }
+
+    private static async Task<Teacher> RemoveTeacherCoursesAsync(IMediator mediatR, Teacher teacher)
+    {
+        if (teacher.Courses.Count == 0)
+            return teacher;
+
+        var command = new RemoveTeacherCoursesCommand(teacher.Id);
+        return await mediatR.Send(command);
+    }
+
+    private static async Task<Teacher> AddTeacherCoursesAsync(IMediator mediatR, Teacher teacher)
+    {
+        teacher.Courses.Add(new()
         {
-            teacher.Name = $"Efthymios ({DateTime.Now.Millisecond})";
-            var command = new UpdateTeacherCommand(teacher);
-            teacher = await mediatR.Send(command);
-        }
-
-        //Remove courses 
-        if (teacher.Courses.Count > 0)
-        {
-            var command = new RemoveTeacherCoursesCommand(teacher.Id);
-            teacher = await mediatR.Send(command);
-        }
-
-        //Add course from scratch
-        {
-            teacher.Courses.Add(new()
-            {
-                Name = "Math"
-            });
-            var command = new UpdateTeacherCommand(teacher);
-            teacher = await mediatR.Send(command);
-        }
-
-        Console.ReadLine();
+            Name = "Math"
+        });
+        var command = new UpdateTeacherCommand(teacher);
+        return await mediatR.Send(command);
     }
 }

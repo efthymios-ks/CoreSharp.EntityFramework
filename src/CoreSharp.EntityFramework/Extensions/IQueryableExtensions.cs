@@ -17,7 +17,7 @@ public static class IQueryableExtensions
     /// <summary>
     /// Paginate collection on given size and return page of given number.
     /// </summary>
-    public static async Task<Page<TEntity>> GetPageAsync<TEntity>(this IQueryable<TEntity> query, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    public static Task<Page<TEntity>> GetPageAsync<TEntity>(this IQueryable<TEntity> query, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         //Validate args 
         _ = query ?? throw new ArgumentNullException(nameof(query));
@@ -26,6 +26,11 @@ public static class IQueryableExtensions
         if (pageSize <= 0)
             throw new ArgumentOutOfRangeException(nameof(pageSize), $"{nameof(pageSize)} has to be positive and non-zero.");
 
+        return GetPageInternalAsync(query, pageNumber, pageSize, cancellationToken);
+    }
+
+    private static async Task<Page<TEntity>> GetPageInternalAsync<TEntity>(this IQueryable<TEntity> query, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    {
         //Calculate and paginate 
         var pagedQuery = query.GetPage(pageNumber, pageSize);
         TEntity[] items;

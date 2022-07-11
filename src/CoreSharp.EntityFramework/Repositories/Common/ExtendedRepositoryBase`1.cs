@@ -125,11 +125,6 @@ public abstract class ExtendedRepositoryBase<TEntity> : RepositoryBase<TEntity>,
 
     public virtual async Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
     {
-        if (pageNumber < 0)
-            throw new ArgumentOutOfRangeException(nameof(pageNumber));
-        else if (pageSize < 1)
-            throw new ArgumentOutOfRangeException(nameof(pageSize));
-
         var query = NavigateTable(navigation);
         return await query.GetPageAsync(pageNumber, pageSize, cancellationToken);
     }
