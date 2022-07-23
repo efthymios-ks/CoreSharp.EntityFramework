@@ -1,6 +1,6 @@
 ﻿using CoreSharp.EntityFramework.Delegates;
 
-namespace CoreSharp.EntityFramework.Samples.MediatR.Queries.Abstract;
+namespace MediatR.Queries.Abstract;
 
 public abstract class RepositoryNavigationBase<TEntity>
 {

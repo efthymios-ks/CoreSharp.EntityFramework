@@ -1,10 +1,10 @@
 ﻿using CoreSharp.EntityFramework.Extensions;
-using CoreSharp.EntityFramework.Samples.Domain.Database.Models;
+using Domain.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace CoreSharp.EntityFramework.Samples.Domain.Database.Configurations;
+namespace Domain.Database.Configurations;
 
 internal class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
 {

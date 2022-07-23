@@ -74,7 +74,7 @@ public abstract class TrackableDbContextBase : DbContextBase
         {
             if (entry.Entity is EntityChange)
                 return false;
-            else if (entry.Entity is not ITrackableEntity trackableEntity)
+            else if (entry.Entity is not ITrackableEntity)
                 return false;
             else if (entry.State is EntityState.Unchanged or EntityState.Detached)
                 return false;
@@ -99,7 +99,7 @@ public abstract class TrackableDbContextBase : DbContextBase
         }
 
         //Scan entries 
-        var temporaryChange = new HashSet<TemporaryEntityChange>();
+        var temporaryChanges = new HashSet<TemporaryEntityChange>();
         foreach (var trackableEntry in trackableEntries)
         {
             var change = new TemporaryEntityChange(trackableEntry);
@@ -140,10 +140,10 @@ public abstract class TrackableDbContextBase : DbContextBase
                 }
             }
 
-            temporaryChange.Add(change);
+            temporaryChanges.Add(change);
         }
 
-        _temporaryChanges = temporaryChange.ToArray();
+        _temporaryChanges = temporaryChanges.ToArray();
     }
 
     private EntityChange[] FinalizeAndGetChangesAfterSave()

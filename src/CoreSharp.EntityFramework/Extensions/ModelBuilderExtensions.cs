@@ -46,7 +46,8 @@ public static class ModelBuilderExtensions
     /// <summary>
     /// Configure database column type for given <see cref="Enum"/>.
     /// </summary>
-    private static EntityTypeBuilder ConfigureEnum<TEnum>(this ModelBuilder builder, string tableName) where TEnum : Enum
+    private static EntityTypeBuilder ConfigureEnum<TEnum>(this ModelBuilder builder, string tableName)
+        where TEnum : Enum
     {
         _ = builder ?? throw new ArgumentNullException(nameof(builder));
         if (string.IsNullOrWhiteSpace(tableName))
@@ -63,7 +64,8 @@ public static class ModelBuilderExtensions
     /// <summary>
     /// Seed data to database column for given enum <see cref="Enum"/>.
     /// </summary>
-    private static void SeedEnum<TEnum>(this ModelBuilder builder) where TEnum : Enum
+    private static void SeedEnum<TEnum>(this ModelBuilder builder)
+        where TEnum : Enum
     {
         _ = builder ?? throw new ArgumentNullException(nameof(builder));
 

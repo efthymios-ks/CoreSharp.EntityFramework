@@ -1,7 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Repositories.Interfaces;
-using CoreSharp.EntityFramework.Samples.Domain.Database.Repositories.Interfaces;
+using Domain.Database.Repositories.Interfaces;
 
-namespace CoreSharp.EntityFramework.Samples.Domain.Database.UnitOfWorks.Interfaces;
+namespace Domain.Database.UnitOfWorks.Interfaces;
 
 public interface IAppUnitOfWork : IUnitOfWork
 {

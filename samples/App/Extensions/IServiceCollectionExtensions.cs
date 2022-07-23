@@ -1,13 +1,13 @@
 ﻿using CoreSharp.EntityFramework.Extensions;
 using CoreSharp.EntityFramework.Repositories.Interfaces;
-using CoreSharp.EntityFramework.Samples.Domain.Database;
-using CoreSharp.EntityFramework.Samples.Domain.Database.UnitOfWorks;
-using CoreSharp.EntityFramework.Samples.Domain.Database.UnitOfWorks.Interfaces;
 using CoreSharp.EntityFramework.Stores.Interfaces;
+using Domain.Database;
+using Domain.Database.UnitOfWorks;
+using Domain.Database.UnitOfWorks.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace CoreSharp.EntityFramework.Samples.App.Extensions;
+namespace App.Extensions;
 
 /// <summary>
 /// <see cref="IServiceCollection"/> extensions.

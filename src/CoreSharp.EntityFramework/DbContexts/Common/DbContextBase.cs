@@ -27,6 +27,26 @@ public abstract class DbContextBase : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        ConfigureTrackableEntities(modelBuilder);
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        OnBeforeSaveChanges();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        OnBeforeSaveChanges();
+        return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void OnBeforeSaveChanges()
+        => UpdateTrackableEntities();
+
+    private static void ConfigureTrackableEntities(ModelBuilder modelBuilder)
+    {
         //Trackable entities
         var trackedEntities = modelBuilder.Model.FindEntityTypes(typeof(ITrackableEntity));
         foreach (var trackedEntity in trackedEntities)
@@ -45,37 +65,21 @@ public abstract class DbContextBase : DbContext
         }
     }
 
-    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    private void UpdateTrackableEntities()
     {
-        OnBeforeSaveChanges();
-        return base.SaveChanges(acceptAllChangesOnSuccess);
-    }
-
-    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-    {
-        OnBeforeSaveChanges();
-        return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-    }
-
-    private void OnBeforeSaveChanges()
-        => UpdateTrackableEntitiesDates();
-
-    private void UpdateTrackableEntitiesDates()
-    {
-        var trackableEntries = ChangeTracker.Entries()
-                                            .Where(e => e.Entity is ITrackableEntity);
+        var trackableEntries = ChangeTracker.Entries().Where(e => e.Entity is ITrackableEntity);
         foreach (var trackableEntry in trackableEntries)
         {
-            var trackedEntity = trackableEntry.Entity as ITrackableEntity;
+            var trackableEntity = trackableEntry.Entity as ITrackableEntity;
 
             switch (trackableEntry.State)
             {
                 case EntityState.Added:
-                    trackedEntity.DateCreatedUtc = DateTime.UtcNow;
+                    trackableEntity.DateCreatedUtc = DateTime.UtcNow;
                     trackableEntry.Property(nameof(ITrackableEntity.DateModifiedUtc)).IsModified = false;
                     break;
                 case EntityState.Modified:
-                    trackedEntity.DateModifiedUtc = DateTime.UtcNow;
+                    trackableEntity.DateModifiedUtc = DateTime.UtcNow;
                     trackableEntry.Property(nameof(ITrackableEntity.DateCreatedUtc)).IsModified = false;
                     break;
             }

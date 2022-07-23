@@ -1,8 +1,8 @@
 ﻿using CoreSharp.EntityFramework.Repositories.Common;
-using CoreSharp.EntityFramework.Samples.Domain.Database.Models;
-using CoreSharp.EntityFramework.Samples.Domain.Database.Repositories.Interfaces;
+using Domain.Database.Models;
+using Domain.Database.Repositories.Interfaces;
 
-namespace CoreSharp.EntityFramework.Samples.Domain.Database.Repositories;
+namespace Domain.Database.Repositories;
 
 public class CourseRepository : ExtendedRepositoryBase<Course>, ICourseRepository
 {

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace CoreSharp.EntityFramework.Samples.MediatR;
+namespace MediatR;
 
 /// <summary>
 /// Used for referencing <see cref="Assembly"/>.

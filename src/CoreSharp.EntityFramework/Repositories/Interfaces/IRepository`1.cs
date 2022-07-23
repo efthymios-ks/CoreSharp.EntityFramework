@@ -24,6 +24,7 @@ public interface IRepository<TEntity>
     /// </summary>
     /// <param name="key">Primary key to match.</param>
     /// <param name="navigation">Optional argument to build query.</param>
+    /// <param name="cancellationToken"></param>
     Task<TEntity> GetAsync(
         object key,
         Query<TEntity> navigation = null,
@@ -33,6 +34,7 @@ public interface IRepository<TEntity>
     /// Get all entities.
     /// </summary>
     /// <param name="navigation">Optional argument to build query.</param>
+    /// <param name="cancellationToken"></param>
     Task<IEnumerable<TEntity>> GetAsync(
         Query<TEntity> navigation = null,
         CancellationToken cancellationToken = default);

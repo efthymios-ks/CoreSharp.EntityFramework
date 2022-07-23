@@ -1,9 +1,9 @@
 ﻿using CoreSharp.EntityFramework.Repositories.Common;
-using CoreSharp.EntityFramework.Samples.Domain.Database.Repositories;
-using CoreSharp.EntityFramework.Samples.Domain.Database.Repositories.Interfaces;
-using CoreSharp.EntityFramework.Samples.Domain.Database.UnitOfWorks.Interfaces;
+using Domain.Database.Repositories;
+using Domain.Database.Repositories.Interfaces;
+using Domain.Database.UnitOfWorks.Interfaces;
 
-namespace CoreSharp.EntityFramework.Samples.Domain.Database.UnitOfWorks;
+namespace Domain.Database.UnitOfWorks;
 
 public class AppUnitOfWork : UnitOfWorkBase, IAppUnitOfWork
 {

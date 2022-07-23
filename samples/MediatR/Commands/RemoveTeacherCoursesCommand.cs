@@ -1,12 +1,11 @@
-﻿using CoreSharp.EntityFramework.Samples.Domain.Database.Models;
-using CoreSharp.EntityFramework.Samples.Domain.Database.UnitOfWorks.Interfaces;
-using MediatR;
+﻿using Domain.Database.Models;
+using Domain.Database.UnitOfWorks.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreSharp.EntityFramework.Samples.MediatR.Commands;
+namespace MediatR.Commands;
 
 public class RemoveTeacherCoursesCommand : IRequest<Teacher>
 {

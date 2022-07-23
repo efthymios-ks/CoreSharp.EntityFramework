@@ -1,7 +1,7 @@
-﻿using CoreSharp.EntityFramework.Samples.Domain.Database.Models.Abstracts;
+﻿using Domain.Database.Models.Abstracts;
 using System;
 
-namespace CoreSharp.EntityFramework.Samples.Domain.Database.Models;
+namespace Domain.Database.Models;
 
 public class StudentAddress : AddressBase
 {

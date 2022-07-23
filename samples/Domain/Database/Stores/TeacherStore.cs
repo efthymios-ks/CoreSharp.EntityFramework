@@ -1,8 +1,8 @@
-﻿using CoreSharp.EntityFramework.Samples.Domain.Database.Models;
-using CoreSharp.EntityFramework.Samples.Domain.Database.Stores.Interfaces;
-using CoreSharp.EntityFramework.Stores.Common;
+﻿using CoreSharp.EntityFramework.Stores.Common;
+using Domain.Database.Models;
+using Domain.Database.Stores.Interfaces;
 
-namespace CoreSharp.EntityFramework.Samples.Domain.Database.Stores;
+namespace Domain.Database.Stores;
 
 public class TeacherStore : StoreBase<Teacher>, ITeacherStore
 {

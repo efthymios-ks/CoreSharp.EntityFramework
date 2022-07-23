@@ -1,10 +1,10 @@
-﻿using CoreSharp.EntityFramework.Samples.App.Extensions;
-using CoreSharp.EntityFramework.Samples.Domain.Database;
+﻿using App.Extensions;
+using Domain.Database;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace CoreSharp.EntityFramework.Samples.App;
+namespace App;
 
 /// <summary>
 /// Pseudo-startup class.
@@ -26,7 +26,7 @@ internal static class Startup
         serviceCollection.AddAppStores();
 
         //3. Optionally, Add MediatR.
-        serviceCollection.AddMediatR(typeof(MediatR.AssemblyReferenceHook));
+        serviceCollection.AddMediatR(typeof(AssemblyReferenceHook));
 
         return serviceCollection.BuildServiceProvider();
     }

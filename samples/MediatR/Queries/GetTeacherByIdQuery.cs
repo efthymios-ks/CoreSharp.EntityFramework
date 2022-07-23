@@ -1,12 +1,11 @@
-﻿using CoreSharp.EntityFramework.Samples.Domain.Database.Models;
-using CoreSharp.EntityFramework.Samples.Domain.Database.UnitOfWorks.Interfaces;
-using CoreSharp.EntityFramework.Samples.MediatR.Queries.Abstract;
-using MediatR;
+﻿using Domain.Database.Models;
+using Domain.Database.UnitOfWorks.Interfaces;
+using MediatR.Queries.Abstract;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreSharp.EntityFramework.Samples.MediatR.Queries;
+namespace MediatR.Queries;
 
 public class GetTeacherByIdQuery : RepositoryNavigationBase<Teacher>, IRequest<Teacher>
 {

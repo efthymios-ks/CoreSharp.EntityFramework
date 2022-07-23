@@ -1,14 +1,14 @@
-﻿using CoreSharp.EntityFramework.Samples.Domain.Database.Models;
-using CoreSharp.EntityFramework.Samples.MediatR.Commands;
-using CoreSharp.EntityFramework.Samples.MediatR.Queries;
+﻿using Domain.Database.Models;
 using MediatR;
+using MediatR.Commands;
+using MediatR.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CoreSharp.EntityFramework.Samples.App;
+namespace App;
 
 internal static class Program
 {
