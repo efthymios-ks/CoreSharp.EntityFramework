@@ -1,11 +1,10 @@
-﻿using CoreSharp.EntityFramework.Samples.Domain.Database.Models;
-using CoreSharp.EntityFramework.Samples.Domain.Database.Stores.Interfaces;
-using MediatR;
+﻿using Domain.Database.Models;
+using Domain.Database.Stores.Interfaces;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreSharp.EntityFramework.Samples.MediatR.Commands;
+namespace MediatR.Commands;
 
 public class UpdateTeacherCommand : IRequest<Teacher>
 {
@@ -29,7 +28,7 @@ public class UpdateTeacherCommandHandler : IRequestHandler<UpdateTeacherCommand,
     //Methods
     public async Task<Teacher> Handle(UpdateTeacherCommand request, CancellationToken cancellationToken)
     {
-        _ = request.Teacher ?? throw new NullReferenceException($"{nameof(request.Teacher)} cannot be null.");
+        _ = request.Teacher ?? throw new ArgumentException($"{nameof(request.Teacher)} cannot be null.", nameof(request));
 
         return await _teacherStore.UpdateAsync(request.Teacher, cancellationToken);
     }

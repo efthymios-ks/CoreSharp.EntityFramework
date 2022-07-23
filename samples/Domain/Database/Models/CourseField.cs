@@ -1,4 +1,4 @@
-﻿namespace CoreSharp.EntityFramework.Samples.Domain.Database.Models;
+﻿namespace Domain.Database.Models;
 
 public enum CourseField
 {

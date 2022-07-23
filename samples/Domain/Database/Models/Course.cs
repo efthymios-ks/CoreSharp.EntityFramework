@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CoreSharp.EntityFramework.Samples.Domain.Database.Models;
+namespace Domain.Database.Models;
 
 public class Course : EntityBase<Guid>
 {

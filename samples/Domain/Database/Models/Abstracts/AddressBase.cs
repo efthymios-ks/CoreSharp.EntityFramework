@@ -1,7 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Entities.Common;
 using System;
 
-namespace CoreSharp.EntityFramework.Samples.Domain.Database.Models.Abstracts;
+namespace Domain.Database.Models.Abstracts;
 
 public abstract class AddressBase : EntityBase<Guid>
 {

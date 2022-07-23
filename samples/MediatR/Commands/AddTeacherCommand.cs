@@ -1,11 +1,10 @@
-﻿using CoreSharp.EntityFramework.Samples.Domain.Database.Models;
-using CoreSharp.EntityFramework.Samples.Domain.Database.UnitOfWorks.Interfaces;
-using MediatR;
+﻿using Domain.Database.Models;
+using Domain.Database.UnitOfWorks.Interfaces;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreSharp.EntityFramework.Samples.MediatR.Commands;
+namespace MediatR.Commands;
 
 public class AddTeacherCommand : IRequest<Teacher>
 {
@@ -29,7 +28,7 @@ public class AddTeacherCommandHandler : IRequestHandler<AddTeacherCommand, Teach
     //Methods
     public async Task<Teacher> Handle(AddTeacherCommand request, CancellationToken cancellationToken)
     {
-        _ = request.Teacher ?? throw new NullReferenceException($"{nameof(request.Teacher)} cannot be null.");
+        _ = request.Teacher ?? throw new ArgumentNullException(nameof(request), $"{nameof(request.Teacher)} cannot be null.");
 
         var createdTeacher = await _appUnitOfWork.Teachers.AddAsync(request.Teacher, cancellationToken);
         await _appUnitOfWork.CommitAsync(cancellationToken);

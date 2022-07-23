@@ -1,4 +1,4 @@
-﻿namespace CoreSharp.EntityFramework.Samples.Domain;
+﻿namespace Domain;
 
 internal static class Configuration
 {

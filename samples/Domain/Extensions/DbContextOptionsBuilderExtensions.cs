@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace CoreSharp.EntityFramework.Samples.Domain.Extensions;
+namespace Domain.Extensions;
 
 /// <summary>
 /// <see cref="DbContextOptionsBuilder"/> extensions.
