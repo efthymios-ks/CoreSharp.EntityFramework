@@ -8,6 +8,16 @@ namespace Domain.Database;
 
 public class AppDbContext : TrackableDbContextBase
 {
+    //Constructors
+    public AppDbContext()
+    {
+    }
+
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options)
+    {
+    }
+
     //Properties
     public DbSet<Teacher> Teachers { get; set; }
     public DbSet<Student> Students { get; set; }
@@ -16,7 +26,10 @@ public class AppDbContext : TrackableDbContextBase
 
     //Methods
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.ConfigureSql();
+    {
+        if (!optionsBuilder.IsConfigured)
+            optionsBuilder.ConfigureSql();
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
