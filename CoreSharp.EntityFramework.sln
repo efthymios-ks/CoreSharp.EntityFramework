@@ -20,6 +20,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "samples\Domain\Do
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediatR", "samples\MediatR\MediatR.csproj", "{D5C808CE-734D-4035-B649-AFB6BF3EEE3E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CF2F0948-46ED-4D53-B579-D4470AA69EE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "tests\Tests\Tests.csproj", "{1BCBA1CC-6516-48AD-8E15-F48191ECF5DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +46,10 @@ Global
 		{D5C808CE-734D-4035-B649-AFB6BF3EEE3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5C808CE-734D-4035-B649-AFB6BF3EEE3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5C808CE-734D-4035-B649-AFB6BF3EEE3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BCBA1CC-6516-48AD-8E15-F48191ECF5DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BCBA1CC-6516-48AD-8E15-F48191ECF5DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BCBA1CC-6516-48AD-8E15-F48191ECF5DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BCBA1CC-6516-48AD-8E15-F48191ECF5DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,6 +59,7 @@ Global
 		{ADC49C81-4BC3-4E4B-93E0-DB0345C194FC} = {F8375870-0CED-4476-85A2-2F408396CFFF}
 		{F509CFBF-FC4B-4CE4-A9B3-1756450027C5} = {F8375870-0CED-4476-85A2-2F408396CFFF}
 		{D5C808CE-734D-4035-B649-AFB6BF3EEE3E} = {F8375870-0CED-4476-85A2-2F408396CFFF}
+		{1BCBA1CC-6516-48AD-8E15-F48191ECF5DB} = {CF2F0948-46ED-4D53-B579-D4470AA69EE6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1D4BB487-5570-493E-84C9-F81816E390FE}
