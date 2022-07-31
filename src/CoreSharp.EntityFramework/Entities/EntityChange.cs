@@ -12,6 +12,9 @@ namespace CoreSharp.EntityFramework.Entities;
 [Table("__EFDataHistory")]
 public class EntityChange
 {
+    //Fields
+    private DateTime _dateCreated = DateTime.UtcNow;
+
     //Properties
     [Key]
     [Column(Order = 0)]
@@ -21,7 +24,11 @@ public class EntityChange
     [Column(Order = 1)]
     [JsonNet.JsonConverter(typeof(JsonNetConverters.UtcDateTimeJsonConverter))]
     [TextJson.Serialization.JsonConverter(typeof(TextJsonConverters.UtcDateTimeJsonConverter))]
-    public DateTime DateCreatedUtc { get; set; } = DateTime.UtcNow;
+    public DateTime DateCreatedUtc
+    {
+        get => _dateCreated;
+        set => _dateCreated = SetDateTimeKindToUtc(value);
+    }
 
     [Required]
     [Column(Order = 2)]
@@ -40,4 +47,11 @@ public class EntityChange
 
     [Column(Order = 6)]
     public string NewState { get; set; }
+
+    /// <summary>
+    /// Avoid <see cref="DateTime.SpecifyKind(DateTime, DateTimeKind)"/> which converts (and ruins) the value.
+    /// Use <see cref="TimeZoneInfo.ConvertTimeToUtc(DateTime)"/> which only sets the <see cref="DateTime.Kind"/>.
+    /// </summary>
+    private static DateTime SetDateTimeKindToUtc(DateTime dateTime)
+        => TimeZoneInfo.ConvertTimeToUtc(dateTime);
 }

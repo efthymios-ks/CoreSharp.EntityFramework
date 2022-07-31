@@ -4,9 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using JsonNet = Newtonsoft.Json;
-using JsonNetConverters = CoreSharp.Json.JsonNet.JsonConverters;
 using TextJson = System.Text.Json;
-using TextJsonConverters = CoreSharp.Json.TextJson.JsonConverters;
 
 namespace CoreSharp.EntityFramework.Entities.Common;
 
@@ -47,8 +45,6 @@ public abstract class EntityBase<TKey> : IEntity<TKey>
     }
 
     [Column(Order = 1)]
-    [JsonNet.JsonConverter(typeof(JsonNetConverters.UtcDateTimeJsonConverter))]
-    [TextJson.Serialization.JsonConverter(typeof(TextJsonConverters.UtcDateTimeJsonConverter))]
     public DateTime DateCreatedUtc
     {
         get => _dateCreatedUtc ?? DateTime.UtcNow;
@@ -56,8 +52,6 @@ public abstract class EntityBase<TKey> : IEntity<TKey>
     }
 
     [Column(Order = 2)]
-    [JsonNet.JsonConverter(typeof(JsonNetConverters.UtcDateTimeJsonConverter))]
-    [TextJson.Serialization.JsonConverter(typeof(TextJsonConverters.UtcDateTimeJsonConverter))]
     public DateTime? DateModifiedUtc
     {
         get => _dateModifiedUtc;

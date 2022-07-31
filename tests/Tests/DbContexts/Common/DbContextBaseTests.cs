@@ -5,7 +5,7 @@ public class DbContextBaseTests : DbContextTestsBase
 {
     //Methods
     [Test]
-    public async Task SaveChangesAsync_TrackableEntityAdded_PrimaryKeyIsGeneratedAndReturned()
+    public async Task SaveChangesAsync_IUniqueEntityAdded_PrimaryKeyIsGeneratedAndReturned()
     {
         //Arrange 
         var teacher = new Teacher
@@ -22,7 +22,7 @@ public class DbContextBaseTests : DbContextTestsBase
     }
 
     [Test]
-    public async Task SaveChangesAsync_TrackableEntityAdded_SetDateCreatedUtc()
+    public async Task SaveChangesAsync_ITrackableEntityAdded_SetsDateCreatedUtc()
     {
         //Arrange 
         var teacher = new Teacher
@@ -41,7 +41,7 @@ public class DbContextBaseTests : DbContextTestsBase
     }
 
     [Test]
-    public async Task SaveChangesAsync_TrackableEntityAdded_DontTouchDateModifiedUtc()
+    public async Task SaveChangesAsync_ITrackableEntityAdded_DateModifiedUtcIsUntouched()
     {
         //Arrange 
         var teacher = new Teacher
@@ -60,7 +60,7 @@ public class DbContextBaseTests : DbContextTestsBase
     }
 
     [Test]
-    public async Task SaveChangesAsync_TrackableEntityUpdated_SetDateModifiedUtc()
+    public async Task SaveChangesAsync_ITrackableEntityUpdated_SetsDateModifiedUtc()
     {
         //Arrange 
         var teacher = new Teacher
@@ -84,7 +84,7 @@ public class DbContextBaseTests : DbContextTestsBase
     }
 
     [Test]
-    public async Task SaveChangesAsync_TrackableEntityUpdated_DontTouchDateCreatedUtc()
+    public async Task SaveChangesAsync_ITrackableEntityUpdated_DateCreatedUtcIsUntouched()
     {
         //Arrange 
         var teacher = new Teacher
