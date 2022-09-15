@@ -13,19 +13,19 @@ namespace CoreSharp.EntityFramework.Repositories.Common;
 public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
     where TEntity : class, IEntity
 {
-    //Constructors
+    // Constructors
     protected RepositoryBase(DbContext dbContext)
     {
         Context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         Table = Context.Set<TEntity>();
     }
 
-    //Properties 
+    // Properties 
     protected DbContext Context { get; }
 
     protected DbSet<TEntity> Table { get; }
 
-    //Methods 
+    // Methods 
     public virtual async Task<TEntity> GetAsync(object key, Query<TEntity> navigation = null,
                                                 CancellationToken cancellationToken = default)
     {

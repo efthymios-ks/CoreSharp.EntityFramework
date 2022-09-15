@@ -5,7 +5,7 @@ namespace Domain.Database.UnitOfWorks.Interfaces;
 
 public interface IAppUnitOfWork : IUnitOfWork
 {
-    //Properties
+    // Properties
     ICourseRepository Courses { get; }
     ITeacherRepository Teachers { get; }
 }

@@ -3,37 +3,37 @@
 [TestFixture]
 public class EntityBaseTests
 {
-    //Methods
+    // Methods
     [Test]
     public void EntityBase_ToString_ReturnsId()
     {
-        //Arrange 
+        // Arrange 
         var teacher = new Teacher
         {
             Id = Guid.NewGuid()
         };
         var expected = teacher.Id.ToString();
 
-        //Act
+        // Act
         var result = teacher.ToString();
 
-        //Assert
+        // Assert
         result.Should().Be(expected);
     }
 
     [Test]
     public void EntityBase_SetDateCreatedUtcWithNonUtcValue_SetsDateTimeKindToUtc()
     {
-        //Arrange
+        // Arrange
         var teacher = new Teacher();
         var dateCreated = DateTime.Now;
         var expected = dateCreated.ToUniversalTime();
 
-        //Act
+        // Act
         teacher.DateCreatedUtc = dateCreated;
         var result = teacher.DateCreatedUtc;
 
-        //Assert
+        // Assert
         result.Should().Be(expected);
         result.Kind.Should().Be(DateTimeKind.Utc);
     }
@@ -41,16 +41,16 @@ public class EntityBaseTests
     [Test]
     public void EntityBase_SetDateModifiedUtcWithNonUtcValue_SetsDateTimeKindToUtc()
     {
-        //Arrange
+        // Arrange
         var teacher = new Teacher();
         var dateModified = DateTime.Now;
         var expected = dateModified.ToUniversalTime();
 
-        //Act
+        // Act
         teacher.DateModifiedUtc = dateModified;
         var result = teacher.DateModifiedUtc.Value;
 
-        //Assert
+        // Assert
         result.Should().Be(expected);
         result.Kind.Should().Be(DateTimeKind.Utc);
     }
@@ -58,7 +58,7 @@ public class EntityBaseTests
     [Test]
     public void EntityBase_ToJsonUsingJsonNet_DateCreatedUtcUsesFormatO()
     {
-        //Arrange
+        // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
         var teacher = new Teacher
         {
@@ -66,17 +66,17 @@ public class EntityBaseTests
         };
         var expected = $"\"{dateAsString}\"";
 
-        //Act 
+        // Act 
         var result = JsonNet.JsonConvert.SerializeObject(teacher.DateCreatedUtc);
 
-        //Assert 
+        // Assert 
         result.Should().Be(expected);
     }
 
     [Test]
     public void EntityBase_ToJsonUsingTextJson_DateCreatedUtcUsesFormatO()
     {
-        //Arrange
+        // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
         var teacher = new Teacher
         {
@@ -84,17 +84,17 @@ public class EntityBaseTests
         };
         var expected = $"\"{dateAsString}\"";
 
-        //Act 
+        // Act 
         var result = TextJson.JsonSerializer.Serialize(teacher.DateCreatedUtc);
 
-        //Assert 
+        // Assert 
         result.Should().Be(expected);
     }
 
     [Test]
     public void EntityBase_ToJsonUsingJsonNet_DateModifiedUtcUsesFormatO()
     {
-        //Arrange
+        // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
         var teacher = new Teacher
         {
@@ -102,17 +102,17 @@ public class EntityBaseTests
         };
         var expected = $"\"{dateAsString}\"";
 
-        //Act 
+        // Act 
         var result = JsonNet.JsonConvert.SerializeObject(teacher.DateModifiedUtc);
 
-        //Assert 
+        // Assert 
         result.Should().Be(expected);
     }
 
     [Test]
     public void EntityBase_ToJsonUsingTextJson_DateModifiedUtcUsesFormatO()
     {
-        //Arrange
+        // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
         var teacher = new Teacher
         {
@@ -120,17 +120,17 @@ public class EntityBaseTests
         };
         var expected = $"\"{dateAsString}\"";
 
-        //Act 
+        // Act 
         var result = TextJson.JsonSerializer.Serialize(teacher.DateModifiedUtc);
 
-        //Assert 
+        // Assert 
         result.Should().Be(expected);
     }
 
     [Test]
     public void EntityBase_FromJsonUsingJsonNet_DateCreatedUtcRetainsDateTimeKindUtc()
     {
-        //Arrange
+        // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
         var expected = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture).ToUniversalTime();
         var teacherAsJson = /*lang=json,strict*/ @"
@@ -143,11 +143,11 @@ public class EntityBaseTests
             ""DateModifiedUtc"": null
         }".Replace("{Date}", dateAsString);
 
-        //Act 
+        // Act 
         var teacher = JsonNet.JsonConvert.DeserializeObject<Teacher>(teacherAsJson);
         var result = teacher!.DateCreatedUtc;
 
-        //Assert
+        // Assert
         result.Should().Be(expected);
         result.Kind.Should().Be(DateTimeKind.Utc);
     }
@@ -155,7 +155,7 @@ public class EntityBaseTests
     [Test]
     public void EntityBase_FromJsonUsingTextJson_DateCreatedUtcRetainsDateTimeKindUtc()
     {
-        //Arrange
+        // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
         var expected = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture).ToUniversalTime();
         var teacherAsJson = /*lang=json,strict*/ @"
@@ -168,11 +168,11 @@ public class EntityBaseTests
             ""DateModifiedUtc"": null
         }".Replace("{Date}", dateAsString);
 
-        //Act 
+        // Act 
         var teacher = TextJson.JsonSerializer.Deserialize<Teacher>(teacherAsJson);
         var result = teacher!.DateCreatedUtc;
 
-        //Assert
+        // Assert
         result.Should().Be(expected);
         result.Kind.Should().Be(DateTimeKind.Utc);
     }
@@ -180,7 +180,7 @@ public class EntityBaseTests
     [Test]
     public void EntityBase_FromJsonUsingJsonNet_DateModifiedUtcRetainsDateTimeKindUtc()
     {
-        //Arrange
+        // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
         var expected = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture).ToUniversalTime();
         var teacherAsJson = /*lang=json,strict*/ @"
@@ -193,11 +193,11 @@ public class EntityBaseTests
             ""DateModifiedUtc"": ""{Date}""
         }".Replace("{Date}", dateAsString);
 
-        //Act 
+        // Act 
         var teacher = JsonNet.JsonConvert.DeserializeObject<Teacher>(teacherAsJson);
         var result = teacher!.DateModifiedUtc!.Value;
 
-        //Assert
+        // Assert
         result.Should().Be(expected);
         result.Kind.Should().Be(DateTimeKind.Utc);
     }
@@ -205,7 +205,7 @@ public class EntityBaseTests
     [Test]
     public void EntityBase_FromJsonUsingTextJson_DateModifiedUtcRetainsDateTimeKindUtc()
     {
-        //Arrange
+        // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
         var expected = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture).ToUniversalTime();
         var teacherAsJson = /*lang=json,strict*/ @"
@@ -218,11 +218,11 @@ public class EntityBaseTests
             ""DateModifiedUtc"": ""{Date}""
         }".Replace("{Date}", dateAsString);
 
-        //Act 
+        // Act 
         var teacher = TextJson.JsonSerializer.Deserialize<Teacher>(teacherAsJson);
         var result = teacher!.DateModifiedUtc!.Value;
 
-        //Assert
+        // Assert
         result.Should().Be(expected);
         result.Kind.Should().Be(DateTimeKind.Utc);
     }

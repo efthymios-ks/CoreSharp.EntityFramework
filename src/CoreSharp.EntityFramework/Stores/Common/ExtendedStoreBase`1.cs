@@ -15,13 +15,13 @@ namespace CoreSharp.EntityFramework.Stores.Common;
 public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtendedStore<TEntity>
     where TEntity : class, IEntity
 {
-    //Constructors
+    // Constructors
     protected ExtendedStoreBase(DbContext dbContext)
         : base(dbContext)
     {
     }
 
-    //Methods 
+    // Methods 
     public virtual async Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
         _ = entities ?? throw new ArgumentNullException(nameof(entities));

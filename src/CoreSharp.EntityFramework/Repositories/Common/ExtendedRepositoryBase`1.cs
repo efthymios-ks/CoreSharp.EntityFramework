@@ -16,13 +16,13 @@ namespace CoreSharp.EntityFramework.Repositories.Common;
 public abstract class ExtendedRepositoryBase<TEntity> : RepositoryBase<TEntity>, IExtendedRepository<TEntity>
     where TEntity : class, IEntity
 {
-    //Constructors
+    // Constructors
     protected ExtendedRepositoryBase(DbContext dbContext)
         : base(dbContext)
     {
     }
 
-    //Methods 
+    // Methods 
     public virtual async Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
         _ = entities ?? throw new ArgumentNullException(nameof(entities));

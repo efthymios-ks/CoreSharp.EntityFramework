@@ -5,6 +5,6 @@
 /// </summary>
 public interface IUniqueEntity
 {
-    //Properties 
+    // Properties 
     object Id { get; set; }
 }

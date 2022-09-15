@@ -11,15 +11,15 @@ namespace CoreSharp.EntityFramework.Repositories.Common;
 /// <inheritdoc cref="IUnitOfWork"/>
 public abstract class UnitOfWorkBase : IUnitOfWork
 {
-    //Constructors
+    // Constructors
     protected UnitOfWorkBase(DbContext dbContext)
         => Context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
-    //Properties
+    // Properties
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     protected DbContext Context { get; }
 
-    //Methods   
+    // Methods   
     public virtual async Task CommitAsync(CancellationToken cancellationToken = default)
         => await Context.SaveChangesAsync(cancellationToken);
 

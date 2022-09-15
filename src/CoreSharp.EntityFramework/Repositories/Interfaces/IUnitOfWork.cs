@@ -8,7 +8,7 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces;
 
 public interface IUnitOfWork : IAsyncDisposable
 {
-    //Methods 
+    // Methods 
     /// <inheritdoc cref="DbContext.SaveChangesAsync(CancellationToken)" />
     Task CommitAsync(CancellationToken cancellationToken = default);
 

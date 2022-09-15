@@ -12,7 +12,7 @@ namespace CoreSharp.EntityFramework.DbContexts.Common;
 
 public abstract class DbContextBase : DbContext
 {
-    //Constructors
+    // Constructors
     protected DbContextBase(DbContextOptions options)
         : base(options)
     {
@@ -22,7 +22,7 @@ public abstract class DbContextBase : DbContext
     {
     }
 
-    //Methods 
+    // Methods 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -47,18 +47,18 @@ public abstract class DbContextBase : DbContext
 
     private static void ConfigureTrackableEntities(ModelBuilder modelBuilder)
     {
-        //Trackable entities
+        // Trackable entities
         var trackedEntities = modelBuilder.Model.FindEntityTypes(typeof(ITrackableEntity));
         foreach (var trackedEntity in trackedEntities)
         {
             var trackedEntityBuilder = modelBuilder.Entity(trackedEntity.Name);
 
-            //DateCreatedUtc
+            // DateCreatedUtc
             var dateCreatedProperty = trackedEntityBuilder
                 .Property(nameof(ITrackableEntity.DateCreatedUtc)) as PropertyBuilder<DateTime>;
             dateCreatedProperty.HasUtcConversion();
 
-            //DateModifiedUtc
+            // DateModifiedUtc
             var dateModifiedProperty = trackedEntityBuilder
                 .Property(nameof(ITrackableEntity.DateModifiedUtc)) as PropertyBuilder<DateTime?>;
             dateModifiedProperty.HasUtcConversion();

@@ -5,7 +5,7 @@ namespace Tests.Common;
 
 public abstract class DbContextTestsBase
 {
-    //Methods
+    // Methods
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
@@ -28,6 +28,6 @@ public abstract class DbContextTestsBase
     public async Task TearDownAsync()
         => await DbContext.Database.EnsureDeletedAsync();
 
-    //Properties
+    // Properties
     protected AppDbContext DbContext { get; set; }
 }

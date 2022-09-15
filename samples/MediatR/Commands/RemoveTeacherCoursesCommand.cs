@@ -9,24 +9,24 @@ namespace MediatR.Commands;
 
 public class RemoveTeacherCoursesCommand : IRequest<Teacher>
 {
-    //Constructors
+    // Constructors
     public RemoveTeacherCoursesCommand(Guid teacherId)
         => TeacherId = teacherId;
 
-    //Properties
+    // Properties
     public Guid TeacherId { get; }
 }
 
 public class RemoveTeacherCoursesCommandHandler : IRequestHandler<RemoveTeacherCoursesCommand, Teacher>
 {
-    //Fields 
+    // Fields 
     private readonly IAppUnitOfWork _appUnitOfWork;
 
-    //Constructors
+    // Constructors
     public RemoveTeacherCoursesCommandHandler(IAppUnitOfWork appUnitOfWork)
         => _appUnitOfWork = appUnitOfWork;
 
-    //Methods
+    // Methods
     public async Task<Teacher> Handle(RemoveTeacherCoursesCommand request, CancellationToken cancellationToken)
     {
         var teacher = await _appUnitOfWork.Teachers.GetAsync(request.TeacherId, q => q.Include(t => t.Courses), cancellationToken);

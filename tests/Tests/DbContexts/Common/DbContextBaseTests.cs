@@ -3,66 +3,66 @@
 [TestFixture]
 public class DbContextBaseTests : DbContextTestsBase
 {
-    //Methods
+    // Methods
     [Test]
     public async Task SaveChangesAsync_IUniqueEntityAdded_PrimaryKeyIsGeneratedAndReturned()
     {
-        //Arrange 
+        // Arrange 
         var teacher = new Teacher
         {
             Name = $"Teacher_{DateTime.Now.ToFileTimeUtc()}"
         };
 
-        //Act 
+        // Act 
         await DbContext.Teachers.AddAsync(teacher);
         await DbContext.SaveChangesAsync();
 
-        //Assert
+        // Assert
         teacher.Id.Should().NotBe(Guid.Empty);
     }
 
     [Test]
     public async Task SaveChangesAsync_ITrackableEntityAdded_SetsDateCreatedUtc()
     {
-        //Arrange 
+        // Arrange 
         var teacher = new Teacher
         {
             Name = $"Teacher_{DateTime.Now.ToFileTimeUtc()}"
         };
 
-        //Act 
+        // Act 
         var dateCreatedUtcBeforeAdding = teacher.DateCreatedUtc;
         await DbContext.Teachers.AddAsync(teacher);
         await DbContext.SaveChangesAsync();
         var dateCreatedUtcAfterAdding = teacher.DateCreatedUtc;
 
-        //Assert
+        // Assert
         dateCreatedUtcAfterAdding.Should().BeOnOrAfter(dateCreatedUtcBeforeAdding);
     }
 
     [Test]
     public async Task SaveChangesAsync_ITrackableEntityAdded_DateModifiedUtcIsUntouched()
     {
-        //Arrange 
+        // Arrange 
         var teacher = new Teacher
         {
             Name = $"Teacher_{DateTime.Now.ToFileTimeUtc()}"
         };
 
-        //Act 
+        // Act 
         var dateModifiedUtcBeforeAdding = teacher.DateModifiedUtc;
         await DbContext.Teachers.AddAsync(teacher);
         await DbContext.SaveChangesAsync();
         var dateModifiedUtcAfterAdding = teacher.DateModifiedUtc;
 
-        //Assert
+        // Assert
         dateModifiedUtcAfterAdding.Should().Be(dateModifiedUtcBeforeAdding);
     }
 
     [Test]
     public async Task SaveChangesAsync_ITrackableEntityUpdated_SetsDateModifiedUtc()
     {
-        //Arrange 
+        // Arrange 
         var teacher = new Teacher
         {
             Name = $"Teacher_{DateTime.Now.ToFileTimeUtc()}",
@@ -71,14 +71,14 @@ public class DbContextBaseTests : DbContextTestsBase
         await DbContext.Teachers.AddAsync(teacher);
         await DbContext.SaveChangesAsync();
 
-        //Act 
+        // Act 
         var dateModifiedUtcBeforeUpdating = teacher.DateModifiedUtc ?? DateTime.MinValue.ToUniversalTime();
         teacher.TeacherType = TeacherType.MiddleSchool;
         DbContext.Teachers.Update(teacher);
         await DbContext.SaveChangesAsync();
         var dateModifiedUtcAfterUpdating = teacher.DateModifiedUtc;
 
-        //Assert
+        // Assert
         dateModifiedUtcAfterUpdating.Should().NotBeNull();
         dateModifiedUtcAfterUpdating.Should().BeOnOrAfter(dateModifiedUtcBeforeUpdating);
     }
@@ -86,7 +86,7 @@ public class DbContextBaseTests : DbContextTestsBase
     [Test]
     public async Task SaveChangesAsync_ITrackableEntityUpdated_DateCreatedUtcIsUntouched()
     {
-        //Arrange 
+        // Arrange 
         var teacher = new Teacher
         {
             Name = $"Teacher_{DateTime.Now.ToFileTimeUtc()}",
@@ -95,14 +95,14 @@ public class DbContextBaseTests : DbContextTestsBase
         await DbContext.Teachers.AddAsync(teacher);
         await DbContext.SaveChangesAsync();
 
-        //Act 
+        // Act 
         var dateCreatedUtcBeforeUpdating = teacher.DateCreatedUtc;
         teacher.TeacherType = TeacherType.MiddleSchool;
         DbContext.Teachers.Update(teacher);
         await DbContext.SaveChangesAsync();
         var dateCreatedUtcAfterUpdating = teacher.DateCreatedUtc;
 
-        //Assert 
+        // Assert 
         dateCreatedUtcAfterUpdating.Should().Be(dateCreatedUtcBeforeUpdating);
     }
 }

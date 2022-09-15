@@ -9,24 +9,24 @@ namespace MediatR.Queries;
 
 public class GetTeacherByIdQuery : RepositoryNavigationBase<Teacher>, IRequest<Teacher>
 {
-    //Constructors
+    // Constructors
     public GetTeacherByIdQuery(Guid teacherId)
         => TeacherId = teacherId;
 
-    //Properties
+    // Properties
     public Guid TeacherId { get; }
 }
 
 public class GetTeacherByIdQueryHandler : IRequestHandler<GetTeacherByIdQuery, Teacher>
 {
-    //Fields
+    // Fields
     private readonly IAppUnitOfWork _appUnitOfWork;
 
-    //Constructors
+    // Constructors
     public GetTeacherByIdQueryHandler(IAppUnitOfWork appUnitOfWork)
         => _appUnitOfWork = appUnitOfWork;
 
-    //Methods
+    // Methods
     public async Task<Teacher> Handle(GetTeacherByIdQuery request, CancellationToken cancellationToken)
         => await _appUnitOfWork.Teachers.GetAsync(request.TeacherId, request.Navigation, cancellationToken);
 }

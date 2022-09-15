@@ -11,21 +11,21 @@ namespace App;
 /// </summary>
 internal static class Startup
 {
-    //Methods 
+    // Methods 
     public static IServiceProvider ConfigureServices()
     {
         var serviceCollection = new ServiceCollection();
 
-        //1. Add DbContext. 
+        // 1. Add DbContext. 
         serviceCollection.AddScoped<AppDbContext>();
 
-        //2a. Add Repositories or...
+        // 2a. Add Repositories or...
         serviceCollection.AddAppRepositories();
 
-        //2b. Add Stores. 
+        // 2b. Add Stores. 
         serviceCollection.AddAppStores();
 
-        //3. Optionally, Add MediatR.
+        // 3. Optionally, Add MediatR.
         serviceCollection.AddMediatR(typeof(AssemblyReferenceHook));
 
         return serviceCollection.BuildServiceProvider();

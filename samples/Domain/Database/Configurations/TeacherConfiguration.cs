@@ -8,7 +8,7 @@ namespace Domain.Database.Configurations;
 
 internal class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
 {
-    //Constructors
+    // Constructors
     public void Configure(EntityTypeBuilder<Teacher> builder)
     {
         _ = builder ?? throw new ArgumentNullException(nameof(builder));
@@ -17,13 +17,13 @@ internal class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
                .IsRequired()
                .HasMaxLength(100);
 
-        //Teachers - Courses > One-to-many
+        // Teachers - Courses > One-to-many
         builder.HasMany(teacher => teacher.Courses)
                .WithOne(course => course.Teacher)
                .HasForeignKey(course => course.TeacherId)
                .OnDelete(DeleteBehavior.Restrict);
 
-        //One enum 
+        // One enum 
         builder.HasEnum(teacher => teacher.TeacherType);
     }
 }

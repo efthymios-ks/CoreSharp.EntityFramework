@@ -6,7 +6,7 @@ namespace Domain.Database.Models;
 
 public class Course : EntityBase<Guid>
 {
-    //Properties
+    // Properties
     public string Name { get; set; }
     public Guid TeacherId { get; set; }
     public virtual Teacher Teacher { get; set; }

@@ -12,10 +12,10 @@ namespace CoreSharp.EntityFramework.Entities;
 [Table("__EFDataHistory")]
 public class EntityChange
 {
-    //Fields
+    // Fields
     private DateTime _dateCreated = DateTime.UtcNow;
 
-    //Properties
+    // Properties
     [Key]
     [Column(Order = 0)]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

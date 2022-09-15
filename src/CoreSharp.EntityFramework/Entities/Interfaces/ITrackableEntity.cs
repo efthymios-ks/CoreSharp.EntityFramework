@@ -4,7 +4,7 @@ namespace CoreSharp.EntityFramework.Entities.Interfaces;
 
 public interface ITrackableEntity
 {
-    //Properties
+    // Properties
     DateTime DateCreatedUtc { get; set; }
     DateTime? DateModifiedUtc { get; set; }
 }

@@ -14,7 +14,7 @@ namespace CoreSharp.EntityFramework.Extensions;
 /// </summary>
 public static class IServiceCollectionExtensions
 {
-    //Methods 
+    // Methods 
     #region Repositories
     /// <inheritdoc cref="AddRepositories(IServiceCollection, Assembly[])" />
     public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection)

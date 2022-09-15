@@ -8,7 +8,7 @@ namespace Domain.Extensions;
 /// </summary>
 internal static class DbContextOptionsBuilderExtensions
 {
-    //Methods
+    // Methods
     public static DbContextOptionsBuilder ConfigureSql(this DbContextOptionsBuilder optionsBuilder)
     {
         _ = optionsBuilder ?? throw new ArgumentNullException(nameof(optionsBuilder));

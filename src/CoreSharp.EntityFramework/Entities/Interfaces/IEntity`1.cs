@@ -2,6 +2,6 @@
 
 public interface IEntity<TKey> : IUniqueEntity<TKey>, IEntity
 {
-    //Properties
+    // Properties
     new TKey Id { get; set; }
 }

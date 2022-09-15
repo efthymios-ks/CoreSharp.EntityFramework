@@ -18,7 +18,7 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces;
 public interface IRepository<TEntity>
     where TEntity : class, IEntity
 {
-    //Methods
+    // Methods
     /// <summary>
     /// Get single entity by given key.
     /// </summary>

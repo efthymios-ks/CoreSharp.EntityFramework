@@ -11,7 +11,7 @@ namespace CoreSharp.EntityFramework.Entities;
 /// </summary>
 internal class TemporaryEntityChange
 {
-    //Constructors
+    // Constructors
     public TemporaryEntityChange(EntityEntry entry)
     {
         Entry = entry;
@@ -19,7 +19,7 @@ internal class TemporaryEntityChange
         Action = $"{Entry.State}";
     }
 
-    //Properties
+    // Properties
     public EntityEntry Entry { get; }
     public string TableName { get; }
     public string Action { get; }
@@ -28,7 +28,7 @@ internal class TemporaryEntityChange
     public IDictionary<string, object> NewState { get; } = new Dictionary<string, object>();
     public ICollection<PropertyEntry> TemporaryProperties { get; } = new HashSet<PropertyEntry>();
 
-    //Methods
+    // Methods
     public EntityChange ToEntityChange()
         => new()
         {

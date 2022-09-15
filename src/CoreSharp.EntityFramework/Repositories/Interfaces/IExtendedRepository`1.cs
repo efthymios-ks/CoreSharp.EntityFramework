@@ -13,7 +13,7 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces;
 public interface IExtendedRepository<TEntity> : IRepository<TEntity>
     where TEntity : class, IEntity
 {
-    //Methods 
+    // Methods 
     /// <inheritdoc cref="IRepository{TEntity}.AddAsync(TEntity, CancellationToken)" />
     Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
 

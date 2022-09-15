@@ -11,7 +11,7 @@ namespace CoreSharp.EntityFramework.Entities.Common;
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
 public abstract class EntityBase<TKey> : IEntity<TKey>
 {
-    //Fields 
+    // Fields 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     [TextJson.Serialization.JsonIgnore]
     [JsonNet.JsonIgnore]
@@ -22,7 +22,7 @@ public abstract class EntityBase<TKey> : IEntity<TKey>
     [JsonNet.JsonIgnore]
     private DateTime? _dateModifiedUtc;
 
-    //Properties 
+    // Properties 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     [TextJson.Serialization.JsonIgnore]
     [JsonNet.JsonIgnore]
@@ -58,7 +58,7 @@ public abstract class EntityBase<TKey> : IEntity<TKey>
         set => _dateModifiedUtc = value is null ? null : SetDateTimeKindToUtc(value.Value);
     }
 
-    //Methods 
+    // Methods 
     public override string ToString()
         => $"{Id}";
 

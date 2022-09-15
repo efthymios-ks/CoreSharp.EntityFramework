@@ -6,7 +6,7 @@ namespace Domain.Database.Repositories;
 
 public class TeacherRepository : ExtendedRepositoryBase<Teacher>, ITeacherRepository
 {
-    //Constructors
+    // Constructors
     public TeacherRepository(AppDbContext schoolDbContext)
         : base(schoolDbContext)
     {

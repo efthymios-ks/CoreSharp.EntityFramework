@@ -10,7 +10,7 @@ namespace CoreSharp.EntityFramework.Entities.Concrete;
 public sealed class EnumShadowEntity<TEnum>
     where TEnum : Enum
 {
-    //Constructors
+    // Constructors
     public EnumShadowEntity()
     {
     }
@@ -21,7 +21,7 @@ public sealed class EnumShadowEntity<TEnum>
         Name = $"{value}";
     }
 
-    //Properties
+    // Properties
     [Key]
     [Column(Order = 0)]
     public TEnum Value { get; set; }

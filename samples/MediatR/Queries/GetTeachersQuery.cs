@@ -13,14 +13,14 @@ public class GetTeachersQuery : RepositoryNavigationBase<Teacher>, IRequest<IEnu
 
 public class GetTeachersQueryHandler : IRequestHandler<GetTeachersQuery, IEnumerable<Teacher>>
 {
-    //Fields
+    // Fields
     private readonly IAppUnitOfWork _appUnitOfWork;
 
-    //Constructors
+    // Constructors
     public GetTeachersQueryHandler(IAppUnitOfWork appUnitOfWork)
         => _appUnitOfWork = appUnitOfWork;
 
-    //Methods
+    // Methods
     public async Task<IEnumerable<Teacher>> Handle(GetTeachersQuery request, CancellationToken cancellationToken)
         => await _appUnitOfWork.Teachers.GetAsync(navigation: request.Navigation, cancellationToken: cancellationToken);
 }

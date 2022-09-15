@@ -22,7 +22,7 @@ internal static class DbSetExtensions
         _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
         _ = entities ?? throw new ArgumentNullException(nameof(entities));
 
-        //Mutate reference to allow EF to write back auto-generated id 
+        // Mutate reference to allow EF to write back auto-generated id 
         var mutatedEntities = entities.ToArray();
         await dbSet.AddRangeAsync(mutatedEntities, cancellationToken);
         return mutatedEntities;
@@ -151,7 +151,7 @@ internal static class DbSetExtensions
         CancellationToken cancellationToken = default)
         where TEntity : class, IEntity
     {
-        //Get all id in single query 
+        // Get all id in single query 
         var idsToLookFor = entities.Select(e => e.Id)
                                    .Distinct();
         var idsFound = await dbSet.Where(e => idsToLookFor.Contains(e.Id))
@@ -161,7 +161,7 @@ internal static class DbSetExtensions
         bool EntityExists(TEntity entity)
             => Array.Exists(idsFound, id => Equals(id, entity.Id));
 
-        //Save entities in batches 
+        // Save entities in batches 
         var entitiesToUpdate = entities.Where(EntityExists);
         var entitiesToAdd = entities.Except(entitiesToUpdate);
         var entitiesAdded = await addAction(entitiesToAdd);

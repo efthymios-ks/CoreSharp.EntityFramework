@@ -6,7 +6,7 @@ namespace Domain.Database.Stores;
 
 public class CourseStore : StoreBase<Course>, ICourseStore
 {
-    //Constructors 
+    // Constructors 
     public CourseStore(AppDbContext appDbContext)
         : base(appDbContext)
     {

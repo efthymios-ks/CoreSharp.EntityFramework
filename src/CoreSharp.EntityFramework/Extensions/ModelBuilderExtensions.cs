@@ -13,11 +13,11 @@ namespace CoreSharp.EntityFramework.Extensions;
 /// </summary>
 public static class ModelBuilderExtensions
 {
-    //Fields
+    // Fields
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private static Pluralizer _pluralizer;
 
-    //Methods
+    // Methods
     /// <inheritdoc cref="HasEnum{TEnum}(ModelBuilder, string)" />
     public static ModelBuilder HasEnum<TEnum>(this ModelBuilder builder)
         where TEnum : Enum

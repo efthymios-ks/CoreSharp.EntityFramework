@@ -8,7 +8,7 @@ namespace Domain.Database.Configurations;
 
 internal class CourseConfiguration : IEntityTypeConfiguration<Course>
 {
-    //Constructors
+    // Constructors
     public void Configure(EntityTypeBuilder<Course> builder)
     {
         _ = builder ?? throw new ArgumentNullException(nameof(builder));
@@ -17,7 +17,7 @@ internal class CourseConfiguration : IEntityTypeConfiguration<Course>
                .IsRequired()
                .HasMaxLength(100);
 
-        //Many-to-many enums
+        // Many-to-many enums
         builder.HasEnums(course => course.Fields);
     }
 }

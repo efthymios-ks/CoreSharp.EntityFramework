@@ -7,17 +7,17 @@ namespace Domain.Database.UnitOfWorks;
 
 public class AppUnitOfWork : UnitOfWorkBase, IAppUnitOfWork
 {
-    //Fields 
+    // Fields 
     private ICourseRepository _courses;
     private ITeacherRepository _teachers;
 
-    //Constructors
+    // Constructors
     public AppUnitOfWork(AppDbContext schoolDbContext)
         : base(schoolDbContext)
     {
     }
 
-    //Properties
+    // Properties
     public ICourseRepository Courses
         => _courses ??= new CourseRepository(Context as AppDbContext);
     public ITeacherRepository Teachers

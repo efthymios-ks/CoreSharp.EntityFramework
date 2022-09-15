@@ -11,13 +11,13 @@ namespace CoreSharp.EntityFramework.Stores.Common;
 public abstract class StoreBase<TEntity> : RepositoryBase<TEntity>, IStore<TEntity>
     where TEntity : class, IEntity
 {
-    //Constructors
+    // Constructors
     protected StoreBase(DbContext dbContext)
         : base(dbContext)
     {
     }
 
-    //Methods 
+    // Methods 
     public override async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         _ = entity ?? throw new ArgumentNullException(nameof(entity));

@@ -7,7 +7,7 @@ namespace Domain.Database.Configurations;
 
 internal class StudentConfiguration : IEntityTypeConfiguration<Student>
 {
-    //Constructors
+    // Constructors
     public void Configure(EntityTypeBuilder<Student> builder)
     {
         _ = builder ?? throw new ArgumentNullException(nameof(builder));
@@ -16,14 +16,14 @@ internal class StudentConfiguration : IEntityTypeConfiguration<Student>
                .IsRequired()
                .HasMaxLength(100);
 
-        //Student - Address > One-to-one
+        // Student - Address > One-to-one
         builder.HasOne(student => student.Address)
                .WithOne(address => address.Student)
                .HasForeignKey<Student>(student => student.AddressId)
                .HasPrincipalKey<StudentAddress>(address => address.StudentId)
                .OnDelete(DeleteBehavior.Restrict);
 
-        //Student - Courses > Many-to-many 
+        // Student - Courses > Many-to-many 
         builder.HasMany(s => s.Courses)
                .WithMany(c => c.Students)
                .UsingEntity(join => join.ToTable("StudentsCourses"));

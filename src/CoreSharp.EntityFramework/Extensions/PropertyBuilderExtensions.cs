@@ -65,7 +65,7 @@ public static class PropertyBuilderExtensions
         var comparer = new ValueComparer<TProperty>(
             (left, right) => toJson(left) == toJson(right),
             value => value == null ? 0 : value.GetHashCode(),
-            value => fromJson(toJson(value)));  //Clone 
+            value => fromJson(toJson(value)));  // Clone 
 
         builder.HasConversion(converter);
         builder.Metadata.SetValueConverter(converter);
@@ -87,7 +87,7 @@ public static class PropertyBuilderExtensions
         var comparer = new ValueComparer<DateTime>(
             (left, right) => left == right,
             value => value.GetHashCode(),
-            value => value  //DateTime is a struct, so an assignment will copy the value. 
+            value => value  // DateTime is a struct, so an assignment will copy the value. 
         );
 
         builder.HasConversion(converter);
@@ -112,7 +112,7 @@ public static class PropertyBuilderExtensions
         var comparer = new ValueComparer<DateTime?>(
             (left, right) => Equals(left, right),
             value => value == null ? 0 : value.Value.GetHashCode(),
-            value => value  //DateTime is a struct, so an assignment will copy the value. 
+            value => value  // DateTime is a struct, so an assignment will copy the value. 
         );
 
         builder.HasConversion(converter);

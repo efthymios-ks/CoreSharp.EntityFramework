@@ -8,24 +8,24 @@ namespace MediatR.Commands;
 
 public class UpdateTeacherCommand : IRequest<Teacher>
 {
-    //Constructors
+    // Constructors
     public UpdateTeacherCommand(Teacher teacher)
         => Teacher = teacher ?? throw new ArgumentNullException(nameof(teacher));
 
-    //Properties
+    // Properties
     public Teacher Teacher { get; }
 }
 
 public class UpdateTeacherCommandHandler : IRequestHandler<UpdateTeacherCommand, Teacher>
 {
-    //Fields
+    // Fields
     private readonly ITeacherStore _teacherStore;
 
-    //Constructors
+    // Constructors
     public UpdateTeacherCommandHandler(ITeacherStore teacherStore)
         => _teacherStore = teacherStore;
 
-    //Methods
+    // Methods
     public async Task<Teacher> Handle(UpdateTeacherCommand request, CancellationToken cancellationToken)
     {
         _ = request.Teacher ?? throw new ArgumentException($"{nameof(request.Teacher)} cannot be null.", nameof(request));

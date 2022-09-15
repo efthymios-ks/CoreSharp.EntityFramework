@@ -8,7 +8,7 @@ namespace Domain.Database;
 
 public class AppDbContext : TrackableDbContextBase
 {
-    //Constructors
+    // Constructors
     public AppDbContext()
     {
     }
@@ -18,13 +18,13 @@ public class AppDbContext : TrackableDbContextBase
     {
     }
 
-    //Properties
+    // Properties
     public DbSet<Teacher> Teachers { get; set; }
     public DbSet<Student> Students { get; set; }
     public DbSet<StudentAddress> StudentAddresses { get; set; }
     public DbSet<Course> Courses { get; set; }
 
-    //Methods
+    // Methods
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -33,7 +33,7 @@ public class AppDbContext : TrackableDbContextBase
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //Always call base method 
+        // Always call base method 
         base.OnModelCreating(modelBuilder);
 
         ConfigureEnums(modelBuilder);

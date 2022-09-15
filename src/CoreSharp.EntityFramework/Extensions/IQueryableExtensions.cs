@@ -19,7 +19,7 @@ public static class IQueryableExtensions
     /// </summary>
     public static Task<Page<TEntity>> GetPageAsync<TEntity>(this IQueryable<TEntity> query, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
-        //Validate args 
+        // Validate args 
         _ = query ?? throw new ArgumentNullException(nameof(query));
         if (pageNumber < 0)
             throw new ArgumentOutOfRangeException(nameof(pageNumber), $"{nameof(pageNumber)} has to be positive.");
@@ -31,7 +31,7 @@ public static class IQueryableExtensions
 
     private static async Task<Page<TEntity>> GetPageInternalAsync<TEntity>(this IQueryable<TEntity> query, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
-        //Calculate and paginate 
+        // Calculate and paginate 
         var pagedQuery = query.GetPage(pageNumber, pageSize);
         TEntity[] items;
         int totalItems;
@@ -48,7 +48,7 @@ public static class IQueryableExtensions
 
         var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
-        //Return
+        // Return
         return new(pageNumber, pageSize, totalItems, totalPages, items);
     }
 }
