@@ -48,10 +48,10 @@ public abstract class DbContextBase : DbContext
     private static void ConfigureTrackableEntities(ModelBuilder modelBuilder)
     {
         // Trackable entities
-        var trackedEntities = modelBuilder.Model.FindEntityTypes(typeof(ITrackableEntity));
-        foreach (var trackedEntity in trackedEntities)
+        var trackableEntities = modelBuilder.Model.FindEntityTypes(typeof(ITrackableEntity));
+        foreach (var trackableEntity in trackableEntities)
         {
-            var trackedEntityBuilder = modelBuilder.Entity(trackedEntity.Name);
+            var trackedEntityBuilder = modelBuilder.Entity(trackableEntity.Name);
 
             // DateCreatedUtc
             var dateCreatedProperty = trackedEntityBuilder

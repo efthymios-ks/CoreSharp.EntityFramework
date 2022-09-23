@@ -9,7 +9,7 @@ namespace CoreSharp.EntityFramework.Entities;
 /// <summary>
 /// For internal, temporary use only.
 /// </summary>
-internal class TemporaryEntityChange
+internal sealed class TemporaryEntityChange
 {
     // Constructors
     public TemporaryEntityChange(EntityEntry entry)
@@ -40,5 +40,5 @@ internal class TemporaryEntityChange
         };
 
     private static string SerializeDictionary(IDictionary<string, object> dictionary)
-        => dictionary?.Any() is true ? JsonSerializer.Serialize(dictionary) : null;
+        => dictionary.Any() ? JsonSerializer.Serialize(dictionary) : null;
 }

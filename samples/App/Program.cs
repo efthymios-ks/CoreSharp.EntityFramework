@@ -25,7 +25,7 @@ async Task<Teacher> GetFirstTeacherAsync(IMediator mediatR)
 {
     var query = new GetTeachersQuery
     {
-        Navigation = q => q.Include(t => t.Courses)
+        Navigation = q => q.Include(teacher => teacher.Courses)
     };
     return (await mediatR.Send(query)).FirstOrDefault();
 }

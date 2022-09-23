@@ -10,7 +10,7 @@ using TextJsonConverters = CoreSharp.Json.TextJson.JsonConverters;
 namespace CoreSharp.EntityFramework.Entities;
 
 [Table("__EFDataHistory")]
-public class EntityChange
+public sealed class EntityChange
 {
     // Fields
     private DateTime _dateCreated = DateTime.UtcNow;

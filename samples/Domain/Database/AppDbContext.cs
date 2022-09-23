@@ -10,6 +10,7 @@ public class AppDbContext : TrackableDbContextBase
 {
     // Constructors
     public AppDbContext()
+        : base()
     {
     }
 
