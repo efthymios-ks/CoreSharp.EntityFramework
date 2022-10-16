@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Database;
 
-public class AppDbContext : TrackableDbContextBase
+public class AppDbContext : AuditableDbContextBase
 {
     // Constructors
     public AppDbContext()

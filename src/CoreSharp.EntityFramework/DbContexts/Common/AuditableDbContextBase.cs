@@ -1,7 +1,9 @@
 ﻿using CoreSharp.EntityFramework.Entities;
 using CoreSharp.EntityFramework.Entities.Interfaces;
+using CoreSharp.EntityFramework.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +12,15 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.DbContexts.Common;
 
-public abstract class TrackableDbContextBase : DbContextBase
+public abstract class AuditableDbContextBase : DbContext
 {
     // Constructors
-    protected TrackableDbContextBase(DbContextOptions options)
+    protected AuditableDbContextBase(DbContextOptions options)
         : base(options)
     {
     }
 
-    protected TrackableDbContextBase()
+    protected AuditableDbContextBase()
         : base()
     {
     }
@@ -27,6 +29,13 @@ public abstract class TrackableDbContextBase : DbContextBase
     public DbSet<EntityChange> DataChanges { get; set; }
 
     // Methods 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        ConfigureTrackableEntities(modelBuilder);
+    }
+
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         var temporaryEntityChanges = OnBeforeSaveChanges();
@@ -44,7 +53,10 @@ public abstract class TrackableDbContextBase : DbContextBase
     }
 
     private TemporaryEntityChange[] OnBeforeSaveChanges()
-        => CacheChangesBeforeSave();
+    {
+        UpdateTrackableEntities();
+        return CacheChangesBeforeSave();
+    }
 
     private void OnAfterSaveChanges(bool acceptAllChangesOnSuccess, TemporaryEntityChange[] temporaryEntityChanges)
     {
@@ -60,6 +72,47 @@ public abstract class TrackableDbContextBase : DbContextBase
         await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 
+    private static void ConfigureTrackableEntities(ModelBuilder modelBuilder)
+    {
+        // Trackable entities
+        var trackableEntities = modelBuilder.Model.FindEntityTypes(typeof(IAuditableEntity));
+        foreach (var trackableEntity in trackableEntities)
+        {
+            var trackedEntityBuilder = modelBuilder.Entity(trackableEntity.Name);
+
+            // DateCreatedUtc
+            var dateCreatedProperty = trackedEntityBuilder
+                .Property(nameof(IAuditableEntity.DateCreatedUtc)) as PropertyBuilder<DateTime>;
+            dateCreatedProperty.HasUtcConversion();
+
+            // DateModifiedUtc
+            var dateModifiedProperty = trackedEntityBuilder
+                .Property(nameof(IAuditableEntity.DateModifiedUtc)) as PropertyBuilder<DateTime?>;
+            dateModifiedProperty.HasUtcConversion();
+        }
+    }
+
+    private void UpdateTrackableEntities()
+    {
+        var trackableEntries = ChangeTracker.Entries().Where(e => e.Entity is IAuditableEntity);
+        foreach (var trackableEntry in trackableEntries)
+        {
+            var trackableEntity = trackableEntry.Entity as IAuditableEntity;
+
+            switch (trackableEntry.State)
+            {
+                case EntityState.Added:
+                    trackableEntity.DateCreatedUtc = DateTime.UtcNow;
+                    trackableEntry.Property(nameof(IAuditableEntity.DateModifiedUtc)).IsModified = false;
+                    break;
+                case EntityState.Modified:
+                    trackableEntity.DateModifiedUtc = DateTime.UtcNow;
+                    trackableEntry.Property(nameof(IAuditableEntity.DateCreatedUtc)).IsModified = false;
+                    break;
+            }
+        }
+    }
+
     private TemporaryEntityChange[] CacheChangesBeforeSave()
     {
         // Force scan for changes to be sure.
@@ -69,7 +122,7 @@ public abstract class TrackableDbContextBase : DbContextBase
         {
             if (entry.Entity is EntityChange)
                 return false;
-            else if (entry.Entity is not ITrackableEntity)
+            else if (entry.Entity is not IAuditableEntity)
                 return false;
             else if (entry.State is EntityState.Unchanged or EntityState.Detached)
                 return false;
@@ -85,9 +138,9 @@ public abstract class TrackableDbContextBase : DbContextBase
         static bool PropertyEntryFilter(PropertyEntry entry)
         {
             var propertyName = entry.Metadata.Name;
-            if (propertyName == nameof(ITrackableEntity.DateCreatedUtc))
+            if (propertyName == nameof(IAuditableEntity.DateCreatedUtc))
                 return false;
-            else if (propertyName == nameof(ITrackableEntity.DateModifiedUtc))
+            else if (propertyName == nameof(IAuditableEntity.DateModifiedUtc))
                 return false;
 
             return true;
