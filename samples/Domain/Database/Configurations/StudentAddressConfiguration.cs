@@ -5,7 +5,7 @@ using System;
 
 namespace Domain.Database.Configurations;
 
-internal class StudentAddressConfiguration : IEntityTypeConfiguration<StudentAddress>
+internal sealed class StudentAddressConfiguration : IEntityTypeConfiguration<StudentAddress>
 {
     // Constructors
     public void Configure(EntityTypeBuilder<StudentAddress> builder)

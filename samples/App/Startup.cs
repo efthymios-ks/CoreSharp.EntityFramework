@@ -26,7 +26,8 @@ internal static class Startup
         serviceCollection.AddAppStores();
 
         // 3. Optionally, Add MediatR.
-        serviceCollection.AddMediatR(typeof(AssemblyReferenceHook));
+        serviceCollection.AddMediatR(
+            config => config.RegisterServicesFromAssembly(typeof(AssemblyReferenceHook).Assembly));
 
         return serviceCollection.BuildServiceProvider();
     }

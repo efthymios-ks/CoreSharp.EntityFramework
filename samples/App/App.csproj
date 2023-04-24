@@ -2,7 +2,7 @@
 
 	<PropertyGroup Label="Package">
 		<AssemblyName>CoreSharp.EntityFramework.Samples.App</AssemblyName>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<ApplicationIcon />
 		<OutputType>Exe</OutputType>
 		<StartupObject />
@@ -12,8 +12,7 @@
 	</PropertyGroup>
 
 	<ItemGroup Label="Package references">
-		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.9">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<TreatAsUsed>true</TreatAsUsed>

@@ -1,6 +1,6 @@
-﻿using CoreSharp.EntityFramework.Repositories.Interfaces;
+﻿using CoreSharp.DependencyInjection.Extensions;
+using CoreSharp.EntityFramework.Repositories.Interfaces;
 using CoreSharp.EntityFramework.Stores.Interfaces;
-using CoreSharp.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ public static class IServiceCollectionExtensions
     public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
         => serviceCollection.AddRepositories(assemblies?.ToArray());
 
-    /// <inheritdoc cref="CoreSharp.Extensions.IServiceCollectionExtensions.AddServices(IServiceCollection, Type, Assembly[])" />
+    /// <inheritdoc cref="DependencyInjection.Extensions.IServiceCollectionExtensions.AddServices(IServiceCollection, Assembly[])" />
     public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, params Assembly[] assemblies)
         => serviceCollection.AddServices(typeof(IRepository<>), assemblies);
     #endregion
@@ -38,7 +38,7 @@ public static class IServiceCollectionExtensions
     public static IServiceCollection AddStores(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
         => serviceCollection.AddStores(assemblies?.ToArray());
 
-    /// <inheritdoc cref="CoreSharp.Extensions.IServiceCollectionExtensions.AddServices(IServiceCollection, Type, Assembly[])" />
+    /// <inheritdoc cref="DependencyInjection.Extensions.IServiceCollectionExtensions.AddServices(IServiceCollection, Type, Assembly[])" />
     public static IServiceCollection AddStores(this IServiceCollection serviceCollection, params Assembly[] assemblies)
         => serviceCollection.AddServices(typeof(IStore<>), assemblies);
     #endregion
@@ -52,7 +52,7 @@ public static class IServiceCollectionExtensions
     public static IServiceCollection AddExtendedRepositories(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
         => serviceCollection.AddExtendedRepositories(assemblies?.ToArray());
 
-    /// <inheritdoc cref="CoreSharp.Extensions.IServiceCollectionExtensions.AddServices(IServiceCollection, Type, Assembly[])" />
+    /// <inheritdoc cref="DependencyInjection.Extensions.IServiceCollectionExtensions.AddServices(IServiceCollection, Type, Assembly[])" />
     public static IServiceCollection AddExtendedRepositories(this IServiceCollection serviceCollection, params Assembly[] assemblies)
         => serviceCollection.AddServices(typeof(IExtendedRepository<>), assemblies);
     #endregion
@@ -66,7 +66,7 @@ public static class IServiceCollectionExtensions
     public static IServiceCollection AddExtendedStores(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
         => serviceCollection.AddExtendedStores(assemblies?.ToArray());
 
-    /// <inheritdoc cref="CoreSharp.Extensions.IServiceCollectionExtensions.AddServices(IServiceCollection, Type, Assembly[])" />
+    /// <inheritdoc cref="DependencyInjection.Extensions.IServiceCollectionExtensions.AddServices(IServiceCollection, Type, Assembly[])" />
     public static IServiceCollection AddExtendedStores(this IServiceCollection serviceCollection, params Assembly[] assemblies)
         => serviceCollection.AddServices(typeof(IExtendedStore<>), assemblies);
     #endregion

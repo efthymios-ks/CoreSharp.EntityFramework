@@ -44,7 +44,7 @@ public abstract class ExtendedRepositoryBase<TEntity> : RepositoryBase<TEntity>,
         await Table.RemoveManyAsync(entities);
     }
 
-    public virtual async Task RemoveByAsync(object key, CancellationToken cancellationToken = default)
+    public virtual async Task RemoveByKeyAsync(object key, CancellationToken cancellationToken = default)
     {
         _ = key ?? throw new ArgumentNullException(nameof(key));
 

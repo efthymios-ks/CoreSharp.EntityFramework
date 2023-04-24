@@ -24,7 +24,7 @@ public interface IExtendedRepository<TEntity> : IRepository<TEntity>
     Task RemoveAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
 
     /// <inheritdoc cref="IRepository{TEntity}.RemoveAsync(TEntity, CancellationToken)" />
-    Task RemoveByAsync(object key, CancellationToken cancellationToken = default);
+    Task RemoveByKeyAsync(object key, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Check any entity exists with given id.

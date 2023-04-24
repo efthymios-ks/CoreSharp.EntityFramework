@@ -6,7 +6,7 @@ using System;
 
 namespace Domain.Database.Configurations;
 
-internal class CourseConfiguration : IEntityTypeConfiguration<Course>
+internal sealed class CourseConfiguration : IEntityTypeConfiguration<Course>
 {
     // Constructors
     public void Configure(EntityTypeBuilder<Course> builder)

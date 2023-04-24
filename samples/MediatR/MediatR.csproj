@@ -2,13 +2,13 @@
 
 	<PropertyGroup Label="Package">
 		<AssemblyName>CoreSharp.EntityFramework.Samples.MediatR</AssemblyName>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<Authors>Efthymios Koktsidis</Authors>
 		<Product>Efthymios Koktsidis</Product>
 	</PropertyGroup>
 
 	<ItemGroup Label="Package references">
-		<PackageReference Include="MediatR" Version="10.0.1" />
+		<PackageReference Include="MediatR" Version="12.0.1" />
 	</ItemGroup>
 
 	<ItemGroup Label="Project references">

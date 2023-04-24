@@ -48,7 +48,7 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
         await Context.SaveChangesAsync(cancellationToken);
     }
 
-    public virtual async Task RemoveByAsync(object key, CancellationToken cancellationToken = default)
+    public virtual async Task RemoveByKeyAsync(object key, CancellationToken cancellationToken = default)
     {
         _ = key ?? throw new ArgumentNullException(nameof(key));
 

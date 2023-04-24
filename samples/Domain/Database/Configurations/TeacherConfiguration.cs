@@ -6,7 +6,7 @@ using System;
 
 namespace Domain.Database.Configurations;
 
-internal class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
+internal sealed class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
 {
     // Constructors
     public void Configure(EntityTypeBuilder<Teacher> builder)
