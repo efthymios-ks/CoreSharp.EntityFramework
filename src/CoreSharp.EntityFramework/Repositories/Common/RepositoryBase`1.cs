@@ -32,7 +32,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
         _ = key ?? throw new ArgumentNullException(nameof(key));
 
         var query = NavigateTable(navigation);
-        return await query.SingleOrDefaultAsync(i => Equals(i.Id, key), cancellationToken);
+        return await query.SingleOrDefaultAsync(e => Equals(e.Id, key), cancellationToken);
     }
 
     public virtual async Task<IEnumerable<TEntity>> GetAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default)

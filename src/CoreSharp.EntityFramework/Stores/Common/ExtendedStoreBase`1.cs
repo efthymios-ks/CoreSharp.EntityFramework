@@ -52,9 +52,8 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
     {
         _ = key ?? throw new ArgumentNullException(nameof(key));
 
-        var entity = await GetAsync(key, cancellationToken: cancellationToken);
-        _ = entity ?? throw new KeyNotFoundException($"Could not find entity with key=`{key}`.");
-        await base.RemoveAsync(entity, cancellationToken);
+        await Context.Set<TEntity>()
+                     .RemoveByKeyAsync(key, cancellationToken);
     }
 
     public virtual async Task<bool> ExistsAsync(object key, CancellationToken cancellationToken = default)

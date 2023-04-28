@@ -168,4 +168,17 @@ internal static class DbSetExtensions
         var entitiesUpdated = await updateAction(entitiesToUpdate);
         return entitiesAdded.Concat(entitiesUpdated);
     }
+
+    public static async Task<int> RemoveByKeyAsync<TEntity>(
+        this DbSet<TEntity> dbSet,
+        object key,
+        CancellationToken cancellationToken = default)
+        where TEntity : class, IEntity
+    {
+        _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
+        _ = key ?? throw new ArgumentNullException(nameof(key));
+
+        return await dbSet.Where(e => Equals(e.Id, key))
+                          .ExecuteDeleteAsync(cancellationToken);
+    }
 }

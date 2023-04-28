@@ -2,7 +2,7 @@
 
 	<PropertyGroup Label="Package">
 		<TargetFramework>net7.0</TargetFramework>
-		<Version>7.0.0</Version>
+		<Version>7.1.0</Version>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
 		<Authors>Efthymios Koktsidis</Authors>
@@ -13,9 +13,7 @@
 		<RepositoryUrl>https://github.com/efthymios-ks/CoreSharp.EntityFramework</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>EF, Entity Framework, Database</PackageTags>
-		<PackageReleaseNotes>-Seal classes.
--DbContext, Refactored to `AuditableDbContextBase`.
--Migrated to .NET 7.		</PackageReleaseNotes>
+		<PackageReleaseNotes>-Repositories, Extended, RemoveByKey, Avoid loading entity in memory.</PackageReleaseNotes>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageIconUrl />
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
