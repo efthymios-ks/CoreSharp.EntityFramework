@@ -111,7 +111,10 @@ public abstract class ExtendedRepositoryBase<TEntity> : RepositoryBase<TEntity>,
         _ = entity ?? throw new ArgumentNullException(nameof(entity));
 
         if (await ExistsAsync(entity.Id, cancellationToken))
+        {
             entity = await UpdateAsync(entity, cancellationToken);
+        }
+
         return entity;
     }
 

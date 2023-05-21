@@ -29,7 +29,9 @@ public class AppDbContext : AuditableDbContextBase
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
+        {
             optionsBuilder.ConfigureSql();
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

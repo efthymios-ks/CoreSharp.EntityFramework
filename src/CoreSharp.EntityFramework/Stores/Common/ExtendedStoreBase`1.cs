@@ -117,7 +117,10 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
         _ = entity ?? throw new ArgumentNullException(nameof(entity));
 
         if (await ExistsAsync(entity.Id, cancellationToken))
+        {
             entity = await UpdateAsync(entity, cancellationToken);
+        }
+
         return entity;
     }
 

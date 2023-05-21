@@ -49,7 +49,9 @@ async Task<Teacher> UpdateTeacherAsync(IMediator mediatR, Teacher teacher)
 async Task<Teacher> RemoveTeacherCoursesAsync(IMediator mediatR, Teacher teacher)
 {
     if (teacher.Courses.Count == 0)
+    {
         return teacher;
+    }
 
     var command = new RemoveTeacherCoursesCommand(teacher.Id);
     return await mediatR.Send(command);

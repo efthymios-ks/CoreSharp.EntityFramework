@@ -36,7 +36,9 @@ public static class ModelBuilderExtensions
     {
         _ = builder ?? throw new ArgumentNullException(nameof(builder));
         if (string.IsNullOrWhiteSpace(tableName))
+        {
             throw new ArgumentNullException(nameof(tableName));
+        }
 
         builder.ConfigureEnum<TEnum>(tableName);
         builder.SeedEnum<TEnum>();
@@ -51,7 +53,9 @@ public static class ModelBuilderExtensions
     {
         _ = builder ?? throw new ArgumentNullException(nameof(builder));
         if (string.IsNullOrWhiteSpace(tableName))
+        {
             throw new ArgumentNullException(nameof(tableName));
+        }
 
         var entityBuilder = builder.Entity<EnumShadowEntity<TEnum>>();
         entityBuilder.ToTable(tableName);
@@ -74,6 +78,8 @@ public static class ModelBuilderExtensions
                           .Select(v => new EnumShadowEntity<TEnum>(v));
         var entityBuilder = builder.Entity<EnumShadowEntity<TEnum>>();
         foreach (var entry in entries)
+        {
             entityBuilder.HasData(entry);
+        }
     }
 }

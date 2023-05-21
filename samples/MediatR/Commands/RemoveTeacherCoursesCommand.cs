@@ -33,10 +33,15 @@ public class RemoveTeacherCoursesCommandHandler : IRequestHandler<RemoveTeacherC
         _ = teacher ?? throw new ArgumentOutOfRangeException($"{nameof(Teacher)} with {nameof(Teacher.Id)}=`{request.TeacherId}` not found.");
 
         if (teacher.Courses.Count == 0)
+        {
             return teacher;
+        }
 
         foreach (var course in teacher.Courses)
+        {
             await _appUnitOfWork.Courses.RemoveAsync(course, cancellationToken);
+        }
+
         teacher.Courses.Clear();
         await _appUnitOfWork.Teachers.UpdateAsync(teacher, cancellationToken);
         await _appUnitOfWork.CommitAsync(cancellationToken);

@@ -22,9 +22,14 @@ public static class IQueryableExtensions
         // Validate args 
         _ = query ?? throw new ArgumentNullException(nameof(query));
         if (pageNumber < 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(pageNumber), $"{nameof(pageNumber)} has to be positive.");
+        }
+
         if (pageSize <= 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(pageSize), $"{nameof(pageSize)} has to be positive and non-zero.");
+        }
 
         return GetPageInternalAsync(query, pageNumber, pageSize, cancellationToken);
     }

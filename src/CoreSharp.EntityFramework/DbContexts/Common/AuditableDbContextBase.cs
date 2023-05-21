@@ -121,11 +121,17 @@ public abstract class AuditableDbContextBase : DbContext
         static bool EntityEntryFilter(EntityEntry entry)
         {
             if (entry.Entity is EntityChange)
+            {
                 return false;
+            }
             else if (entry.Entity is not IAuditableEntity)
+            {
                 return false;
+            }
             else if (entry.State is EntityState.Unchanged or EntityState.Detached)
+            {
                 return false;
+            }
 
             return true;
         }
@@ -133,15 +139,21 @@ public abstract class AuditableDbContextBase : DbContext
         // If no valid entries detected, return. 
         var trackableEntries = ChangeTracker.Entries().Where(EntityEntryFilter);
         if (!trackableEntries.Any())
+        {
             return Array.Empty<TemporaryEntityChange>();
+        }
 
         static bool PropertyEntryFilter(PropertyEntry entry)
         {
             var propertyName = entry.Metadata.Name;
             if (propertyName == nameof(IAuditableEntity.DateCreatedUtc))
+            {
                 return false;
+            }
             else if (propertyName == nameof(IAuditableEntity.DateModifiedUtc))
+            {
                 return false;
+            }
 
             return true;
         }
@@ -207,9 +219,13 @@ public abstract class AuditableDbContextBase : DbContext
                 var propertyValue = property.CurrentValue;
 
                 if (property.Metadata.IsPrimaryKey())
+                {
                     temporaryChange.Keys[propertyName] = propertyValue;
+                }
                 else
+                {
                     temporaryChange.NewState[propertyName] = propertyValue;
+                }
 
                 temporaryChange.TemporaryProperties.Remove(property);
             }
