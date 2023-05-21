@@ -9,5 +9,5 @@ internal sealed class StudentAddressConfiguration : IEntityTypeConfiguration<Stu
 {
     // Constructors
     public void Configure(EntityTypeBuilder<StudentAddress> builder)
-        => _ = builder ?? throw new ArgumentNullException(nameof(builder));
+        => ArgumentNullException.ThrowIfNull(builder);
 }

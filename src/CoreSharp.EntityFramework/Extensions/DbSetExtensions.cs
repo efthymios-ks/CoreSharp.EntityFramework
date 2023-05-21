@@ -19,8 +19,8 @@ internal static class DbSetExtensions
         CancellationToken cancellationToken = default)
         where TEntity : class
     {
-        _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(dbSet);
+        ArgumentNullException.ThrowIfNull(entities);
 
         // Mutate reference to allow EF to write back auto-generated id 
         var mutatedEntities = entities.ToArray();
@@ -33,8 +33,8 @@ internal static class DbSetExtensions
         IEnumerable<TEntity> entities)
         where TEntity : class
     {
-        _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(dbSet);
+        ArgumentNullException.ThrowIfNull(entities);
 
         dbSet.UpdateRange(entities);
         return await Task.FromResult(entities);
@@ -44,8 +44,8 @@ internal static class DbSetExtensions
         this DbSet<TEntity> dbSet, IEnumerable<TEntity> entities)
         where TEntity : class
     {
-        _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(dbSet);
+        ArgumentNullException.ThrowIfNull(entities);
 
         dbSet.AttachRange(entities);
         return await Task.FromResult(entities);
@@ -56,8 +56,8 @@ internal static class DbSetExtensions
         IEnumerable<TEntity> entities)
         where TEntity : class
     {
-        _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(dbSet);
+        ArgumentNullException.ThrowIfNull(entities);
 
         dbSet.RemoveRange(entities);
         await Task.CompletedTask;
@@ -69,8 +69,8 @@ internal static class DbSetExtensions
         CancellationToken cancellationToken = default)
         where TEntity : class, IEntity
     {
-        _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(dbSet);
+        ArgumentNullException.ThrowIfNull(entities);
 
         Task<IEnumerable<TEntity>> AddAction(IEnumerable<TEntity> entitiesToAdd)
             => dbSet.AddManyAsync(entitiesToAdd, cancellationToken);
@@ -85,8 +85,8 @@ internal static class DbSetExtensions
         CancellationToken cancellationToken = default)
         where TEntity : class, IEntity
     {
-        _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(dbSet);
+        ArgumentNullException.ThrowIfNull(entities);
 
         Task<IEnumerable<TEntity>> AddAction(IEnumerable<TEntity> entitiesToAdd)
             => dbSet.AddManyAsync(entitiesToAdd, cancellationToken);
@@ -101,8 +101,8 @@ internal static class DbSetExtensions
         CancellationToken cancellationToken = default)
         where TEntity : class, IEntity
     {
-        _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(dbSet);
+        ArgumentNullException.ThrowIfNull(entities);
 
         Task<IEnumerable<TEntity>> AddAction(IEnumerable<TEntity> entitiesToAdd)
             => dbSet.AddManyAsync(entitiesToAdd, cancellationToken);
@@ -117,8 +117,8 @@ internal static class DbSetExtensions
         CancellationToken cancellationToken = default)
         where TEntity : class, IEntity
     {
-        _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(dbSet);
+        ArgumentNullException.ThrowIfNull(entities);
 
         Task<IEnumerable<TEntity>> DiscardAddAction(IEnumerable<TEntity> _)
             => Task.FromResult(Enumerable.Empty<TEntity>());
@@ -133,8 +133,8 @@ internal static class DbSetExtensions
         CancellationToken cancellationToken = default)
         where TEntity : class, IEntity
     {
-        _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(dbSet);
+        ArgumentNullException.ThrowIfNull(entities);
 
         Task<IEnumerable<TEntity>> DiscardAddAction(IEnumerable<TEntity> _)
             => Task.FromResult(Enumerable.Empty<TEntity>());
@@ -175,8 +175,8 @@ internal static class DbSetExtensions
         CancellationToken cancellationToken = default)
         where TEntity : class, IEntity
     {
-        _ = dbSet ?? throw new ArgumentNullException(nameof(dbSet));
-        _ = key ?? throw new ArgumentNullException(nameof(key));
+        ArgumentNullException.ThrowIfNull(dbSet);
+        ArgumentNullException.ThrowIfNull(key);
 
         return await dbSet.Where(e => Equals(e.Id, key))
                           .ExecuteDeleteAsync(cancellationToken);

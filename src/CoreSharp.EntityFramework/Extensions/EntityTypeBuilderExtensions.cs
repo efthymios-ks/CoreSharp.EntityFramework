@@ -23,8 +23,8 @@ public static class EntityTypeBuilderExtensions
         where TEntity : class
         where TEnum : Enum
     {
-        _ = builder ?? throw new ArgumentNullException(nameof(builder));
-        _ = propertySelector ?? throw new ArgumentNullException(nameof(propertySelector));
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(propertySelector);
 
         var enumPropertyName = propertySelector.GetMemberName();
         return builder.HasOne<EnumShadowEntity<TEnum>>()
@@ -41,8 +41,8 @@ public static class EntityTypeBuilderExtensions
         where TEntity : class
         where TEnum : Enum
     {
-        _ = builder ?? throw new ArgumentNullException(nameof(builder));
-        _ = propertySelector ?? throw new ArgumentNullException(nameof(propertySelector));
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(propertySelector);
 
         return builder.Property(propertySelector)
                       .HasJsonConversion();

@@ -10,7 +10,11 @@ public class UpdateTeacherCommand : IRequest<Teacher>
 {
     // Constructors
     public UpdateTeacherCommand(Teacher teacher)
-        => Teacher = teacher ?? throw new ArgumentNullException(nameof(teacher));
+    {
+        ArgumentNullException.ThrowIfNull(teacher);
+
+        Teacher = teacher;
+    }
 
     // Properties
     public Teacher Teacher { get; }
@@ -28,7 +32,7 @@ public class UpdateTeacherCommandHandler : IRequestHandler<UpdateTeacherCommand,
     // Methods
     public async Task<Teacher> Handle(UpdateTeacherCommand request, CancellationToken cancellationToken)
     {
-        _ = request.Teacher ?? throw new ArgumentException($"{nameof(request.Teacher)} cannot be null.", nameof(request));
+        _ = request.Teacher ?? throw new InvalidOperationException($"{nameof(request.Teacher)} cannot be null.");
 
         return await _teacherStore.UpdateAsync(request.Teacher, cancellationToken);
     }

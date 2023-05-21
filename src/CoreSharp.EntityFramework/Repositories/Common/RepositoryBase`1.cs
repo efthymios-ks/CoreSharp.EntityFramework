@@ -16,7 +16,9 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
     // Constructors
     protected RepositoryBase(DbContext dbContext)
     {
-        Context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        ArgumentNullException.ThrowIfNull(dbContext);
+
+        Context = dbContext;
         Table = Context.Set<TEntity>();
     }
 
@@ -29,7 +31,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
     public virtual async Task<TEntity> GetAsync(object key, Query<TEntity> navigation = null,
                                                 CancellationToken cancellationToken = default)
     {
-        _ = key ?? throw new ArgumentNullException(nameof(key));
+        ArgumentNullException.ThrowIfNull(key);
 
         var query = NavigateTable(navigation);
         return await query.SingleOrDefaultAsync(e => Equals(e.Id, key), cancellationToken);
@@ -43,7 +45,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
 
     public virtual async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        _ = entity ?? throw new ArgumentNullException(nameof(entity));
+        ArgumentNullException.ThrowIfNull(entity);
 
         await Table.AddAsync(entity, cancellationToken);
         return entity;
@@ -51,7 +53,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
 
     public virtual async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        _ = entity ?? throw new ArgumentNullException(nameof(entity));
+        ArgumentNullException.ThrowIfNull(entity);
 
         Table.Attach(entity);
         return await Task.FromResult(entity);
@@ -59,7 +61,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
 
     public virtual async Task RemoveAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        _ = entity ?? throw new ArgumentNullException(nameof(entity));
+        ArgumentNullException.ThrowIfNull(entity);
 
         Table.Remove(entity);
         await Task.CompletedTask;

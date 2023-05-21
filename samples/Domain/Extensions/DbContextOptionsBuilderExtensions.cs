@@ -11,7 +11,7 @@ internal static class DbContextOptionsBuilderExtensions
     // Methods
     public static DbContextOptionsBuilder ConfigureSql(this DbContextOptionsBuilder optionsBuilder)
     {
-        _ = optionsBuilder ?? throw new ArgumentNullException(nameof(optionsBuilder));
+        ArgumentNullException.ThrowIfNull(optionsBuilder);
 
         optionsBuilder.UseSqlServer(Configuration.SqlConnectionString);
         optionsBuilder.EnableSensitiveDataLogging();

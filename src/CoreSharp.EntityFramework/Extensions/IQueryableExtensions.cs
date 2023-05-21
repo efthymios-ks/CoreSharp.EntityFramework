@@ -20,7 +20,7 @@ public static class IQueryableExtensions
     public static Task<Page<TEntity>> GetPageAsync<TEntity>(this IQueryable<TEntity> query, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         // Validate args 
-        _ = query ?? throw new ArgumentNullException(nameof(query));
+        ArgumentNullException.ThrowIfNull(query);
         if (pageNumber < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(pageNumber), $"{nameof(pageNumber)} has to be positive.");

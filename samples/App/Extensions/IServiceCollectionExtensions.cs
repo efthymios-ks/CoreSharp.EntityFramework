@@ -19,7 +19,7 @@ internal static class IServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddAppRepositories(this IServiceCollection serviceCollection)
     {
-        _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
+        ArgumentNullException.ThrowIfNull(serviceCollection);
 
         serviceCollection.AddRepositories(typeof(AppDbContext).Assembly);
         serviceCollection.AddExtendedRepositories(typeof(AppDbContext).Assembly);
@@ -33,7 +33,7 @@ internal static class IServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddAppStores(this IServiceCollection serviceCollection)
     {
-        _ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
+        ArgumentNullException.ThrowIfNull(serviceCollection);
 
         serviceCollection.AddStores(typeof(AppDbContext).Assembly);
         serviceCollection.AddExtendedStores(typeof(AppDbContext).Assembly);

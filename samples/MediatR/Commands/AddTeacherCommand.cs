@@ -10,7 +10,11 @@ public class AddTeacherCommand : IRequest<Teacher>
 {
     // Constructors
     public AddTeacherCommand(Teacher teacher)
-        => Teacher = teacher ?? throw new ArgumentNullException(nameof(teacher));
+    {
+        ArgumentNullException.ThrowIfNull(teacher);
+
+        Teacher = teacher;
+    }
 
     // Properties
     public Teacher Teacher { get; }
@@ -28,7 +32,7 @@ public class AddTeacherCommandHandler : IRequestHandler<AddTeacherCommand, Teach
     // Methods
     public async Task<Teacher> Handle(AddTeacherCommand request, CancellationToken cancellationToken)
     {
-        _ = request.Teacher ?? throw new ArgumentNullException(nameof(request), $"{nameof(request.Teacher)} cannot be null.");
+        _ = request.Teacher ?? throw new InvalidOperationException($"{nameof(request.Teacher)} cannot be null.");
 
         var createdTeacher = await _appUnitOfWork.Teachers.AddAsync(request.Teacher, cancellationToken);
         await _appUnitOfWork.CommitAsync(cancellationToken);

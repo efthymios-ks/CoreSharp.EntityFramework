@@ -17,7 +17,7 @@ public static class DbContextExtensions
     /// </summary>
     public static async Task RollbackAsync(this DbContext dbContext, CancellationToken cancellationToken = default)
     {
-        _ = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        ArgumentNullException.ThrowIfNull(dbContext);
 
         var changedEntities = dbContext.ChangeTracker.Entries()
                                                      .Where(e => e.State != EntityState.Unchanged);

@@ -13,7 +13,11 @@ public abstract class UnitOfWorkBase : IUnitOfWork
 {
     // Constructors
     protected UnitOfWorkBase(DbContext dbContext)
-        => Context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    {
+        ArgumentNullException.ThrowIfNull(dbContext);
+
+        Context = dbContext;
+    }
 
     // Properties
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]

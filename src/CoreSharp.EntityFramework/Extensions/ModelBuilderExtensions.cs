@@ -34,11 +34,8 @@ public static class ModelBuilderExtensions
     public static ModelBuilder HasEnum<TEnum>(this ModelBuilder builder, string tableName)
         where TEnum : Enum
     {
-        _ = builder ?? throw new ArgumentNullException(nameof(builder));
-        if (string.IsNullOrWhiteSpace(tableName))
-        {
-            throw new ArgumentNullException(nameof(tableName));
-        }
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrEmpty(tableName);
 
         builder.ConfigureEnum<TEnum>(tableName);
         builder.SeedEnum<TEnum>();
@@ -51,11 +48,8 @@ public static class ModelBuilderExtensions
     private static EntityTypeBuilder ConfigureEnum<TEnum>(this ModelBuilder builder, string tableName)
         where TEnum : Enum
     {
-        _ = builder ?? throw new ArgumentNullException(nameof(builder));
-        if (string.IsNullOrWhiteSpace(tableName))
-        {
-            throw new ArgumentNullException(nameof(tableName));
-        }
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrEmpty(tableName);
 
         var entityBuilder = builder.Entity<EnumShadowEntity<TEnum>>();
         entityBuilder.ToTable(tableName);
@@ -71,7 +65,7 @@ public static class ModelBuilderExtensions
     private static void SeedEnum<TEnum>(this ModelBuilder builder)
         where TEnum : Enum
     {
-        _ = builder ?? throw new ArgumentNullException(nameof(builder));
+        ArgumentNullException.ThrowIfNull(builder);
 
         var entries = Enum.GetValues(typeof(TEnum))
                           .Cast<TEnum>()

@@ -10,7 +10,7 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
     // Constructors
     public void Configure(EntityTypeBuilder<Student> builder)
     {
-        _ = builder ?? throw new ArgumentNullException(nameof(builder));
+        ArgumentNullException.ThrowIfNull(builder);
 
         builder.Property(student => student.Name)
                .IsRequired()

@@ -11,7 +11,7 @@ internal sealed class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
     // Constructors
     public void Configure(EntityTypeBuilder<Teacher> builder)
     {
-        _ = builder ?? throw new ArgumentNullException(nameof(builder));
+        ArgumentNullException.ThrowIfNull(builder);
 
         builder.Property(teacher => teacher.Name)
                .IsRequired()

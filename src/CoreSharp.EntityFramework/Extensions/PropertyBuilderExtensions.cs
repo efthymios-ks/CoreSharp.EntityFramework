@@ -22,8 +22,8 @@ public static class PropertyBuilderExtensions
     public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder, TextJson.JsonSerializerOptions options)
         where TProperty : class
     {
-        _ = builder ?? throw new ArgumentNullException(nameof(builder));
-        _ = options ?? throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(options);
 
         string ToJson(TProperty property)
           => TextJson.JsonSerializer.Serialize(property, options);
@@ -38,8 +38,8 @@ public static class PropertyBuilderExtensions
     public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder, JsonNet.JsonSerializerSettings settings)
         where TProperty : class
     {
-        _ = builder ?? throw new ArgumentNullException(nameof(builder));
-        _ = settings ?? throw new ArgumentNullException(nameof(settings));
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(settings);
 
         string ToJson(TProperty property)
           => JsonNet.JsonConvert.SerializeObject(property, settings);
@@ -77,7 +77,7 @@ public static class PropertyBuilderExtensions
     /// <inheritdoc cref="HasUtcConversion(PropertyBuilder{DateTime?})" />
     public static PropertyBuilder<DateTime> HasUtcConversion(this PropertyBuilder<DateTime> builder)
     {
-        _ = builder ?? throw new ArgumentNullException(nameof(builder));
+        ArgumentNullException.ThrowIfNull(builder);
 
         var converter = new ValueConverter<DateTime, DateTime>(
             appValue => appValue.ToUniversalTime(),
@@ -102,7 +102,7 @@ public static class PropertyBuilderExtensions
     /// </summary>
     public static PropertyBuilder<DateTime?> HasUtcConversion(this PropertyBuilder<DateTime?> builder)
     {
-        _ = builder ?? throw new ArgumentNullException(nameof(builder));
+        ArgumentNullException.ThrowIfNull(builder);
 
         var converter = new ValueConverter<DateTime?, DateTime?>(
             appValue => appValue == null ? null : appValue.Value.ToUniversalTime(),

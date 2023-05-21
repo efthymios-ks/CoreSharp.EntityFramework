@@ -24,7 +24,7 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
     // Methods 
     public virtual async Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(entities);
 
         var addedEntities = await Table.AddManyAsync(entities, cancellationToken);
         await Context.SaveChangesAsync(cancellationToken);
@@ -33,7 +33,7 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
 
     public virtual async Task<IEnumerable<TEntity>> UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(entities);
 
         var updatedEntities = await Table.AttachManyAsync(entities);
         await Context.SaveChangesAsync(cancellationToken);
@@ -42,7 +42,7 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
 
     public virtual async Task RemoveAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(entities);
 
         await Table.RemoveManyAsync(entities);
         await Context.SaveChangesAsync(cancellationToken);
@@ -50,7 +50,7 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
 
     public virtual async Task RemoveByKeyAsync(object key, CancellationToken cancellationToken = default)
     {
-        _ = key ?? throw new ArgumentNullException(nameof(key));
+        ArgumentNullException.ThrowIfNull(key);
 
         await Context.Set<TEntity>()
                      .RemoveByKeyAsync(key, cancellationToken);
@@ -58,7 +58,7 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
 
     public virtual async Task<bool> ExistsAsync(object key, CancellationToken cancellationToken = default)
     {
-        _ = key ?? throw new ArgumentNullException(nameof(key));
+        ArgumentNullException.ThrowIfNull(key);
 
         return await ExistsAsync(q => q.Where(e => Equals(e.Id, key)), cancellationToken);
     }
@@ -81,7 +81,7 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
 
     public virtual async Task<TEntity> AddOrUpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        _ = entity ?? throw new ArgumentNullException(nameof(entity));
+        ArgumentNullException.ThrowIfNull(entity);
 
         return await ExistsAsync(entity.Id, cancellationToken)
                 ? await UpdateAsync(entity, cancellationToken)
@@ -90,7 +90,7 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
 
     public virtual async Task<IEnumerable<TEntity>> AddOrUpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(entities);
 
         var finalEntities = await Table.AddOrAttachManyAsync(entities, cancellationToken);
         await Context.SaveChangesAsync(cancellationToken);
@@ -99,7 +99,7 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
 
     public virtual async Task<TEntity> AddIfNotExistAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        _ = entity ?? throw new ArgumentNullException(nameof(entity));
+        ArgumentNullException.ThrowIfNull(entity);
 
         var existing = await GetAsync(entity.Id, cancellationToken: cancellationToken);
         return existing ?? await AddAsync(entity, cancellationToken);
@@ -107,14 +107,14 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
 
     public virtual async Task<IEnumerable<TEntity>> AddIfNotExistAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(entities);
 
         return await Table.AddManyIfNotExistAsync(entities, cancellationToken);
     }
 
     public virtual async Task<TEntity> UpdateIfExistAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        _ = entity ?? throw new ArgumentNullException(nameof(entity));
+        ArgumentNullException.ThrowIfNull(entity);
 
         if (await ExistsAsync(entity.Id, cancellationToken))
         {
@@ -126,7 +126,7 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
 
     public virtual async Task<IEnumerable<TEntity>> UpdateIfExistAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
-        _ = entities ?? throw new ArgumentNullException(nameof(entities));
+        ArgumentNullException.ThrowIfNull(entities);
 
         return await Table.AttachManyIfExistAsync(entities, cancellationToken);
     }

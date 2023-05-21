@@ -11,7 +11,7 @@ internal sealed class CourseConfiguration : IEntityTypeConfiguration<Course>
     // Constructors
     public void Configure(EntityTypeBuilder<Course> builder)
     {
-        _ = builder ?? throw new ArgumentNullException(nameof(builder));
+        ArgumentNullException.ThrowIfNull(builder);
 
         builder.Property(course => course.Name)
                .IsRequired()
