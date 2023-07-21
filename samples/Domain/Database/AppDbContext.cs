@@ -1,4 +1,4 @@
-﻿using CoreSharp.EntityFramework.DbContexts.Common;
+﻿using CoreSharp.EntityFramework.DbContexts.Abstracts;
 using CoreSharp.EntityFramework.Extensions;
 using Domain.Database.Models;
 using Domain.Extensions;

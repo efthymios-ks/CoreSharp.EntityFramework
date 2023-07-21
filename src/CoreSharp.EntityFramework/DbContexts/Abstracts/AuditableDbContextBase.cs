@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreSharp.EntityFramework.DbContexts.Common;
+namespace CoreSharp.EntityFramework.DbContexts.Abstracts;
 
 public abstract class AuditableDbContextBase : DbContext
 {

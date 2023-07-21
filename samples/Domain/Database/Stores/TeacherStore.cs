@@ -1,4 +1,4 @@
-﻿using CoreSharp.EntityFramework.Stores.Common;
+﻿using CoreSharp.EntityFramework.Stores.Abstracts;
 using Domain.Database.Models;
 using Domain.Database.Stores.Interfaces;
 

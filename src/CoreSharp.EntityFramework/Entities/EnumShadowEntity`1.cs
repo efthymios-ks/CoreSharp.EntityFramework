@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CoreSharp.EntityFramework.Entities.Concrete;
+namespace CoreSharp.EntityFramework.Entities;
 
 /// <summary>
 /// <see cref="Enum"/> shadow entity used for table relationships.

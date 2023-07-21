@@ -6,7 +6,7 @@ using System.Diagnostics;
 using JsonNet = Newtonsoft.Json;
 using TextJson = System.Text.Json;
 
-namespace CoreSharp.EntityFramework.Entities.Common;
+namespace CoreSharp.EntityFramework.Entities.Abstracts;
 
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
 public abstract class EntityBase<TKey> : IEntity<TKey>

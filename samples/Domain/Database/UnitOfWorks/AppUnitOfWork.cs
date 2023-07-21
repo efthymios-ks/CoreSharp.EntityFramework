@@ -1,4 +1,4 @@
-﻿using CoreSharp.EntityFramework.Repositories.Common;
+﻿using CoreSharp.EntityFramework.Repositories.Abstracts;
 using Domain.Database.Repositories;
 using Domain.Database.Repositories.Interfaces;
 using Domain.Database.UnitOfWorks.Interfaces;

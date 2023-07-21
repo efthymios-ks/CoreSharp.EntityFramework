@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace Domain.Database.Configurations;
+namespace Domain.Database.EntityTypeConfigurations;
 
-internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
+internal sealed class StudentEntityTypeConfiguration : IEntityTypeConfiguration<Student>
 {
     // Constructors
     public void Configure(EntityTypeBuilder<Student> builder)

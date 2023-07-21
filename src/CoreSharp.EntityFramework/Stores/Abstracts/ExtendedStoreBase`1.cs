@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreSharp.EntityFramework.Stores.Common;
+namespace CoreSharp.EntityFramework.Stores.Abstracts;
 
 public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtendedStore<TEntity>
     where TEntity : class, IEntity

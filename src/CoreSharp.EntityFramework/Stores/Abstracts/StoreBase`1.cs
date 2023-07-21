@@ -1,12 +1,12 @@
 ﻿using CoreSharp.EntityFramework.Entities.Interfaces;
-using CoreSharp.EntityFramework.Repositories.Common;
+using CoreSharp.EntityFramework.Repositories.Abstracts;
 using CoreSharp.EntityFramework.Stores.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreSharp.EntityFramework.Stores.Common;
+namespace CoreSharp.EntityFramework.Stores.Abstracts;
 
 public abstract class StoreBase<TEntity> : RepositoryBase<TEntity>, IStore<TEntity>
     where TEntity : class, IEntity
