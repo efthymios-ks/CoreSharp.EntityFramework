@@ -2,7 +2,7 @@
 
 	<PropertyGroup Label="Package">
 		<TargetFramework>net7.0</TargetFramework>
-		<Version>7.2.0</Version>
+		<Version>7.3.0</Version>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
 		<Authors>Efthymios Koktsidis</Authors>
@@ -13,7 +13,7 @@
 		<RepositoryUrl>https://github.com/efthymios-ks/CoreSharp.EntityFramework</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>EF, Entity Framework, Database</PackageTags>
-		<PackageReleaseNotes>-Code clean-up and refactor.</PackageReleaseNotes>
+		<PackageReleaseNotes>-chore(solution): restructure folders.</PackageReleaseNotes>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageIconUrl />
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -22,9 +22,9 @@
 	</PropertyGroup>
 
 	<ItemGroup Label="Package references">
-		<PackageReference Include="CoreSharp" Version="7.2.0" PrivateAssets="Compile" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" PrivateAssets="Compile" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.5" PrivateAssets="Compile" />
+		<PackageReference Include="CoreSharp" Version="7.4.0" PrivateAssets="Compile" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.9" PrivateAssets="Compile" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.9" PrivateAssets="Compile" />
 		<PackageReference Include="Pluralize.NET.Core" Version="1.0.0" PrivateAssets="Compile" />
 	</ItemGroup>
 
