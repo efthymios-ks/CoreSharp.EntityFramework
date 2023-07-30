@@ -14,12 +14,15 @@ namespace CoreSharp.EntityFramework.Extensions;
 public static class PropertyBuilderExtensions
 {
     /// <inheritdoc cref="HasJsonConversion{TProperty}(PropertyBuilder{TProperty}, JsonNet.JsonSerializerSettings)"/>
-    public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder)
+    public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(
+        this PropertyBuilder<TProperty> builder)
         where TProperty : class
         => builder.HasJsonConversion(JsonSettings.Default);
 
     /// <inheritdoc cref="HasJsonConversionInternal{TProperty}(PropertyBuilder{TProperty}, Func{TProperty, string}, Func{string, TProperty})"/>
-    public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder, TextJson.JsonSerializerOptions options)
+    public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(
+        this PropertyBuilder<TProperty> builder,
+        TextJson.JsonSerializerOptions options)
         where TProperty : class
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -35,7 +38,9 @@ public static class PropertyBuilderExtensions
     }
 
     /// <inheritdoc cref="HasJsonConversionInternal{TProperty}(PropertyBuilder{TProperty}, Func{TProperty, string}, Func{string, TProperty})"/>
-    public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder, JsonNet.JsonSerializerSettings settings)
+    public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(
+        this PropertyBuilder<TProperty> builder,
+        JsonNet.JsonSerializerSettings settings)
         where TProperty : class
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -53,9 +58,10 @@ public static class PropertyBuilderExtensions
     /// <summary>
     /// Convert a property from and to json for database storage.
     /// </summary>
-    private static PropertyBuilder<TProperty> HasJsonConversionInternal<TProperty>(this PropertyBuilder<TProperty> builder,
-                                                                                   Func<TProperty, string> toJson,
-                                                                                   Func<string, TProperty> fromJson)
+    private static PropertyBuilder<TProperty> HasJsonConversionInternal<TProperty>(
+        this PropertyBuilder<TProperty> builder,
+        Func<TProperty, string> toJson,
+        Func<string, TProperty> fromJson)
         where TProperty : class
     {
         var converter = new ValueConverter<TProperty, string>(

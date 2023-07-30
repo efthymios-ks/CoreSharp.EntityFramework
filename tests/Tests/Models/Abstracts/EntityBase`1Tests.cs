@@ -1,11 +1,11 @@
 ﻿namespace Tests.Models.Common;
 
 [TestFixture]
-public class EntityBaseTests
+public sealed class EntityBaseTests
 {
     // Methods
     [Test]
-    public void EntityBase_ToString_ReturnsId()
+    public void EntityBase_ToString_ShouldReturnId()
     {
         // Arrange 
         var teacher = new Teacher
@@ -22,7 +22,7 @@ public class EntityBaseTests
     }
 
     [Test]
-    public void EntityBase_SetDateCreatedUtcWithNonUtcValue_SetsDateTimeKindToUtc()
+    public void EntityBase_SetDateCreatedUtcWithNonUtcValue_ShouldSetDateTimeKindToUtc()
     {
         // Arrange
         var teacher = new Teacher();
@@ -39,7 +39,7 @@ public class EntityBaseTests
     }
 
     [Test]
-    public void EntityBase_SetDateModifiedUtcWithNonUtcValue_SetsDateTimeKindToUtc()
+    public void EntityBase_SetDateModifiedUtcWithNonUtcValue_ShouldSetDateTimeKindToUtc()
     {
         // Arrange
         var teacher = new Teacher();
@@ -56,7 +56,7 @@ public class EntityBaseTests
     }
 
     [Test]
-    public void EntityBase_ToJsonUsingJsonNet_DateCreatedUtcUsesFormatO()
+    public void EntityBase_ToJsonUsingJsonNet_DateCreatedUtc_ShouldUseFormatO()
     {
         // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
@@ -74,7 +74,7 @@ public class EntityBaseTests
     }
 
     [Test]
-    public void EntityBase_ToJsonUsingTextJson_DateCreatedUtcUsesFormatO()
+    public void EntityBase_ToJsonUsingTextJson_DateCreatedUtc_ShouldUseFormatO()
     {
         // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
@@ -92,7 +92,7 @@ public class EntityBaseTests
     }
 
     [Test]
-    public void EntityBase_ToJsonUsingJsonNet_DateModifiedUtcUsesFormatO()
+    public void EntityBase_ToJsonUsingJsonNet_DateModifiedUtc_ShouldUseFormatO()
     {
         // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
@@ -110,7 +110,7 @@ public class EntityBaseTests
     }
 
     [Test]
-    public void EntityBase_ToJsonUsingTextJson_DateModifiedUtcUsesFormatO()
+    public void EntityBase_ToJsonUsingTextJson_DateModifiedUtc_ShouldUseFormatO()
     {
         // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
@@ -128,7 +128,7 @@ public class EntityBaseTests
     }
 
     [Test]
-    public void EntityBase_FromJsonUsingJsonNet_DateCreatedUtcRetainsDateTimeKindUtc()
+    public void EntityBase_FromJsonUsingJsonNet_DateCreatedUtc_ShouldRetainDateTimeKindUtc()
     {
         // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
@@ -153,7 +153,7 @@ public class EntityBaseTests
     }
 
     [Test]
-    public void EntityBase_FromJsonUsingTextJson_DateCreatedUtcRetainsDateTimeKindUtc()
+    public void EntityBase_FromJsonUsingTextJson_DateCreatedUtc_ShouldRetainDateTimeKindUtc()
     {
         // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
@@ -203,7 +203,7 @@ public class EntityBaseTests
     }
 
     [Test]
-    public void EntityBase_FromJsonUsingTextJson_DateModifiedUtcRetainsDateTimeKindUtc()
+    public void EntityBase_FromJsonUsingTextJson_DateModifiedUtc_ShouldRetainDateTimeKindUtc()
     {
         // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
