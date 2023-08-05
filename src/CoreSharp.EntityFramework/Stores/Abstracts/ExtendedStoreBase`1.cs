@@ -22,7 +22,9 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
     }
 
     // Methods 
-    public virtual async Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    public virtual async Task<IEnumerable<TEntity>> AddAsync(
+        IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
@@ -31,7 +33,9 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
         return addedEntities;
     }
 
-    public virtual async Task<IEnumerable<TEntity>> UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    public virtual async Task<IEnumerable<TEntity>> UpdateAsync(
+        IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
@@ -40,7 +44,9 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
         return updatedEntities;
     }
 
-    public virtual async Task RemoveAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    public virtual async Task RemoveAsync(
+        IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
@@ -48,7 +54,9 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
         await Context.SaveChangesAsync(cancellationToken);
     }
 
-    public virtual async Task RemoveByKeyAsync(object key, CancellationToken cancellationToken = default)
+    public virtual async Task RemoveByKeyAsync(
+        object key,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(key);
 
@@ -56,14 +64,18 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
                      .RemoveByKeyAsync(key, cancellationToken);
     }
 
-    public virtual async Task<bool> ExistsAsync(object key, CancellationToken cancellationToken = default)
+    public virtual async Task<bool> ExistsAsync(
+        object key,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(key);
 
         return await ExistsAsync(q => q.Where(e => Equals(e.Id, key)), cancellationToken);
     }
 
-    public virtual async Task<bool> ExistsAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
+    public virtual async Task<bool> ExistsAsync(
+        Query<TEntity> navigation = null,
+        CancellationToken cancellationToken = default)
     {
         var query = NavigateTable(navigation);
         var foundIds = await query.Select(e => e.Id)
@@ -73,13 +85,17 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
         return foundIds.Length > 0;
     }
 
-    public virtual async Task<long> CountAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
+    public virtual async Task<long> CountAsync(
+        Query<TEntity> navigation = null,
+        CancellationToken cancellationToken = default)
     {
         var query = NavigateTable(navigation).AsNoTracking();
         return await query.LongCountAsync(cancellationToken);
     }
 
-    public virtual async Task<TEntity> AddOrUpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public virtual async Task<TEntity> AddOrUpdateAsync(
+        TEntity entity,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
@@ -88,7 +104,9 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
                 : await AddAsync(entity, cancellationToken);
     }
 
-    public virtual async Task<IEnumerable<TEntity>> AddOrUpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    public virtual async Task<IEnumerable<TEntity>> AddOrUpdateAsync(
+        IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
@@ -97,7 +115,9 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
         return finalEntities;
     }
 
-    public virtual async Task<TEntity> AddIfNotExistAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public virtual async Task<TEntity> AddIfNotExistAsync(
+        TEntity entity,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
@@ -105,14 +125,17 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
         return existing ?? await AddAsync(entity, cancellationToken);
     }
 
-    public virtual async Task<IEnumerable<TEntity>> AddIfNotExistAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    public virtual async Task<IEnumerable<TEntity>> AddIfNotExistAsync(
+        IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
         return await Table.AddManyIfNotExistAsync(entities, cancellationToken);
     }
 
-    public virtual async Task<TEntity> UpdateIfExistAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public virtual async Task<TEntity> UpdateIfExistAsync(
+        TEntity entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
@@ -124,14 +147,20 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
         return entity;
     }
 
-    public virtual async Task<IEnumerable<TEntity>> UpdateIfExistAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    public virtual async Task<IEnumerable<TEntity>> UpdateIfExistAsync(
+        IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
         return await Table.AttachManyIfExistAsync(entities, cancellationToken);
     }
 
-    public virtual async Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Query<TEntity> navigation = null, CancellationToken cancellationToken = default)
+    public virtual async Task<Page<TEntity>> GetPageAsync(
+        int pageNumber,
+        int pageSize,
+        Query<TEntity> navigation = null,
+        CancellationToken cancellationToken = default)
     {
         var query = NavigateTable(navigation);
         return await query.GetPageAsync(pageNumber, pageSize, cancellationToken);

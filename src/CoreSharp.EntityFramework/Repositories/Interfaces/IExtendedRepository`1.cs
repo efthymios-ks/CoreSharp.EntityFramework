@@ -15,32 +15,48 @@ public interface IExtendedRepository<TEntity> : IRepository<TEntity>
 {
     // Methods 
     /// <inheritdoc cref="IRepository{TEntity}.AddAsync(TEntity, CancellationToken)" />
-    Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+    Task<IEnumerable<TEntity>> AddAsync(
+        IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default);
 
     /// <inheritdoc cref="IRepository{TEntity}.UpdateAsync(TEntity, CancellationToken)" />
-    Task<IEnumerable<TEntity>> UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+    Task<IEnumerable<TEntity>> UpdateAsync(
+        IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default);
 
     /// <inheritdoc cref="IRepository{TEntity}.RemoveAsync(TEntity, CancellationToken)" />
-    Task RemoveAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+    Task RemoveAsync(
+        IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default);
 
     /// <inheritdoc cref="IRepository{TEntity}.RemoveAsync(TEntity, CancellationToken)" />
-    Task RemoveByKeyAsync(object key, CancellationToken cancellationToken = default);
+    Task RemoveByKeyAsync(
+        object key,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Check any entity exists with given id.
     /// </summary>
-    Task<bool> ExistsAsync(object key, CancellationToken cancellationToken = default);
+    Task<bool> ExistsAsync(
+        object key,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Check if the subquery returns one or more records.
     /// </summary>
-    Task<bool> ExistsAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default);
+    Task<bool> ExistsAsync(
+        Query<TEntity> navigation = null,
+        CancellationToken cancellationToken = default);
 
     /// <inheritdoc cref="EntityFrameworkQueryableExtensions.CountAsync{TSource}(IQueryable{TSource}, CancellationToken)" />
-    Task<long> CountAsync(Query<TEntity> navigation = null, CancellationToken cancellationToken = default);
+    Task<long> CountAsync(
+        Query<TEntity> navigation = null,
+        CancellationToken cancellationToken = default);
 
     /// <inheritdoc cref="AddOrUpdateAsync(IEnumerable{TEntity}, CancellationToken)"/>
-    Task<TEntity> AddOrUpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
+    Task<TEntity> AddOrUpdateAsync(
+        TEntity entity,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Adds or updates entities by key when
@@ -48,30 +64,44 @@ public interface IExtendedRepository<TEntity> : IRepository<TEntity>
     /// Equivalent to an "upsert" operation from database terminology.
     /// This method can useful when seeding data using migrations.
     /// </summary>
-    Task<IEnumerable<TEntity>> AddOrUpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+    Task<IEnumerable<TEntity>> AddOrUpdateAsync(
+        IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default);
 
     /// <inheritdoc cref="AddIfNotExistAsync(IEnumerable{TEntity}, CancellationToken)"/>
-    Task<TEntity> AddIfNotExistAsync(TEntity entity, CancellationToken cancellationToken = default);
+    Task<TEntity> AddIfNotExistAsync(
+        TEntity entity,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Add non existing entities.
     /// Ignore existing.
     /// <see cref="DbContext.SaveChangesAsync(CancellationToken)"/> is called.
     /// </summary>
-    Task<IEnumerable<TEntity>> AddIfNotExistAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+    Task<IEnumerable<TEntity>> AddIfNotExistAsync(
+        IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default);
 
     /// <inheritdoc cref="UpdateIfExistAsync(IEnumerable{TEntity}, CancellationToken)"/>
-    Task<TEntity> UpdateIfExistAsync(TEntity entity, CancellationToken cancellationToken = default);
+    Task<TEntity> UpdateIfExistAsync(
+        TEntity entity,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Update existing entities.
     /// Ignore non existing.
     /// <see cref="DbContext.SaveChangesAsync(CancellationToken)"/> is called.
     /// </summary>
-    Task<IEnumerable<TEntity>> UpdateIfExistAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+    Task<IEnumerable<TEntity>> UpdateIfExistAsync(
+        IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Return paged entity collection.
     /// </summary>
-    Task<Page<TEntity>> GetPageAsync(int pageNumber, int pageSize, Query<TEntity> navigation = null, CancellationToken cancellationToken = default);
+    Task<Page<TEntity>> GetPageAsync(
+        int pageNumber,
+        int pageSize,
+        Query<TEntity> navigation = null,
+        CancellationToken cancellationToken = default);
 }

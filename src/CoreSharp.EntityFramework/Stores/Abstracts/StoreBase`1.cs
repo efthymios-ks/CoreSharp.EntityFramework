@@ -18,7 +18,9 @@ public abstract class StoreBase<TEntity> : RepositoryBase<TEntity>, IStore<TEnti
     }
 
     // Methods 
-    public override async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public override async Task<TEntity> AddAsync(
+        TEntity entity,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
@@ -27,7 +29,9 @@ public abstract class StoreBase<TEntity> : RepositoryBase<TEntity>, IStore<TEnti
         return createdEntity;
     }
 
-    public override async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public override async Task<TEntity> UpdateAsync(
+        TEntity entity,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
@@ -36,7 +40,9 @@ public abstract class StoreBase<TEntity> : RepositoryBase<TEntity>, IStore<TEnti
         return updatedEntity;
     }
 
-    public override async Task RemoveAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public override async Task RemoveAsync(
+        TEntity entity,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
