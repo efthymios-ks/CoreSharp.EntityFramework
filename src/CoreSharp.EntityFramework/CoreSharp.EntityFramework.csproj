@@ -2,7 +2,7 @@
 
 	<PropertyGroup Label="Package">
 		<TargetFramework>net7.0</TargetFramework>
-		<Version>7.3.0</Version>
+		<Version>7.5.0</Version>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
 		<Authors>Efthymios Koktsidis</Authors>
@@ -13,7 +13,7 @@
 		<RepositoryUrl>https://github.com/efthymios-ks/CoreSharp.EntityFramework</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>EF, Entity Framework, Database</PackageTags>
-		<PackageReleaseNotes>-chore(solution): restructure folders.</PackageReleaseNotes>
+		<PackageReleaseNotes>-refactor(DbContext): switch to in-memory database.</PackageReleaseNotes>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageIconUrl />
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>

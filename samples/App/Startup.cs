@@ -16,6 +16,8 @@ internal static class Startup
     {
         var serviceCollection = new ServiceCollection();
 
+        serviceCollection.AddAppLogging();
+
         // 1. Add DbContext. 
         serviceCollection.AddScoped<AppDbContext>();
 

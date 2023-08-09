@@ -3,21 +3,23 @@ using CoreSharp.EntityFramework.Extensions;
 using Domain.Database.Models;
 using Domain.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Domain.Database;
 
 public class AppDbContext : AuditableDbContextBase
 {
-    // Constructors
-    public AppDbContext()
-        : base()
-    {
-    }
+    // Fields
+    private readonly ILoggerFactory _loggerFactory;
 
-    public AppDbContext(DbContextOptions<AppDbContext> options)
+    // Constructors
+    public AppDbContext(ILoggerFactory loggerFactory)
+        : base()
+        => _loggerFactory = loggerFactory;
+
+    public AppDbContext(DbContextOptions<AppDbContext> options, ILoggerFactory loggerFactory)
         : base(options)
-    {
-    }
+        => _loggerFactory = loggerFactory;
 
     // Properties
     public DbSet<Teacher> Teachers { get; set; }
@@ -30,7 +32,7 @@ public class AppDbContext : AuditableDbContextBase
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.ConfigureSql();
+            optionsBuilder.ConfigureSql(_loggerFactory);
         }
     }
 

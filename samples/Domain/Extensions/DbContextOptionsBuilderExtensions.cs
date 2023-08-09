@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Database;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Domain.Extensions;
@@ -9,12 +11,17 @@ namespace Domain.Extensions;
 internal static class DbContextOptionsBuilderExtensions
 {
     // Methods
-    public static DbContextOptionsBuilder ConfigureSql(this DbContextOptionsBuilder optionsBuilder)
+    public static DbContextOptionsBuilder ConfigureSql(
+        this DbContextOptionsBuilder optionsBuilder,
+        ILoggerFactory loggerFactory)
     {
         ArgumentNullException.ThrowIfNull(optionsBuilder);
 
-        optionsBuilder.UseSqlServer(Configuration.SqlConnectionString);
+        var databaseName = $"{nameof(AppDbContext)}_{DateTime.Now.ToFileTimeUtc()}";
+        optionsBuilder.UseInMemoryDatabase(databaseName: databaseName);
         optionsBuilder.EnableSensitiveDataLogging();
+        optionsBuilder.EnableDetailedErrors();
+        optionsBuilder.UseLoggerFactory(loggerFactory);
 
         return optionsBuilder;
     }

@@ -1,4 +1,5 @@
 ﻿using App;
+using Domain.Database;
 using Domain.Database.Models;
 using MediatR;
 using MediatR.Commands;
@@ -12,6 +13,8 @@ using System.Threading.Tasks;
 var services = Startup.ConfigureServices();
 var mediatR = services.GetRequiredService<IMediator>();
 
+await EnsureInMemoryDatabaseExitsAsync(services);
+await AddInitialTeachersAsync(mediatR);
 var teacher = await GetFirstTeacherAsync(mediatR);
 teacher ??= await CreateTeacherAsync(mediatR);
 teacher = await UpdateTeacherAsync(mediatR, teacher);
@@ -21,11 +24,28 @@ await AddTeacherCoursesAsync(mediatR, teacher);
 Console.ReadLine();
 
 // Methods 
+async Task EnsureInMemoryDatabaseExitsAsync(IServiceProvider serviceProvider)
+{
+    var appDbContext = services.GetRequiredService<AppDbContext>();
+    await appDbContext.Database.EnsureCreatedAsync();
+}
+
+async Task AddInitialTeachersAsync(IMediator mediator)
+{
+    var teacher = new Teacher
+    {
+        Name = "Teacher 1",
+        TeacherType = TeacherType.HighSchool
+    };
+    var command = new AddTeacherCommand(teacher);
+    await mediator.Send(command);
+}
+
 async Task<Teacher> GetFirstTeacherAsync(IMediator mediatR)
 {
     var query = new GetTeachersQuery
     {
-        Navigation = q => q.Include(teacher => teacher.Courses)
+        Navigation = query => query.Include(teacher => teacher.Courses)
     };
     return (await mediatR.Send(query)).FirstOrDefault();
 }

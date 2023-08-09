@@ -18,7 +18,7 @@ public abstract class AppDbContextTestsBase
                         .EnableDetailedErrors()
                         .EnableSensitiveDataLogging()
                         .Options;
-        AppDbContext = new AppDbContext(options);
+        AppDbContext = new AppDbContext(options, loggerFactory: null);
     }
 
     [OneTimeTearDown]

@@ -5,6 +5,7 @@ using Domain.Database;
 using Domain.Database.UnitOfWorks;
 using Domain.Database.UnitOfWorks.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace App.Extensions;
@@ -39,5 +40,12 @@ internal static class IServiceCollectionExtensions
         serviceCollection.AddExtendedStores(typeof(AppDbContext).Assembly);
 
         return serviceCollection;
+    }
+
+    public static IServiceCollection AddAppLogging(this IServiceCollection servicesCollection)
+    {
+        servicesCollection.AddLogging(builder => builder.AddDebug());
+
+        return servicesCollection;
     }
 }
