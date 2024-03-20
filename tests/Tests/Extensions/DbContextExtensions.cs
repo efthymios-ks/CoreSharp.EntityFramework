@@ -19,7 +19,7 @@ public sealed class DbContextExtensionsTests : AppDbContextTestsBase
     public async Task RollbackAsync_WhenEntityAdded_ShouldRemoveAddedEntity()
     {
         // Arrange
-        var teacher = CreateTeacher();
+        var teacher = GenerateTeacher();
         var initialCount = await AppDbContext.Teachers.CountAsync();
 
         // Act
@@ -35,7 +35,7 @@ public sealed class DbContextExtensionsTests : AppDbContextTestsBase
     public async Task RollbackAsync_WhenEntityModified_ShouldRestoreEntityToOriginalState()
     {
         // Arrange
-        await PopulateTeachersAsync(1);
+        await InsertTeachersAsync(1);
         var teacher = await AppDbContext.Teachers.FirstOrDefaultAsync();
         var originalName = teacher.Name;
 
@@ -53,7 +53,7 @@ public sealed class DbContextExtensionsTests : AppDbContextTestsBase
     public async Task RollbackAsync_WhenEntityDeleted_ShouldRestoreEntityToOriginalState()
     {
         // Arrange
-        await PopulateTeachersAsync(1);
+        await InsertTeachersAsync(1);
         var teacher = await AppDbContext.Teachers.FirstOrDefaultAsync();
         var initialCount = await AppDbContext.Teachers.CountAsync();
 

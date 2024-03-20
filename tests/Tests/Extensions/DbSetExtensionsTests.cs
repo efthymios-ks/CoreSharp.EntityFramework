@@ -38,7 +38,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int toAddCount = 2;
-        var teachersToAdd = CreateTeachers(toAddCount);
+        var teachersToAdd = GenerateTeachers(toAddCount);
 
         // Act
         var addedTeachers = await AppDbContext.Teachers.AddManyAsync(teachersToAdd);
@@ -83,7 +83,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int toAddCount = 2;
-        var teachersToAdd = CreateTeachers(toAddCount);
+        var teachersToAdd = GenerateTeachers(toAddCount);
 
         // Act
         var addedTeachers = await AppDbContext.Teachers.AddManyIfNotExistAsync(teachersToAdd);
@@ -101,7 +101,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int initialCount = 2;
-        var existingTeachers = await PopulateTeachersAsync(initialCount);
+        var existingTeachers = await InsertTeachersAsync(initialCount);
 
         // Act
         var addedTeachers = await AppDbContext.Teachers.AddManyIfNotExistAsync(existingTeachers);
@@ -146,7 +146,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int initialCount = 2;
-        var existingTeachers = await PopulateTeachersAsync(initialCount);
+        var existingTeachers = await InsertTeachersAsync(initialCount);
         existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
 
         // Act
@@ -192,7 +192,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int initialCount = 2;
-        var existingTeachers = await PopulateTeachersAsync(initialCount);
+        var existingTeachers = await InsertTeachersAsync(initialCount);
         existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
 
         // Act
@@ -210,7 +210,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int initialCount = 2;
-        var teachers = CreateTeachers(initialCount);
+        var teachers = GenerateTeachers(initialCount);
 
         // Act
         var updatedTeachers = await AppDbContext.Teachers.UpdateManyIfExistAsync(teachers);
@@ -253,7 +253,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int toAddCount = 2;
-        var teachersToAdd = CreateTeachers(toAddCount);
+        var teachersToAdd = GenerateTeachers(toAddCount);
 
         // Act
         var addedTeachers = await AppDbContext.Teachers.AddOrUpdateManyAsync(teachersToAdd);
@@ -270,7 +270,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int initialCount = 2;
-        var existingTeachers = await PopulateTeachersAsync(initialCount);
+        var existingTeachers = await InsertTeachersAsync(initialCount);
         existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
 
         // Act
@@ -289,9 +289,9 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         // Arrange
         const int initialCount = 2;
         const int toAddCount = 2;
-        var existingTeachers = await PopulateTeachersAsync(initialCount);
+        var existingTeachers = await InsertTeachersAsync(initialCount);
         existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
-        var teachersToAdd = CreateTeachers(toAddCount);
+        var teachersToAdd = GenerateTeachers(toAddCount);
         var teachersToAddOrUpdate = teachersToAdd.Concat(existingTeachers);
 
         // Act
@@ -309,7 +309,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         DbSet<Teacher> dbSet = null;
-        var teachersToAttach = CreateTeachers(2);
+        var teachersToAttach = GenerateTeachers(2);
 
         // Act
         Func<Task> action = async () => await dbSet.AttachManyAsync(teachersToAttach);
@@ -335,7 +335,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int toAttachCount = 2;
-        var teachersToAttach = CreateTeachers(toAttachCount);
+        var teachersToAttach = GenerateTeachers(toAttachCount);
 
         // Act
         var attachedTeachers = await AppDbContext.Teachers.AttachManyAsync(teachersToAttach);
@@ -357,7 +357,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         DbSet<Teacher> dbSet = null;
-        var teachersToAttach = CreateTeachers(1);
+        var teachersToAttach = GenerateTeachers(1);
 
         // Act
         Func<Task> action = async () => await dbSet.AttachManyIfExistAsync(teachersToAttach);
@@ -384,7 +384,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int initialCount = 2;
-        var existingTeachers = await PopulateTeachersAsync(initialCount);
+        var existingTeachers = await InsertTeachersAsync(initialCount);
         existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
 
         // Act
@@ -405,7 +405,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task AttachManyIfExistAsync_WhenEntitiesDoNotExistInDatabase_ShouldNotAttachEntities()
     {
         // Arrange
-        var teachersToAttach = CreateTeachers(2);
+        var teachersToAttach = GenerateTeachers(2);
 
         // Act
         var attachedTeachers = await AppDbContext.Teachers.AttachManyIfExistAsync(teachersToAttach);
@@ -423,7 +423,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         DbSet<Teacher> dbSet = null;
-        var teachersToAddOrAttach = CreateTeachers(1);
+        var teachersToAddOrAttach = GenerateTeachers(1);
 
         // Act
         Func<Task> action = async () => await dbSet.AddOrAttachManyAsync(teachersToAddOrAttach);
@@ -450,7 +450,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int toAddCount = 2;
-        var teachersToAdd = CreateTeachers(toAddCount);
+        var teachersToAdd = GenerateTeachers(toAddCount);
 
         // Act
         var addedTeachers = await AppDbContext.Teachers.AddOrAttachManyAsync(teachersToAdd);
@@ -467,7 +467,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int initialCount = 2;
-        var existingTeachers = await PopulateTeachersAsync(initialCount);
+        var existingTeachers = await InsertTeachersAsync(initialCount);
         existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
 
         // Act
@@ -490,9 +490,9 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         // Arrange
         const int initialCount = 5;
         const int toAddCount = 2;
-        var existingTeachers = await PopulateTeachersAsync(initialCount);
+        var existingTeachers = await InsertTeachersAsync(initialCount);
         existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
-        var teachersToAdd = CreateTeachers(toAddCount);
+        var teachersToAdd = GenerateTeachers(toAddCount);
         var teachersToAddOrAttach = teachersToAdd.Concat(existingTeachers);
 
         // Act
@@ -511,7 +511,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         DbSet<Teacher> dbSet = null;
-        var teachersToRemove = CreateTeachers(1);
+        var teachersToRemove = GenerateTeachers(1);
 
         // Act
         Func<Task> action = async () => await dbSet.RemoveManyAsync(teachersToRemove);
@@ -539,7 +539,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         // Arrange
         const int initialCount = 5;
         const int toRemoveCount = 3;
-        var existingTeachers = await PopulateTeachersAsync(initialCount);
+        var existingTeachers = await InsertTeachersAsync(initialCount);
         var teachersToRemove = existingTeachers.Take(toRemoveCount);
 
         // Act

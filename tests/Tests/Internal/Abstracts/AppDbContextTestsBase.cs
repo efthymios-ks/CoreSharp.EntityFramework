@@ -1,54 +1,64 @@
 ﻿using Domain.Database;
 using Microsoft.EntityFrameworkCore;
+using Testcontainers.MsSql;
 
 namespace Tests.Internal.Abstracts;
 
 public abstract class AppDbContextTestsBase
 {
+    private readonly MsSqlContainer _sqlContainer = new MsSqlBuilder()
+        .Build();
+
     // Properties
     protected AppDbContext AppDbContext { get; set; }
 
     // Methods
     [OneTimeSetUp]
-    public void OneTimeSetUp()
+    public async Task OneTimeSetUp()
     {
-        var databaseName = $"{nameof(Domain.Database.AppDbContext)}_{DateTime.Now.ToFileTimeUtc()}";
+        await _sqlContainer.StartAsync();
         var options = new DbContextOptionsBuilder<AppDbContext>()
-                        .UseInMemoryDatabase(databaseName: databaseName)
-                        .EnableDetailedErrors()
-                        .EnableSensitiveDataLogging()
-                        .Options;
+          .UseSqlServer(_sqlContainer.GetConnectionString())
+          .EnableDetailedErrors()
+          .EnableSensitiveDataLogging()
+          .Options;
+
         AppDbContext = new AppDbContext(options, loggerFactory: null);
+        await AppDbContext.Database.EnsureCreatedAsync();
     }
 
     [OneTimeTearDown]
     public async Task OneTimeTearDownAsync()
-        => await AppDbContext.DisposeAsync();
-
-    [SetUp]
-    public async Task SetUpAsync()
-        => await AppDbContext.Database.EnsureCreatedAsync();
-
-    [TearDown]
-    public async Task TearDownAsync()
-        => await AppDbContext.Database.EnsureDeletedAsync();
-
-    protected async Task<Teacher[]> PopulateTeachersAsync(int count)
     {
-        var teachers = CreateTeachers(count);
-        await AppDbContext.AddRangeAsync(teachers);
-        await AppDbContext.SaveChangesAsync();
-        return teachers;
+        if (AppDbContext is not null)
+        {
+            await AppDbContext.DisposeAsync();
+        }
+
+        await _sqlContainer.StopAsync();
     }
 
-    protected static Teacher[] CreateTeachers(int count)
-        => Enumerable.Range(0, count)
-                     .Select(_ => CreateTeacher())
-                     .ToArray();
+    [SetUp]
+    public Task SetUpAsync()
+        => AppDbContext.Database.ExecuteSqlAsync($"DELETE FROM Teachers");
 
-    protected static Teacher CreateTeacher()
+    protected static Teacher[] GenerateTeachers(int count)
+        => Enumerable
+            .Range(0, count)
+            .Select(_ => GenerateTeacher())
+            .ToArray();
+
+    protected static Teacher GenerateTeacher()
         => new()
         {
             Name = $"Teacher {Guid.NewGuid()}"
         };
+
+    protected async Task<Teacher[]> InsertTeachersAsync(int count)
+    {
+        var teachers = GenerateTeachers(count);
+        await AppDbContext.AddRangeAsync(teachers);
+        await AppDbContext.SaveChangesAsync();
+        return teachers;
+    }
 }

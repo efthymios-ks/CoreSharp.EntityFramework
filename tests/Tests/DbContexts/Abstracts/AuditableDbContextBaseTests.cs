@@ -20,16 +20,22 @@ public sealed class AuditableDbContextBaseTests : AppDbContextTestsBase
     public async Task SaveChanges_WhenEntitiesAdded_ShouldSaveChangesAndUpdateDataChanges()
     {
         // Arrange 
-        var teacher = new Teacher { Name = "Efthymios" };
+        var teacher = new Teacher
+        {
+            Name = "Efthymios"
+        };
 
         // Act
         AppDbContext.Teachers.Add(teacher);
         AppDbContext.SaveChanges();
 
         // Assert
-        var changedEntity = await AppDbContext.DataChanges.LastOrDefaultAsync();
+        var changedEntity = await AppDbContext
+            .DataChanges
+            .OrderBy(entity => entity.DateCreatedUtc)
+            .LastOrDefaultAsync();
         changedEntity.Should().NotBeNull();
-        changedEntity.TableName.Should().Be("Teacher");
+        changedEntity.TableName.Should().Be("Teachers");
         changedEntity.Action.Should().Be(EntityState.Added.ToString());
         changedEntity.Keys.Should().Be(JsonSerializer.Serialize(new { teacher.Id }));
     }
@@ -48,9 +54,12 @@ public sealed class AuditableDbContextBaseTests : AppDbContextTestsBase
         await AppDbContext.SaveChangesAsync();
 
         // Assert
-        var changedEntity = await AppDbContext.DataChanges.LastOrDefaultAsync();
+        var changedEntity = await AppDbContext
+            .DataChanges
+            .OrderBy(entity => entity.DateCreatedUtc)
+            .LastOrDefaultAsync();
         changedEntity.Should().NotBeNull();
-        changedEntity.TableName.Should().Be("Teacher");
+        changedEntity.TableName.Should().Be("Teachers");
         changedEntity.Action.Should().Be(EntityState.Modified.ToString());
         changedEntity.Keys.Should().Be(JsonSerializer.Serialize(new { teacher.Id }));
     }

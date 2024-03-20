@@ -1,4 +1,4 @@
-﻿namespace Tests.Models.Common;
+﻿namespace CoreSharp.EntityFramework.Entities.Tests;
 
 [TestFixture]
 public sealed class EntityBaseTests
