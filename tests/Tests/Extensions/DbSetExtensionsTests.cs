@@ -7,34 +7,34 @@ namespace CoreSharp.EntityFramework.Extensions.Tests;
 public sealed class DbSetExtensionsTests : AppDbContextTestsBase
 {
     [Test]
-    public async Task AddManyAsync_ShouldThrowArgumentNullException_WhenDbSetIsNull()
+    public async Task AddManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
         DbSet<Teacher> dbSet = null;
         var teachersToAdd = Enumerable.Empty<Teacher>();
 
         // Act
-        Func<Task> action = async () => await dbSet.AddManyAsync(teachersToAdd);
+        Func<Task> action = () => dbSet.AddManyAsync(teachersToAdd);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
     }
 
     [Test]
-    public async Task AddManyAsync_ShouldThrowArgumentNullException_WhenEntitiesIsNull()
+    public async Task AddManyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
         IEnumerable<Teacher> teachersToAdd = null;
 
         // Act
-        Func<Task> action = async () => await AppDbContext.Teachers.AddManyAsync(teachersToAdd);
+        Func<Task> action = () => AppDbContext.Teachers.AddManyAsync(teachersToAdd);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
     }
 
     [Test]
-    public async Task AddManyAsync_ShouldAddMultipleEntitiesToDatabase_WhenCalled()
+    public async Task AddManyAsync_WhenCalled_ShouldAddMultipleEntitiesToDatabase()
     {
         // Arrange
         const int toAddCount = 2;
@@ -59,7 +59,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         var teachersToAdd = Enumerable.Empty<Teacher>();
 
         // Act
-        Func<Task> action = async () => await dbSet.AddManyIfNotExistAsync(teachersToAdd);
+        Func<Task> action = () => dbSet.AddManyIfNotExistAsync(teachersToAdd);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -72,7 +72,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         IEnumerable<Teacher> teachersToAdd = null;
 
         // Act
-        Func<Task> action = async () => await AppDbContext.Teachers.AddManyIfNotExistAsync(teachersToAdd);
+        Func<Task> action = () => AppDbContext.Teachers.AddManyIfNotExistAsync(teachersToAdd);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -99,19 +99,25 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     [Test]
     public async Task AddManyIfNotExistAsync_WhenEntitiesAlreadyExistInDatabase_ShouldNotAddEntities()
     {
-        // Arrange
-        const int initialCount = 2;
-        var existingTeachers = await InsertTeachersAsync(initialCount);
+        // Arrange  
+        var existingTeacher = (await InsertTeachersAsync(1))[0];
+        var teacherToAdd = GenerateTeacher();
+        var teachersToTryAdd = new[]
+        {
+            existingTeacher,
+            teacherToAdd
+        };
 
         // Act
-        var addedTeachers = await AppDbContext.Teachers.AddManyIfNotExistAsync(existingTeachers);
+        var addedTeachers = await AppDbContext.Teachers.AddManyIfNotExistAsync(teachersToTryAdd);
         await AppDbContext.SaveChangesAsync();
         var afterAddCount = await AppDbContext.Teachers.CountAsync();
 
         // Assert
         addedTeachers.Should().NotBeNull();
-        addedTeachers.Should().HaveCount(0);
-        afterAddCount.Should().Be(initialCount);
+        addedTeachers.Should().HaveCount(1);
+        addedTeachers.Should().ContainEquivalentOf(teacherToAdd);
+        afterAddCount.Should().Be(2);
     }
 
     [Test]
@@ -122,7 +128,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         var teachers = Enumerable.Empty<Teacher>();
 
         // Act
-        Func<Task> action = async () => await dbSet.UpdateManyAsync(teachers);
+        Func<Task> action = () => dbSet.UpdateManyAsync(teachers);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -135,7 +141,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         IEnumerable<Teacher> teachersToUpdate = null;
 
         // Act
-        Func<Task> action = async () => await AppDbContext.Teachers.UpdateManyAsync(teachersToUpdate);
+        Func<Task> action = () => AppDbContext.Teachers.UpdateManyAsync(teachersToUpdate);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -156,8 +162,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         // Assert
         updatedTeachers.Should().NotBeNull();
         updatedTeachers.Should().HaveCount(initialCount);
-        updatedTeachers.Should().BeEquivalentTo(existingTeachers,
-            options => options.Excluding(teacher => teacher.Id));
+        updatedTeachers.Should().BeEquivalentTo(existingTeachers);
     }
 
     [Test]
@@ -168,7 +173,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         var teachersToUpdate = Enumerable.Empty<Teacher>();
 
         // Act
-        Func<Task> action = async () => await dbSet.UpdateManyIfExistAsync(teachersToUpdate);
+        Func<Task> action = () => dbSet.UpdateManyIfExistAsync(teachersToUpdate);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -181,7 +186,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         IEnumerable<Teacher> teachersToUpdate = null;
 
         // Act
-        Func<Task> action = async () => await AppDbContext.Teachers.UpdateManyIfExistAsync(teachersToUpdate);
+        Func<Task> action = () => AppDbContext.Teachers.UpdateManyIfExistAsync(teachersToUpdate);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -208,17 +213,25 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     [Test]
     public async Task UpdateManyIfExistAsync_WhenEntitiesDoNotExistInDatabase_ShouldNotUpdateEntities()
     {
-        // Arrange
-        const int initialCount = 2;
-        var teachers = GenerateTeachers(initialCount);
+        // Arrange  
+        var existingTeacher = (await InsertTeachersAsync(1))[0];
+        var nonExistingTeacher = GenerateTeacher();
+        var teachersToUpdate = new[]
+        {
+            existingTeacher,
+            nonExistingTeacher
+        };
 
         // Act
-        var updatedTeachers = await AppDbContext.Teachers.UpdateManyIfExistAsync(teachers);
+        existingTeacher.Name = Guid.NewGuid().ToString();
+        var updatedTeachers = await AppDbContext.Teachers.UpdateManyIfExistAsync(teachersToUpdate);
         await AppDbContext.SaveChangesAsync();
 
         // Assert
         updatedTeachers.Should().NotBeNull();
-        updatedTeachers.Should().HaveCount(0);
+        updatedTeachers.Should().HaveCount(1);
+        updatedTeachers.Should().ContainEquivalentOf(existingTeacher);
+        updatedTeachers.Should().NotContainEquivalentOf(nonExistingTeacher);
     }
 
     [Test]
@@ -229,7 +242,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         var teachersToAddOrUpdate = Enumerable.Empty<Teacher>();
 
         // Act
-        Func<Task> action = async () => await dbSet.AddOrUpdateManyAsync(teachersToAddOrUpdate);
+        Func<Task> action = () => dbSet.AddOrUpdateManyAsync(teachersToAddOrUpdate);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -242,7 +255,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         IEnumerable<Teacher> teachersToAddOrUpdate = null;
 
         // Act
-        Func<Task> action = async () => await AppDbContext.Teachers.AddOrUpdateManyAsync(teachersToAddOrUpdate);
+        Func<Task> action = () => AppDbContext.Teachers.AddOrUpdateManyAsync(teachersToAddOrUpdate);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -312,7 +325,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         var teachersToAttach = GenerateTeachers(2);
 
         // Act
-        Func<Task> action = async () => await dbSet.AttachManyAsync(teachersToAttach);
+        Func<Task> action = () => dbSet.AttachManyAsync(teachersToAttach);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -360,7 +373,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         var teachersToAttach = GenerateTeachers(1);
 
         // Act
-        Func<Task> action = async () => await dbSet.AttachManyIfExistAsync(teachersToAttach);
+        Func<Task> action = () => dbSet.AttachManyIfExistAsync(teachersToAttach);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -373,7 +386,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         IEnumerable<Teacher> teachersToAttach = null;
 
         // Act
-        Func<Task> action = async () => await AppDbContext.Teachers.AttachManyIfExistAsync(teachersToAttach);
+        Func<Task> action = () => AppDbContext.Teachers.AttachManyIfExistAsync(teachersToAttach);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -385,7 +398,6 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         // Arrange
         const int initialCount = 2;
         var existingTeachers = await InsertTeachersAsync(initialCount);
-        existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
 
         // Act
         var attachedTeachers = await AppDbContext.Teachers.AttachManyIfExistAsync(existingTeachers);
@@ -426,7 +438,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         var teachersToAddOrAttach = GenerateTeachers(1);
 
         // Act
-        Func<Task> action = async () => await dbSet.AddOrAttachManyAsync(teachersToAddOrAttach);
+        Func<Task> action = () => dbSet.AddOrAttachManyAsync(teachersToAddOrAttach);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -439,7 +451,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         IEnumerable<Teacher> teachersToAddOrAttach = null;
 
         // Act
-        Func<Task> action = async () => await AppDbContext.Teachers.AddOrAttachManyAsync(teachersToAddOrAttach);
+        Func<Task> action = () => AppDbContext.Teachers.AddOrAttachManyAsync(teachersToAddOrAttach);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -468,7 +480,6 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         // Arrange
         const int initialCount = 2;
         var existingTeachers = await InsertTeachersAsync(initialCount);
-        existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
 
         // Act
         var attachedTeachers = await AppDbContext.Teachers.AddOrAttachManyAsync(existingTeachers);
@@ -505,6 +516,62 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         AppDbContext.Teachers.Should().BeEquivalentTo(teachersToAddOrAttach);
     }
 
+    [Test]
+    public async Task RemoveByKeyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        DbSet<Teacher> dbSet = null;
+        var teacherToRemove = GenerateTeacher();
+
+        // Act
+        Func<Task> action = () => dbSet.RemoveByKeyAsync(teacherToRemove.Id);
+
+        // Assert
+        await action.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task RemoveByKeyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        object teacherIdToRemove = null;
+
+        // Act
+        Func<Task> action = () => AppDbContext.Teachers.RemoveByKeyAsync(teacherIdToRemove);
+
+        // Assert
+        await action.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task RemoveByKeyAsync_WhenKeyExists_ShouldRemoveEntityFromDbContext()
+    {
+        // Arrange 
+        var existingTeacher = (await InsertTeachersAsync(1))[0];
+
+        // Act
+        var teachersRemovedCount = await AppDbContext.Teachers.RemoveByKeyAsync(existingTeacher.Id);
+        await AppDbContext.SaveChangesAsync();
+
+        // Assert
+        teachersRemovedCount.Should().Be(1);
+    }
+
+    [Test]
+    public async Task RemoveByKeyAsync_WhenKeyNotFound_ShouldNotRemoveEntityFromDbContext()
+    {
+        // Arrange 
+        var teachersBeforeRemove = await InsertTeachersAsync(1);
+
+        // Act
+        var teachersRemovedCount = await AppDbContext.Teachers.RemoveByKeyAsync(Guid.NewGuid());
+        await AppDbContext.SaveChangesAsync();
+        var teachersAfterRemove = await AppDbContext.Teachers.ToArrayAsync();
+
+        // Assert
+        teachersRemovedCount.Should().Be(0);
+        teachersAfterRemove.Should().BeEquivalentTo(teachersBeforeRemove);
+    }
 
     [Test]
     public async Task RemoveManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
@@ -514,7 +581,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         var teachersToRemove = GenerateTeachers(1);
 
         // Act
-        Func<Task> action = async () => await dbSet.RemoveManyAsync(teachersToRemove);
+        Func<Task> action = () => dbSet.RemoveManyAsync(teachersToRemove);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -527,7 +594,7 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         IEnumerable<Teacher> teachersToRemove = null;
 
         // Act
-        Func<Task> action = async () => await AppDbContext.Teachers.RemoveManyAsync(teachersToRemove);
+        Func<Task> action = () => AppDbContext.Teachers.RemoveManyAsync(teachersToRemove);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();

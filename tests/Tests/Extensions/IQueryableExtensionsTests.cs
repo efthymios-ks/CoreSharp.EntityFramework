@@ -6,7 +6,7 @@ public sealed class IQueryableExtensionsTests
     [Test]
     public async Task GetPageAsync_WhenCalled_ShouldReturnCorrectPageNumberAndSize()
     {
-        // Arrange & Act
+        // Arrange 
         const int pageNumber = 2;
         const int pageSize = 5;
         var query = Enumerable.Range(1, 20).AsQueryable();
@@ -23,7 +23,7 @@ public sealed class IQueryableExtensionsTests
     [Test]
     public async Task GetPageAsync_WhenCalled_ShouldReturnCorrectTotalItems()
     {
-        // Arrange & Act
+        // Arrange 
         const int pageNumber = 2;
         const int pageSize = 5;
         var query = Enumerable.Range(1, 20).AsQueryable();
@@ -39,7 +39,7 @@ public sealed class IQueryableExtensionsTests
     [Test]
     public async Task GetPageAsync_WhenCalled_ShouldReturnCorrectTotalPages()
     {
-        // Arrange & Act
+        // Arrange 
         const int pageNumber = 2;
         const int pageSize = 5;
         var query = Enumerable.Range(1, 20).AsQueryable();
@@ -55,7 +55,7 @@ public sealed class IQueryableExtensionsTests
     [Test]
     public async Task GetPageAsync_WhenCalled_ShouldReturnCorrectItemsInPage()
     {
-        // Arrange & Act
+        // Arrange
         const int pageNumber = 2;
         const int pageSize = 5;
         var query = Enumerable.Range(1, 20).AsQueryable();

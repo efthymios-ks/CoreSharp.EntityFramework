@@ -19,8 +19,10 @@ public static class DbContextExtensions
     {
         ArgumentNullException.ThrowIfNull(dbContext);
 
-        var changedEntities = dbContext.ChangeTracker.Entries()
-                                                     .Where(e => e.State != EntityState.Unchanged);
+        var changedEntities = dbContext.ChangeTracker
+            .Entries()
+            .Where(e => e.State != EntityState.Unchanged);
+
         foreach (var entity in changedEntities)
         {
             switch (entity.State)

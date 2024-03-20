@@ -37,13 +37,13 @@ internal static class DbSetExtensions
         ArgumentNullException.ThrowIfNull(dbSet);
         ArgumentNullException.ThrowIfNull(entities);
 
+        return await dbSet.AddOrUpdateManyInternalAsync(entities, AddAction, DiscardUpdateAction, cancellationToken);
+
         Task<IEnumerable<TEntity>> AddAction(IEnumerable<TEntity> entitiesToAdd)
             => dbSet.AddManyAsync(entitiesToAdd, cancellationToken);
 
         Task<IEnumerable<TEntity>> DiscardUpdateAction(IEnumerable<TEntity> _)
             => Task.FromResult(Enumerable.Empty<TEntity>());
-
-        return await dbSet.AddOrUpdateManyInternalAsync(entities, AddAction, DiscardUpdateAction, cancellationToken);
     }
 
     public static async Task<IEnumerable<TEntity>> UpdateManyAsync<TEntity>(
@@ -67,13 +67,13 @@ internal static class DbSetExtensions
         ArgumentNullException.ThrowIfNull(dbSet);
         ArgumentNullException.ThrowIfNull(entities);
 
+        return await dbSet.AddOrUpdateManyInternalAsync(entities, DiscardAddAction, UpdateAction, cancellationToken);
+
         Task<IEnumerable<TEntity>> DiscardAddAction(IEnumerable<TEntity> _)
             => Task.FromResult(Enumerable.Empty<TEntity>());
 
         Task<IEnumerable<TEntity>> UpdateAction(IEnumerable<TEntity> entitiesToUpdate)
             => dbSet.UpdateManyAsync(entitiesToUpdate);
-
-        return await dbSet.AddOrUpdateManyInternalAsync(entities, DiscardAddAction, UpdateAction, cancellationToken);
     }
 
     public static async Task<IEnumerable<TEntity>> AddOrUpdateManyAsync<TEntity>(
@@ -85,13 +85,13 @@ internal static class DbSetExtensions
         ArgumentNullException.ThrowIfNull(dbSet);
         ArgumentNullException.ThrowIfNull(entities);
 
+        return await dbSet.AddOrUpdateManyInternalAsync(entities, AddAction, UpdateAction, cancellationToken);
+
         Task<IEnumerable<TEntity>> AddAction(IEnumerable<TEntity> entitiesToAdd)
             => dbSet.AddManyAsync(entitiesToAdd, cancellationToken);
 
         Task<IEnumerable<TEntity>> UpdateAction(IEnumerable<TEntity> entitiesToUpdate)
             => dbSet.UpdateManyAsync(entitiesToUpdate);
-
-        return await dbSet.AddOrUpdateManyInternalAsync(entities, AddAction, UpdateAction, cancellationToken);
     }
 
     public static async Task<IEnumerable<TEntity>> AttachManyAsync<TEntity>(
@@ -114,13 +114,13 @@ internal static class DbSetExtensions
         ArgumentNullException.ThrowIfNull(dbSet);
         ArgumentNullException.ThrowIfNull(entities);
 
+        return await dbSet.AddOrUpdateManyInternalAsync(entities, DiscardAddAction, UpdateAction, cancellationToken);
+
         Task<IEnumerable<TEntity>> DiscardAddAction(IEnumerable<TEntity> _)
             => Task.FromResult(Enumerable.Empty<TEntity>());
 
         Task<IEnumerable<TEntity>> UpdateAction(IEnumerable<TEntity> entitiesToUpdate)
             => dbSet.AttachManyAsync(entitiesToUpdate);
-
-        return await dbSet.AddOrUpdateManyInternalAsync(entities, DiscardAddAction, UpdateAction, cancellationToken);
     }
 
     public static async Task<IEnumerable<TEntity>> AddOrAttachManyAsync<TEntity>(
@@ -132,13 +132,13 @@ internal static class DbSetExtensions
         ArgumentNullException.ThrowIfNull(dbSet);
         ArgumentNullException.ThrowIfNull(entities);
 
+        return await dbSet.AddOrUpdateManyInternalAsync(entities, AddAction, UpdateAction, cancellationToken);
+
         Task<IEnumerable<TEntity>> AddAction(IEnumerable<TEntity> entitiesToAdd)
             => dbSet.AddManyAsync(entitiesToAdd, cancellationToken);
 
         Task<IEnumerable<TEntity>> UpdateAction(IEnumerable<TEntity> entitiesToUpdate)
             => dbSet.AttachManyAsync(entitiesToUpdate);
-
-        return await dbSet.AddOrUpdateManyInternalAsync(entities, AddAction, UpdateAction, cancellationToken);
     }
 
     public static async Task<int> RemoveByKeyAsync<TEntity>(
@@ -150,8 +150,9 @@ internal static class DbSetExtensions
         ArgumentNullException.ThrowIfNull(dbSet);
         ArgumentNullException.ThrowIfNull(key);
 
-        return await dbSet.Where(e => Equals(e.Id, key))
-                          .ExecuteDeleteAsync(cancellationToken);
+        return await dbSet
+            .Where(e => Equals(e.Id, key))
+            .ExecuteDeleteAsync(cancellationToken);
     }
 
     public static async Task RemoveManyAsync<TEntity>(
@@ -175,13 +176,15 @@ internal static class DbSetExtensions
         where TEntity : class, IEntity
     {
         // Get all ids in single query. 
-        var idsToLookFor = entities.Select(entity => entity.Id)
-                                   .Distinct();
+        var idsToLookFor = entities
+            .Select(entity => entity.Id)
+            .Distinct();
 
-        var idsFound = await dbSet.Where(entity => idsToLookFor.Contains(entity.Id))
-                                  .Select(entity => entity.Id)
-                                  .AsNoTracking()
-                                  .ToArrayAsync(cancellationToken);
+        var idsFound = await dbSet
+            .Where(entity => idsToLookFor.Contains(entity.Id))
+            .Select(entity => entity.Id)
+            .AsNoTracking()
+            .ToArrayAsync(cancellationToken);
 
         // Save entities in batches.
         var entitiesToUpdate = entities.Where(EntityExists);

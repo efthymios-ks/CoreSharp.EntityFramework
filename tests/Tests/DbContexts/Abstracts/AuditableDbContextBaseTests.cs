@@ -1,23 +1,14 @@
-﻿using CoreSharp.EntityFramework.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
-namespace CoreSharp.EntityFramework.DbContexts.Abstracts;
+namespace CoreSharp.EntityFramework.DbContexts.Abstracts.Tests;
 
 [TestFixture]
 public sealed class AuditableDbContextBaseTests : AppDbContextTestsBase
 {
-    // Methods
+    // Methods 
     [Test]
-    public void DataChanges_WhenCalled_ShouldBeInitialized()
-    {
-        // Act & Assert
-        AppDbContext.DataChanges.Should().NotBeNull();
-        AppDbContext.DataChanges.Should().BeAssignableTo<DbSet<EntityChange>>();
-    }
-
-    [Test]
-    public async Task SaveChanges_WhenEntitiesAdded_ShouldSaveChangesAndUpdateDataChanges()
+    public async Task SaveChanges_WhenEntityAdded_ShouldSaveChangesAndUpdateDataChanges()
     {
         // Arrange 
         var teacher = new Teacher
@@ -30,38 +21,35 @@ public sealed class AuditableDbContextBaseTests : AppDbContextTestsBase
         AppDbContext.SaveChanges();
 
         // Assert
-        var changedEntity = await AppDbContext
+        var change = await AppDbContext
             .DataChanges
             .OrderBy(entity => entity.DateCreatedUtc)
             .LastOrDefaultAsync();
-        changedEntity.Should().NotBeNull();
-        changedEntity.TableName.Should().Be("Teachers");
-        changedEntity.Action.Should().Be(EntityState.Added.ToString());
-        changedEntity.Keys.Should().Be(JsonSerializer.Serialize(new { teacher.Id }));
+        change.Should().NotBeNull();
+        change.TableName.Should().Be("Teachers");
+        change.Action.Should().Be(EntityState.Added.ToString());
+        change.Keys.Should().Be(JsonSerializer.Serialize(new { teacher.Id }));
     }
 
     [Test]
-    public async Task SaveChangesAsync_WhenCalledAndEntitiesChanged_ShouldSaveChangesAndUpdateDataChangesAsync()
+    public async Task SaveChangesAsync_WhenEntityChanged_ShouldSaveChangesAndUpdateDataChangesAsync()
     {
         // Arrange 
-        var teacher = new Teacher { Name = "Efthymios" };
+        var existingTeacher = (await InsertTeachersAsync(1))[0];
 
         // Act
-        AppDbContext.Teachers.Add(teacher);
-        await AppDbContext.SaveChangesAsync();
-        teacher.Name = "Efthymios K.";
-        AppDbContext.Attach(teacher);
+        existingTeacher.Name = "Efthymios K.";
         await AppDbContext.SaveChangesAsync();
 
         // Assert
-        var changedEntity = await AppDbContext
+        var change = await AppDbContext
             .DataChanges
             .OrderBy(entity => entity.DateCreatedUtc)
             .LastOrDefaultAsync();
-        changedEntity.Should().NotBeNull();
-        changedEntity.TableName.Should().Be("Teachers");
-        changedEntity.Action.Should().Be(EntityState.Modified.ToString());
-        changedEntity.Keys.Should().Be(JsonSerializer.Serialize(new { teacher.Id }));
+        change.Should().NotBeNull();
+        change.TableName.Should().Be("Teachers");
+        change.Action.Should().Be(EntityState.Modified.ToString());
+        change.Keys.Should().Be(JsonSerializer.Serialize(new { existingTeacher.Id }));
     }
 
     [Test]
@@ -120,6 +108,29 @@ public sealed class AuditableDbContextBaseTests : AppDbContextTestsBase
     }
 
     [Test]
+    public async Task SaveChangesAsync_WhenAuditableEntityUpdated_ShouldNotChangeDateCreatedUtc()
+    {
+        // Arrange 
+        var teacher = new Teacher
+        {
+            Name = $"Teacher_{DateTime.Now.ToFileTimeUtc()}",
+            TeacherType = TeacherType.Elementary
+        };
+        await AppDbContext.Teachers.AddAsync(teacher);
+        await AppDbContext.SaveChangesAsync();
+
+        // Act 
+        var dateCreatedUtcBeforeUpdating = teacher.DateCreatedUtc;
+        teacher.TeacherType = TeacherType.MiddleSchool;
+        AppDbContext.Teachers.Update(teacher);
+        await AppDbContext.SaveChangesAsync();
+        var dateCreatedUtcAfterUpdating = teacher.DateCreatedUtc;
+
+        // Assert 
+        dateCreatedUtcAfterUpdating.Should().Be(dateCreatedUtcBeforeUpdating);
+    }
+
+    [Test]
     public async Task SaveChangesAsync_WhenAuditableEntityUpdated_ShouldSetDateModifiedUtc()
     {
         // Arrange 
@@ -141,28 +152,5 @@ public sealed class AuditableDbContextBaseTests : AppDbContextTestsBase
         // Assert
         dateModifiedUtcAfterUpdating.Should().NotBeNull();
         dateModifiedUtcAfterUpdating.Should().BeOnOrAfter(dateModifiedUtcBeforeUpdating);
-    }
-
-    [Test]
-    public async Task SaveChangesAsync_WhenAuditableEntityUpdated_ShouldNotChangeDateCreatedUtc()
-    {
-        // Arrange 
-        var teacher = new Teacher
-        {
-            Name = $"Teacher_{DateTime.Now.ToFileTimeUtc()}",
-            TeacherType = TeacherType.Elementary
-        };
-        await AppDbContext.Teachers.AddAsync(teacher);
-        await AppDbContext.SaveChangesAsync();
-
-        // Act 
-        var dateCreatedUtcBeforeUpdating = teacher.DateCreatedUtc;
-        teacher.TeacherType = TeacherType.MiddleSchool;
-        AppDbContext.Teachers.Update(teacher);
-        await AppDbContext.SaveChangesAsync();
-        var dateCreatedUtcAfterUpdating = teacher.DateCreatedUtc;
-
-        // Assert 
-        dateCreatedUtcAfterUpdating.Should().Be(dateCreatedUtcBeforeUpdating);
     }
 }
