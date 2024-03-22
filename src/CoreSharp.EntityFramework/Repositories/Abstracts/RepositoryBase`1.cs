@@ -31,7 +31,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
     public virtual async Task<TEntity> GetAsync(
         object key,
         Query<TEntity> navigation = null,
-                                                CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(key);
 

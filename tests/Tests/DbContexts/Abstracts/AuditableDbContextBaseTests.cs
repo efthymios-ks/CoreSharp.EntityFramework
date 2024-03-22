@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
-namespace CoreSharp.EntityFramework.DbContexts.Abstracts.Tests;
+namespace Tests.DbContexts.Abstracts;
 
 [TestFixture]
 public sealed class AuditableDbContextBaseTests : AppDbContextTestsBase

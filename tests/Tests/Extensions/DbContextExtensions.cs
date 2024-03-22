@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CoreSharp.EntityFramework.Extensions;
+using Microsoft.EntityFrameworkCore;
 
-namespace CoreSharp.EntityFramework.Extensions.Tests;
+namespace Tests.Extensions;
 
 [TestFixture]
 public sealed class DbContextExtensionsTests : AppDbContextTestsBase

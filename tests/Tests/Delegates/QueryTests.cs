@@ -1,7 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Delegates;
 using System.Diagnostics.CodeAnalysis;
 
-namespace CoreSharp.Delegates.Tests;
+namespace Tests.Delegates;
 
 [TestFixture]
 [SuppressMessage("Style", "IDE0039:Use local function", Justification = "<Pending>")]

@@ -24,15 +24,12 @@ public abstract class UnitOfWorkBase : IUnitOfWork
     protected DbContext Context { get; }
 
     // Methods   
-    public virtual async Task CommitAsync(CancellationToken cancellationToken = default)
-        => await Context.SaveChangesAsync(cancellationToken);
+    public virtual Task CommitAsync(CancellationToken cancellationToken = default)
+        => Context.SaveChangesAsync(cancellationToken);
 
-    public virtual async Task RollbackAsync(CancellationToken cancellationToken = default)
-        => await Context.RollbackAsync(cancellationToken);
+    public virtual Task RollbackAsync(CancellationToken cancellationToken = default)
+        => Context.RollbackAsync(cancellationToken);
 
-    public virtual async ValueTask DisposeAsync()
-    {
-        GC.SuppressFinalize(this);
-        await Context.DisposeAsync();
-    }
+    public virtual ValueTask DisposeAsync()
+        => Context.DisposeAsync();
 }

@@ -1,5 +1,4 @@
-﻿using CoreSharp.Json.JsonNet;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
@@ -17,7 +16,7 @@ public static class PropertyBuilderExtensions
     public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(
         this PropertyBuilder<TProperty> builder)
         where TProperty : class
-        => builder.HasJsonConversion(JsonSettings.Default);
+        => builder.HasJsonConversion(TextJson.JsonSerializerOptions.Default);
 
     /// <inheritdoc cref="HasJsonConversionInternal{TProperty}(PropertyBuilder{TProperty}, Func{TProperty, string}, Func{string, TProperty})"/>
     public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(
@@ -28,13 +27,13 @@ public static class PropertyBuilderExtensions
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(options);
 
+        return builder.HasJsonConversionInternal(ToJson, FromJson);
+
         string ToJson(TProperty property)
-          => TextJson.JsonSerializer.Serialize(property, options);
+            => TextJson.JsonSerializer.Serialize(property, options);
 
         TProperty FromJson(string json)
-          => TextJson.JsonSerializer.Deserialize<TProperty>(json, options);
-
-        return builder.HasJsonConversionInternal(ToJson, FromJson);
+            => TextJson.JsonSerializer.Deserialize<TProperty>(json, options);
     }
 
     /// <inheritdoc cref="HasJsonConversionInternal{TProperty}(PropertyBuilder{TProperty}, Func{TProperty, string}, Func{string, TProperty})"/>
@@ -46,13 +45,13 @@ public static class PropertyBuilderExtensions
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(settings);
 
+        return builder.HasJsonConversionInternal(ToJson, FromJson);
+
         string ToJson(TProperty property)
-          => JsonNet.JsonConvert.SerializeObject(property, settings);
+            => JsonNet.JsonConvert.SerializeObject(property, settings);
 
         TProperty FromJson(string json)
-          => JsonNet.JsonConvert.DeserializeObject<TProperty>(json, settings);
-
-        return builder.HasJsonConversionInternal(ToJson, FromJson);
+            => JsonNet.JsonConvert.DeserializeObject<TProperty>(json, settings);
     }
 
     /// <summary>

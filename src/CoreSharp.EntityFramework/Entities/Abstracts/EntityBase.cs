@@ -7,7 +7,6 @@ using TextJson = System.Text.Json;
 
 namespace CoreSharp.EntityFramework.Entities.Abstracts;
 
-[DebuggerDisplay("{DebuggerDisplay,nq}")]
 public abstract class EntityBase : IEntity
 {
     // Fields 
@@ -22,12 +21,6 @@ public abstract class EntityBase : IEntity
     private DateTime? _dateModifiedUtc;
 
     // Properties 
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    [TextJson.Serialization.JsonIgnore]
-    [JsonNet.JsonIgnore]
-    private string DebuggerDisplay
-        => ToString();
-
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     [NotMapped]
     [TextJson.Serialization.JsonIgnore]

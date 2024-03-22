@@ -2,7 +2,7 @@
 
 namespace CoreSharp.EntityFramework.Entities.Interfaces;
 
-public interface IAuditableEntity
+public interface IAuditEntity
 {
     // Properties
     DateTime DateCreatedUtc { get; set; }

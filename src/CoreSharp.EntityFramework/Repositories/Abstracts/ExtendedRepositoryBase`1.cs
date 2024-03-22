@@ -56,7 +56,7 @@ public abstract class ExtendedRepositoryBase<TEntity> : RepositoryBase<TEntity>,
         ArgumentNullException.ThrowIfNull(key);
 
         await Context.Set<TEntity>()
-                     .RemoveByKeyAsync(key, cancellationToken);
+            .RemoveByKeyAsync(key, cancellationToken);
     }
 
     public virtual async Task<bool> ExistsAsync(
@@ -73,10 +73,11 @@ public abstract class ExtendedRepositoryBase<TEntity> : RepositoryBase<TEntity>,
         CancellationToken cancellationToken = default)
     {
         var query = NavigateTable(navigation);
-        var foundIds = await query.Select(e => e.Id)
-                                  .Take(1)
-                                  .AsNoTracking()
-                                  .ToArrayAsync(cancellationToken);
+        var foundIds = await query
+            .Select(e => e.Id)
+            .Take(1)
+            .AsNoTracking()
+            .ToArrayAsync(cancellationToken);
         return foundIds.Length > 0;
     }
 
@@ -95,8 +96,8 @@ public abstract class ExtendedRepositoryBase<TEntity> : RepositoryBase<TEntity>,
         ArgumentNullException.ThrowIfNull(entity);
 
         return await ExistsAsync(entity.Id, cancellationToken)
-                ? await UpdateAsync(entity, cancellationToken)
-                : await AddAsync(entity, cancellationToken);
+            ? await UpdateAsync(entity, cancellationToken)
+            : await AddAsync(entity, cancellationToken);
     }
 
     public virtual async Task<IEnumerable<TEntity>> AddOrUpdateAsync(

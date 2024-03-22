@@ -14,6 +14,9 @@ namespace CoreSharp.EntityFramework.DbContexts.Abstracts;
 
 public abstract class AuditableDbContextBase : DbContext
 {
+    private static readonly string _auditEntityDateCreatedPropertyName = nameof(IAuditEntity.DateCreatedUtc);
+    private static readonly string _auditEntityDateModifiedPropertyName = nameof(IAuditEntity.DateModifiedUtc);
+
     // Constructors
     protected AuditableDbContextBase(DbContextOptions options)
         : base(options)
@@ -26,14 +29,14 @@ public abstract class AuditableDbContextBase : DbContext
     }
 
     // Properties
+    internal bool IsDisposed { get; set; }
     public DbSet<EntityChange> DataChanges { get; set; }
 
     // Methods 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        ConfigureTrackableEntities(modelBuilder);
+        ConfigureAuditEntities(modelBuilder);
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -52,9 +55,28 @@ public abstract class AuditableDbContextBase : DbContext
         return databaseChangeCount;
     }
 
+    private static void ConfigureAuditEntities(ModelBuilder modelBuilder)
+    {
+        var auditEntities = modelBuilder.Model.FindEntityTypes(typeof(IAuditEntity));
+        foreach (var auditEntity in auditEntities)
+        {
+            var entityTypeBuilder = modelBuilder.Entity(auditEntity.Name);
+
+            // DateCreatedUtc
+            var dateCreatedProperty = entityTypeBuilder
+                .Property(nameof(IAuditEntity.DateCreatedUtc)) as PropertyBuilder<DateTime>;
+            dateCreatedProperty.HasUtcConversion();
+
+            // DateModifiedUtc
+            var dateModifiedProperty = entityTypeBuilder
+                .Property(nameof(IAuditEntity.DateModifiedUtc)) as PropertyBuilder<DateTime?>;
+            dateModifiedProperty.HasUtcConversion();
+        }
+    }
+
     private TemporaryEntityChange[] OnBeforeSaveChanges()
     {
-        UpdateTrackableEntities();
+        UpdateAuditEntities();
         return CacheChangesBeforeSave();
     }
 
@@ -72,42 +94,21 @@ public abstract class AuditableDbContextBase : DbContext
         await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 
-    private static void ConfigureTrackableEntities(ModelBuilder modelBuilder)
+    private void UpdateAuditEntities()
     {
-        // Trackable entities
-        var trackableEntities = modelBuilder.Model.FindEntityTypes(typeof(IAuditableEntity));
-        foreach (var trackableEntity in trackableEntities)
+        var auditEntityEntries = ChangeTracker.Entries().Where(e => e.Entity is IAuditEntity);
+        foreach (var auditEntityEntry in auditEntityEntries)
         {
-            var trackedEntityBuilder = modelBuilder.Entity(trackableEntity.Name);
-
-            // DateCreatedUtc
-            var dateCreatedProperty = trackedEntityBuilder
-                .Property(nameof(IAuditableEntity.DateCreatedUtc)) as PropertyBuilder<DateTime>;
-            dateCreatedProperty.HasUtcConversion();
-
-            // DateModifiedUtc
-            var dateModifiedProperty = trackedEntityBuilder
-                .Property(nameof(IAuditableEntity.DateModifiedUtc)) as PropertyBuilder<DateTime?>;
-            dateModifiedProperty.HasUtcConversion();
-        }
-    }
-
-    private void UpdateTrackableEntities()
-    {
-        var trackableEntries = ChangeTracker.Entries().Where(e => e.Entity is IAuditableEntity);
-        foreach (var trackableEntry in trackableEntries)
-        {
-            var trackableEntity = trackableEntry.Entity as IAuditableEntity;
-
-            switch (trackableEntry.State)
+            var auditEntity = auditEntityEntry.Entity as IAuditEntity;
+            switch (auditEntityEntry.State)
             {
                 case EntityState.Added:
-                    trackableEntity.DateCreatedUtc = DateTime.UtcNow;
-                    trackableEntry.Property(nameof(IAuditableEntity.DateModifiedUtc)).IsModified = false;
+                    auditEntity.DateCreatedUtc = DateTime.UtcNow;
+                    auditEntityEntry.Property(_auditEntityDateModifiedPropertyName).IsModified = false;
                     break;
                 case EntityState.Modified:
-                    trackableEntity.DateModifiedUtc = DateTime.UtcNow;
-                    trackableEntry.Property(nameof(IAuditableEntity.DateCreatedUtc)).IsModified = false;
+                    auditEntity.DateModifiedUtc = DateTime.UtcNow;
+                    auditEntityEntry.Property(_auditEntityDateCreatedPropertyName).IsModified = false;
                     break;
             }
         }
@@ -118,54 +119,21 @@ public abstract class AuditableDbContextBase : DbContext
         // Force scan for changes to be sure.
         ChangeTracker.DetectChanges();
 
-        static bool EntityEntryFilter(EntityEntry entry)
-        {
-            if (entry.Entity is EntityChange)
-            {
-                return false;
-            }
-            else if (entry.Entity is not IAuditableEntity)
-            {
-                return false;
-            }
-            else if (entry.State is EntityState.Unchanged or EntityState.Detached)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         // If no valid entries detected, return. 
-        var trackableEntries = ChangeTracker.Entries().Where(EntityEntryFilter);
-        if (!trackableEntries.Any())
+        var auditEntityEntries = ChangeTracker.Entries().Where(EntityEntryFilter);
+        if (!auditEntityEntries.Any())
         {
             return Array.Empty<TemporaryEntityChange>();
         }
 
-        static bool PropertyEntryFilter(PropertyEntry entry)
-        {
-            var propertyName = entry.Metadata.Name;
-            if (propertyName == nameof(IAuditableEntity.DateCreatedUtc))
-            {
-                return false;
-            }
-            else if (propertyName == nameof(IAuditableEntity.DateModifiedUtc))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         // Scan entries 
         var temporaryEntityChanges = new HashSet<TemporaryEntityChange>();
-        foreach (var trackableEntry in trackableEntries)
+        foreach (var auditEntityEntry in auditEntityEntries)
         {
-            var temporaryEntityChange = new TemporaryEntityChange(trackableEntry);
+            var temporaryEntityChange = new TemporaryEntityChange(auditEntityEntry);
 
             // Scan properties 
-            var properties = trackableEntry.Properties.Where(PropertyEntryFilter);
+            var properties = auditEntityEntry.Properties.Where(PropertyEntryFilter);
             foreach (var property in properties)
             {
                 var propertyName = property.Metadata.Name;
@@ -185,7 +153,7 @@ public abstract class AuditableDbContextBase : DbContext
                 }
 
                 // Properties 
-                switch (trackableEntry.State)
+                switch (auditEntityEntry.State)
                 {
                     case EntityState.Added:
                         temporaryEntityChange.NewState[propertyName] = property.CurrentValue;
@@ -204,6 +172,39 @@ public abstract class AuditableDbContextBase : DbContext
         }
 
         return temporaryEntityChanges.ToArray();
+
+        static bool EntityEntryFilter(EntityEntry entry)
+        {
+            if (entry.Entity is EntityChange)
+            {
+                return false;
+            }
+            else if (entry.Entity is not IAuditEntity)
+            {
+                return false;
+            }
+            else if (entry.State is EntityState.Unchanged or EntityState.Detached)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        static bool PropertyEntryFilter(PropertyEntry entry)
+        {
+            var propertyName = entry.Metadata.Name;
+            if (propertyName == nameof(IAuditEntity.DateCreatedUtc))
+            {
+                return false;
+            }
+            else if (propertyName == nameof(IAuditEntity.DateModifiedUtc))
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 
     private static EntityChange[] FinalizeAndGetChangesAfterSave(TemporaryEntityChange[] temporaryEntityChanges)
@@ -232,7 +233,30 @@ public abstract class AuditableDbContextBase : DbContext
         }
 
         // Convert and return all temporary changes, regardless. 
-        return temporaryEntityChanges.Select(c => c.ToEntityChange())
-                                     .ToArray();
+        return temporaryEntityChanges
+            .Select(c => c.ToEntityChange())
+            .ToArray();
+    }
+
+    public override void Dispose()
+    {
+        if (IsDisposed)
+        {
+            return;
+        }
+
+        IsDisposed = true;
+        base.Dispose();
+    }
+
+    public override ValueTask DisposeAsync()
+    {
+        if (IsDisposed)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        IsDisposed = true;
+        return base.DisposeAsync();
     }
 }
