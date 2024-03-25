@@ -1,10 +1,11 @@
 ﻿using CoreSharp.EntityFramework.Repositories.Abstracts;
 using Microsoft.EntityFrameworkCore;
+using Tests.Internal.Database.Models;
 
 namespace Tests.Repositories.Abstracts;
 
 [TestFixture]
-public sealed class UnitOfWorkBaseTests : AppDbContextTestsBase
+public sealed class UnitOfWorkBaseTests : DummyDbContextTestsBase
 {
     [Test]
     public void Constructor_WhenDbContextIsNull_ShouldThrowArgumentNullException()
@@ -13,7 +14,7 @@ public sealed class UnitOfWorkBaseTests : AppDbContextTestsBase
         DbContext dbContext = null;
 
         // Act
-        Action action = () => _ = new TestUnitOfWork(dbContext);
+        Action action = () => _ = new DummyUnitOfWork(dbContext);
 
         // Assert
         action.Should().ThrowExactly<ArgumentNullException>();
@@ -23,31 +24,31 @@ public sealed class UnitOfWorkBaseTests : AppDbContextTestsBase
     public async Task CommitAsync_WhenCalled_ShouldSaveChanges()
     {
         // Arrange   
-        var teacherToAdd = new Teacher
+        var dummyToAdd = new DummyEntity
         {
             Name = Guid.NewGuid().ToString()
         };
-        var unitOfWork = new TestUnitOfWork(AppDbContext);
+        var unitOfWork = new DummyUnitOfWork(DbContext);
 
         // Act
-        await AppDbContext.Teachers.AddAsync(teacherToAdd);
+        await DbContext.Dummies.AddAsync(dummyToAdd);
         await unitOfWork.CommitAsync();
-        var teachers = await AppDbContext.Teachers.ToArrayAsync();
+        var dummies = await DbContext.Dummies.ToArrayAsync();
 
         // Assert  
-        teachers.Should().BeEquivalentTo(new[] { teacherToAdd });
+        dummies.Should().BeEquivalentTo(new[] { dummyToAdd });
     }
 
     [Test]
     public async Task CommitAsync_WhenCancellationTokenIsSet_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var unitOfWork = new TestUnitOfWork(AppDbContext);
+        var unitOfWork = new DummyUnitOfWork(DbContext);
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
         // Act
-        await AppDbContext.Teachers.AddAsync(new());
+        await DbContext.Dummies.AddAsync(new());
         Func<Task> func = () => unitOfWork.CommitAsync(cancellationTokenSource.Token);
 
         // Assert  
@@ -58,25 +59,25 @@ public sealed class UnitOfWorkBaseTests : AppDbContextTestsBase
     public async Task RollbackAsync_WhenCalled_ShouldRollbackPendingChanges()
     {
         // Arrange   
-        var teacherToAdd = new Teacher();
-        var unitOfWork = new TestUnitOfWork(AppDbContext);
+        var dummyToAdd = new DummyEntity();
+        var unitOfWork = new DummyUnitOfWork(DbContext);
 
         // Act
-        await AppDbContext.Teachers.AddAsync(teacherToAdd);
+        await DbContext.Dummies.AddAsync(dummyToAdd);
         await unitOfWork.RollbackAsync();
-        var teachers = await AppDbContext.Teachers.ToArrayAsync();
+        var dummies = await DbContext.Dummies.ToArrayAsync();
 
         // Assert 
-        teachers.Should().BeEmpty();
+        dummies.Should().BeEmpty();
     }
 
     [Test]
     public async Task RollbackAsync_WhenCancellationTokenIsSetAndEntityDeleted_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var unitOfWork = new TestUnitOfWork(AppDbContext);
-        var existingTeachers = await InsertTeachersAsync(1);
-        AppDbContext.Teachers.RemoveRange(existingTeachers);
+        var unitOfWork = new DummyUnitOfWork(DbContext);
+        var existingDummies = await PreloadDummiesAsync(1);
+        DbContext.Dummies.RemoveRange(existingDummies);
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
@@ -91,7 +92,7 @@ public sealed class UnitOfWorkBaseTests : AppDbContextTestsBase
     public async Task DisposeAsync_ShouldCallDisposeAsyncOnContext()
     {
         // Arrange 
-        var unitOfWork = new TestUnitOfWork(AppDbContext);
+        var unitOfWork = new DummyUnitOfWork(DbContext);
         await unitOfWork.DisposeAsync();
 
         // Act
@@ -101,9 +102,9 @@ public sealed class UnitOfWorkBaseTests : AppDbContextTestsBase
         await func.Should().ThrowExactlyAsync<ObjectDisposedException>();
     }
 
-    private class TestUnitOfWork : UnitOfWorkBase
+    private sealed class DummyUnitOfWork : UnitOfWorkBase
     {
-        public TestUnitOfWork(DbContext dbContext)
+        public DummyUnitOfWork(DbContext dbContext)
             : base(dbContext)
         {
         }

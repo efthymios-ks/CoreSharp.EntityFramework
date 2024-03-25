@@ -1,88 +1,86 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Tests.Internal.Database.Models;
 
 namespace Tests.DbContexts.Abstracts;
 
 [TestFixture]
-public sealed class AuditableDbContextBaseTests : AppDbContextTestsBase
+public sealed class AuditableDbContextBaseTests : DummyDbContextTestsBase
 {
     // Methods 
     [Test]
     public async Task SaveChanges_WhenEntityAdded_ShouldSaveChangesAndUpdateDataChanges()
     {
         // Arrange 
-        var teacher = new Teacher
-        {
-            Name = "Efthymios"
-        };
+        var dummy = GenerateDummy();
 
         // Act
-        AppDbContext.Teachers.Add(teacher);
-        AppDbContext.SaveChanges();
+        DbContext.Dummies.Add(dummy);
+        DbContext.SaveChanges();
 
         // Assert
-        var change = await AppDbContext
+        var change = await DbContext
             .DataChanges
             .OrderBy(entity => entity.DateCreatedUtc)
             .LastOrDefaultAsync();
         change.Should().NotBeNull();
-        change.TableName.Should().Be("Teachers");
+        change.TableName.Should().Be("Dummies");
         change.Action.Should().Be(EntityState.Added.ToString());
-        change.Keys.Should().Be(JsonSerializer.Serialize(new { teacher.Id }));
+        change.Keys.Should().Be(JsonSerializer.Serialize(new { dummy.Id }));
     }
 
     [Test]
     public async Task SaveChangesAsync_WhenEntityChanged_ShouldSaveChangesAndUpdateDataChangesAsync()
     {
         // Arrange 
-        var existingTeacher = (await InsertTeachersAsync(1))[0];
+        var existingDummy = (await PreloadDummiesAsync(1))[0];
 
         // Act
-        existingTeacher.Name = "Efthymios K.";
-        await AppDbContext.SaveChangesAsync();
+        existingDummy.Name = Guid.NewGuid().ToString();
+        await DbContext.SaveChangesAsync();
 
         // Assert
-        var change = await AppDbContext
+        var change = await DbContext
             .DataChanges
             .OrderBy(entity => entity.DateCreatedUtc)
             .LastOrDefaultAsync();
         change.Should().NotBeNull();
-        change.TableName.Should().Be("Teachers");
+        change.TableName.Should().Be("Dummies");
         change.Action.Should().Be(EntityState.Modified.ToString());
-        change.Keys.Should().Be(JsonSerializer.Serialize(new { existingTeacher.Id }));
+        change.Keys.Should().Be(JsonSerializer.Serialize(new { existingDummy.Id }));
     }
 
     [Test]
     public async Task SaveChangesAsync_WhenUniqueEntityAdded_ShouldGenerateAndReturnPrimaryKey()
     {
         // Arrange 
-        var teacher = new Teacher
+        var dummy = new DummyEntity
         {
-            Name = $"Teacher_{DateTime.Now.ToFileTimeUtc()}"
+            Name = Guid.NewGuid().ToString()
         };
 
         // Act 
-        await AppDbContext.Teachers.AddAsync(teacher);
-        await AppDbContext.SaveChangesAsync();
+        await DbContext.Dummies.AddAsync(dummy);
+        await DbContext.SaveChangesAsync();
 
         // Assert
-        teacher.Id.Should().NotBe(Guid.Empty);
+        dummy.Id.Should().NotBe(Guid.Empty);
     }
 
     [Test]
     public async Task SaveChangesAsync_WhenAuditableEntityAdded_ShouldSetDateCreatedUtc()
     {
         // Arrange 
-        var teacher = new Teacher
+        var dummy = new DummyEntity
         {
-            Name = $"Teacher_{DateTime.Now.ToFileTimeUtc()}"
+            Name = Guid.NewGuid().ToString()
         };
 
         // Act 
-        var dateCreatedUtcBeforeAdding = teacher.DateCreatedUtc;
-        await AppDbContext.Teachers.AddAsync(teacher);
-        await AppDbContext.SaveChangesAsync();
-        var dateCreatedUtcAfterAdding = teacher.DateCreatedUtc;
+        var dateCreatedUtcBeforeAdding = dummy.DateCreatedUtc;
+        await DbContext.Dummies.AddAsync(dummy);
+        await DbContext.SaveChangesAsync();
+        var dateCreatedUtcAfterAdding = dummy.DateCreatedUtc;
 
         // Assert
         dateCreatedUtcAfterAdding.Should().BeOnOrAfter(dateCreatedUtcBeforeAdding);
@@ -92,16 +90,16 @@ public sealed class AuditableDbContextBaseTests : AppDbContextTestsBase
     public async Task SaveChangesAsync_WhenAuditableEntityAdded_ShouldNotChangeDateModifiedUtc()
     {
         // Arrange 
-        var teacher = new Teacher
+        var dummy = new DummyEntity
         {
-            Name = $"Teacher_{DateTime.Now.ToFileTimeUtc()}"
+            Name = Guid.NewGuid().ToString()
         };
 
         // Act 
-        var dateModifiedUtcBeforeAdding = teacher.DateModifiedUtc;
-        await AppDbContext.Teachers.AddAsync(teacher);
-        await AppDbContext.SaveChangesAsync();
-        var dateModifiedUtcAfterAdding = teacher.DateModifiedUtc;
+        var dateModifiedUtcBeforeAdding = dummy.DateModifiedUtc;
+        await DbContext.Dummies.AddAsync(dummy);
+        await DbContext.SaveChangesAsync();
+        var dateModifiedUtcAfterAdding = dummy.DateModifiedUtc;
 
         // Assert
         dateModifiedUtcAfterAdding.Should().Be(dateModifiedUtcBeforeAdding);
@@ -111,20 +109,14 @@ public sealed class AuditableDbContextBaseTests : AppDbContextTestsBase
     public async Task SaveChangesAsync_WhenAuditableEntityUpdated_ShouldNotChangeDateCreatedUtc()
     {
         // Arrange 
-        var teacher = new Teacher
-        {
-            Name = $"Teacher_{DateTime.Now.ToFileTimeUtc()}",
-            TeacherType = TeacherType.Elementary
-        };
-        await AppDbContext.Teachers.AddAsync(teacher);
-        await AppDbContext.SaveChangesAsync();
+        var existingDummy = (await PreloadDummiesAsync(1))[0];
 
         // Act 
-        var dateCreatedUtcBeforeUpdating = teacher.DateCreatedUtc;
-        teacher.TeacherType = TeacherType.MiddleSchool;
-        AppDbContext.Teachers.Update(teacher);
-        await AppDbContext.SaveChangesAsync();
-        var dateCreatedUtcAfterUpdating = teacher.DateCreatedUtc;
+        var dateCreatedUtcBeforeUpdating = existingDummy.DateCreatedUtc;
+        existingDummy.Name = Guid.NewGuid().ToString();
+        DbContext.Dummies.Update(existingDummy);
+        await DbContext.SaveChangesAsync();
+        var dateCreatedUtcAfterUpdating = existingDummy.DateCreatedUtc;
 
         // Assert 
         dateCreatedUtcAfterUpdating.Should().Be(dateCreatedUtcBeforeUpdating);
@@ -134,20 +126,14 @@ public sealed class AuditableDbContextBaseTests : AppDbContextTestsBase
     public async Task SaveChangesAsync_WhenAuditableEntityUpdated_ShouldSetDateModifiedUtc()
     {
         // Arrange 
-        var teacher = new Teacher
-        {
-            Name = $"Teacher_{DateTime.Now.ToFileTimeUtc()}",
-            TeacherType = TeacherType.Elementary
-        };
-        await AppDbContext.Teachers.AddAsync(teacher);
-        await AppDbContext.SaveChangesAsync();
+        var existingDummy = (await PreloadDummiesAsync(1))[0];
 
         // Act 
-        var dateModifiedUtcBeforeUpdating = teacher.DateModifiedUtc ?? DateTime.MinValue.ToUniversalTime();
-        teacher.TeacherType = TeacherType.MiddleSchool;
-        AppDbContext.Teachers.Update(teacher);
-        await AppDbContext.SaveChangesAsync();
-        var dateModifiedUtcAfterUpdating = teacher.DateModifiedUtc;
+        var dateModifiedUtcBeforeUpdating = existingDummy.DateModifiedUtc ?? DateTime.MinValue.ToUniversalTime();
+        existingDummy.Name = Guid.NewGuid().ToString();
+        DbContext.Dummies.Update(existingDummy);
+        await DbContext.SaveChangesAsync();
+        var dateModifiedUtcAfterUpdating = existingDummy.DateModifiedUtc;
 
         // Assert
         dateModifiedUtcAfterUpdating.Should().NotBeNull();

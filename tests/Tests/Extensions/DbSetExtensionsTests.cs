@@ -1,21 +1,21 @@
 ﻿using CoreSharp.EntityFramework.Extensions;
-using CoreSharp.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Tests.Internal.Database.Models;
 
 namespace Tests.Extensions;
 
 [TestFixture]
-public sealed class DbSetExtensionsTests : AppDbContextTestsBase
+public sealed class DbSetExtensionsTests : DummyDbContextTestsBase
 {
     [Test]
     public async Task AddManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        DbSet<Teacher> dbSet = null;
-        var teachersToAdd = Enumerable.Empty<Teacher>();
+        DbSet<DummyEntity> dbSet = null;
+        var dummiesToAdd = Enumerable.Empty<DummyEntity>();
 
         // Act
-        Func<Task> action = () => dbSet.AddManyAsync(teachersToAdd);
+        Func<Task> action = () => dbSet.AddManyAsync(dummiesToAdd);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -25,10 +25,10 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task AddManyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        IEnumerable<Teacher> teachersToAdd = null;
+        IEnumerable<DummyEntity> dummiesToAdd = null;
 
         // Act
-        Func<Task> action = () => AppDbContext.Teachers.AddManyAsync(teachersToAdd);
+        Func<Task> action = () => DbContext.Dummies.AddManyAsync(dummiesToAdd);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -39,16 +39,16 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int toAddCount = 2;
-        var teachersToAdd = GenerateTeachers(toAddCount);
+        var dummiesToAdd = GenerateDummies(toAddCount);
 
         // Act
-        var addedTeachers = await AppDbContext.Teachers.AddManyAsync(teachersToAdd);
-        await AppDbContext.SaveChangesAsync();
-        var afterAddCount = await AppDbContext.Teachers.CountAsync();
+        var addedDummies = await DbContext.Dummies.AddManyAsync(dummiesToAdd);
+        await DbContext.SaveChangesAsync();
+        var afterAddCount = await DbContext.Dummies.CountAsync();
 
         // Assert
-        addedTeachers.Should().NotBeNull();
-        addedTeachers.Should().HaveCount(toAddCount);
+        addedDummies.Should().NotBeNull();
+        addedDummies.Should().HaveCount(toAddCount);
         afterAddCount.Should().Be(toAddCount);
     }
 
@@ -56,11 +56,11 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task AddManyIfNotExistAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        DbSet<Teacher> dbSet = null;
-        var teachersToAdd = Enumerable.Empty<Teacher>();
+        DbSet<DummyEntity> dbSet = null;
+        var dummiesToAdd = Enumerable.Empty<DummyEntity>();
 
         // Act
-        Func<Task> action = () => dbSet.AddManyIfNotExistAsync(teachersToAdd);
+        Func<Task> action = () => dbSet.AddManyIfNotExistAsync(dummiesToAdd);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -70,10 +70,10 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task AddManyIfNotExistAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        IEnumerable<Teacher> teachersToAdd = null;
+        IEnumerable<DummyEntity> dummiesToAdd = null;
 
         // Act
-        Func<Task> action = () => AppDbContext.Teachers.AddManyIfNotExistAsync(teachersToAdd);
+        Func<Task> action = () => DbContext.Dummies.AddManyIfNotExistAsync(dummiesToAdd);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -84,16 +84,16 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int toAddCount = 2;
-        var teachersToAdd = GenerateTeachers(toAddCount);
+        var dummiesToAdd = GenerateDummies(toAddCount);
 
         // Act
-        var addedTeachers = await AppDbContext.Teachers.AddManyIfNotExistAsync(teachersToAdd);
-        await AppDbContext.SaveChangesAsync();
-        var afterAddCount = await AppDbContext.Teachers.CountAsync();
+        var addedDummies = await DbContext.Dummies.AddManyIfNotExistAsync(dummiesToAdd);
+        await DbContext.SaveChangesAsync();
+        var afterAddCount = await DbContext.Dummies.CountAsync();
 
         // Assert
-        addedTeachers.Should().NotBeNull();
-        addedTeachers.Should().HaveCount(toAddCount);
+        addedDummies.Should().NotBeNull();
+        addedDummies.Should().HaveCount(toAddCount);
         afterAddCount.Should().Be(toAddCount);
     }
 
@@ -101,23 +101,23 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task AddManyIfNotExistAsync_WhenEntitiesAlreadyExistInDatabase_ShouldNotAddEntities()
     {
         // Arrange  
-        var existingTeacher = (await InsertTeachersAsync(1))[0];
-        var teacherToAdd = GenerateTeacher();
+        var existingDummy = (await PreloadDummiesAsync(1))[0];
+        var dummyToAdd = GenerateDummy();
         var teachersToTryAdd = new[]
         {
-            existingTeacher,
-            teacherToAdd
+            existingDummy,
+            dummyToAdd
         };
 
         // Act
-        var addedTeachers = await AppDbContext.Teachers.AddManyIfNotExistAsync(teachersToTryAdd);
-        await AppDbContext.SaveChangesAsync();
-        var afterAddCount = await AppDbContext.Teachers.CountAsync();
+        var addedDummies = await DbContext.Dummies.AddManyIfNotExistAsync(teachersToTryAdd);
+        await DbContext.SaveChangesAsync();
+        var afterAddCount = await DbContext.Dummies.CountAsync();
 
         // Assert
-        addedTeachers.Should().NotBeNull();
-        addedTeachers.Should().HaveCount(1);
-        addedTeachers.Should().ContainEquivalentOf(teacherToAdd);
+        addedDummies.Should().NotBeNull();
+        addedDummies.Should().HaveCount(1);
+        addedDummies.Should().ContainEquivalentOf(dummyToAdd);
         afterAddCount.Should().Be(2);
     }
 
@@ -125,11 +125,11 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task UpdateManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        DbSet<Teacher> dbSet = null;
-        var teachers = Enumerable.Empty<Teacher>();
+        DbSet<DummyEntity> dbSet = null;
+        var dummies = Enumerable.Empty<DummyEntity>();
 
         // Act
-        Func<Task> action = () => dbSet.UpdateManyAsync(teachers);
+        Func<Task> action = () => dbSet.UpdateManyAsync(dummies);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -139,10 +139,10 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task UpdateManyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        IEnumerable<Teacher> teachersToUpdate = null;
+        IEnumerable<DummyEntity> dummiesToUpdate = null;
 
         // Act
-        Func<Task> action = () => AppDbContext.Teachers.UpdateManyAsync(teachersToUpdate);
+        Func<Task> action = () => DbContext.Dummies.UpdateManyAsync(dummiesToUpdate);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -153,28 +153,31 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int initialCount = 2;
-        var existingTeachers = await InsertTeachersAsync(initialCount);
-        existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
+        var existingDummies = await PreloadDummiesAsync(initialCount);
+        foreach (var dummy in existingDummies)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
 
         // Act
-        var updatedTeachers = await AppDbContext.Teachers.UpdateManyAsync(existingTeachers);
-        await AppDbContext.SaveChangesAsync();
+        var updatedDummies = await DbContext.Dummies.UpdateManyAsync(existingDummies);
+        await DbContext.SaveChangesAsync();
 
         // Assert
-        updatedTeachers.Should().NotBeNull();
-        updatedTeachers.Should().HaveCount(initialCount);
-        updatedTeachers.Should().BeEquivalentTo(existingTeachers);
+        updatedDummies.Should().NotBeNull();
+        updatedDummies.Should().HaveCount(initialCount);
+        updatedDummies.Should().BeEquivalentTo(existingDummies);
     }
 
     [Test]
     public async Task UpdateManyIfExistAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        DbSet<Teacher> dbSet = null;
-        var teachersToUpdate = Enumerable.Empty<Teacher>();
+        DbSet<DummyEntity> dbSet = null;
+        var dummiesToUpdate = Enumerable.Empty<DummyEntity>();
 
         // Act
-        Func<Task> action = () => dbSet.UpdateManyIfExistAsync(teachersToUpdate);
+        Func<Task> action = () => dbSet.UpdateManyIfExistAsync(dummiesToUpdate);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -184,10 +187,10 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task UpdateManyIfExistAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        IEnumerable<Teacher> teachersToUpdate = null;
+        IEnumerable<DummyEntity> dummiesToUpdate = null;
 
         // Act
-        Func<Task> action = () => AppDbContext.Teachers.UpdateManyIfExistAsync(teachersToUpdate);
+        Func<Task> action = () => DbContext.Dummies.UpdateManyIfExistAsync(dummiesToUpdate);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -198,52 +201,55 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int initialCount = 2;
-        var existingTeachers = await InsertTeachersAsync(initialCount);
-        existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
+        var existingDummies = await PreloadDummiesAsync(initialCount);
+        foreach (var dummy in existingDummies)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
 
         // Act
-        var updatedTeachers = await AppDbContext.Teachers.UpdateManyIfExistAsync(existingTeachers);
-        await AppDbContext.SaveChangesAsync();
+        var updatedDummies = await DbContext.Dummies.UpdateManyIfExistAsync(existingDummies);
+        await DbContext.SaveChangesAsync();
 
         // Assert
-        updatedTeachers.Should().NotBeNull();
-        updatedTeachers.Should().HaveCount(initialCount);
-        updatedTeachers.Should().BeEquivalentTo(existingTeachers);
+        updatedDummies.Should().NotBeNull();
+        updatedDummies.Should().HaveCount(initialCount);
+        updatedDummies.Should().BeEquivalentTo(existingDummies);
     }
 
     [Test]
     public async Task UpdateManyIfExistAsync_WhenEntitiesDoNotExistInDatabase_ShouldNotUpdateEntities()
     {
         // Arrange  
-        var existingTeacher = (await InsertTeachersAsync(1))[0];
-        var nonExistingTeacher = GenerateTeacher();
-        var teachersToUpdate = new[]
+        var existingDummy = (await PreloadDummiesAsync(1))[0];
+        var nonExistingDummy = GenerateDummy();
+        var dummiesToUpdate = new[]
         {
-            existingTeacher,
-            nonExistingTeacher
+            existingDummy,
+            nonExistingDummy
         };
 
         // Act
-        existingTeacher.Name = Guid.NewGuid().ToString();
-        var updatedTeachers = await AppDbContext.Teachers.UpdateManyIfExistAsync(teachersToUpdate);
-        await AppDbContext.SaveChangesAsync();
+        existingDummy.Name = Guid.NewGuid().ToString();
+        var updatedDummies = await DbContext.Dummies.UpdateManyIfExistAsync(dummiesToUpdate);
+        await DbContext.SaveChangesAsync();
 
         // Assert
-        updatedTeachers.Should().NotBeNull();
-        updatedTeachers.Should().HaveCount(1);
-        updatedTeachers.Should().ContainEquivalentOf(existingTeacher);
-        updatedTeachers.Should().NotContainEquivalentOf(nonExistingTeacher);
+        updatedDummies.Should().NotBeNull();
+        updatedDummies.Should().HaveCount(1);
+        updatedDummies.Should().ContainEquivalentOf(existingDummy);
+        updatedDummies.Should().NotContainEquivalentOf(nonExistingDummy);
     }
 
     [Test]
     public async Task AddOrUpdateManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        DbSet<Teacher> dbSet = null;
-        var teachersToAddOrUpdate = Enumerable.Empty<Teacher>();
+        DbSet<DummyEntity> dbSet = null;
+        var dummiesToAddOrUpdate = Enumerable.Empty<DummyEntity>();
 
         // Act
-        Func<Task> action = () => dbSet.AddOrUpdateManyAsync(teachersToAddOrUpdate);
+        Func<Task> action = () => dbSet.AddOrUpdateManyAsync(dummiesToAddOrUpdate);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -253,10 +259,10 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task AddOrUpdateManyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        IEnumerable<Teacher> teachersToAddOrUpdate = null;
+        IEnumerable<DummyEntity> dummiesToAddOrUpdate = null;
 
         // Act
-        Func<Task> action = () => AppDbContext.Teachers.AddOrUpdateManyAsync(teachersToAddOrUpdate);
+        Func<Task> action = () => DbContext.Dummies.AddOrUpdateManyAsync(dummiesToAddOrUpdate);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -267,16 +273,16 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int toAddCount = 2;
-        var teachersToAdd = GenerateTeachers(toAddCount);
+        var dummiesToAdd = GenerateDummies(toAddCount);
 
         // Act
-        var addedTeachers = await AppDbContext.Teachers.AddOrUpdateManyAsync(teachersToAdd);
-        await AppDbContext.SaveChangesAsync();
+        var addedDummies = await DbContext.Dummies.AddOrUpdateManyAsync(dummiesToAdd);
+        await DbContext.SaveChangesAsync();
 
         // Assert
-        addedTeachers.Should().NotBeNull();
-        addedTeachers.Should().HaveCount(toAddCount);
-        addedTeachers.Should().BeEquivalentTo(teachersToAdd);
+        addedDummies.Should().NotBeNull();
+        addedDummies.Should().HaveCount(toAddCount);
+        addedDummies.Should().BeEquivalentTo(dummiesToAdd);
     }
 
     [Test]
@@ -284,17 +290,20 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int initialCount = 2;
-        var existingTeachers = await InsertTeachersAsync(initialCount);
-        existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
+        var existingDummies = await PreloadDummiesAsync(initialCount);
+        foreach (var dummy in existingDummies)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
 
         // Act
-        var updatedTeachers = await AppDbContext.Teachers.AddOrUpdateManyAsync(existingTeachers);
-        await AppDbContext.SaveChangesAsync();
+        var updatedDummies = await DbContext.Dummies.AddOrUpdateManyAsync(existingDummies);
+        await DbContext.SaveChangesAsync();
 
         // Assert
-        updatedTeachers.Should().NotBeNull();
-        updatedTeachers.Should().HaveCount(initialCount);
-        updatedTeachers.Should().BeEquivalentTo(existingTeachers);
+        updatedDummies.Should().NotBeNull();
+        updatedDummies.Should().HaveCount(initialCount);
+        updatedDummies.Should().BeEquivalentTo(existingDummies);
     }
 
     [Test]
@@ -303,30 +312,34 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         // Arrange
         const int initialCount = 2;
         const int toAddCount = 2;
-        var existingTeachers = await InsertTeachersAsync(initialCount);
-        existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
-        var teachersToAdd = GenerateTeachers(toAddCount);
-        var teachersToAddOrUpdate = teachersToAdd.Concat(existingTeachers);
+        var existingDummies = await PreloadDummiesAsync(initialCount);
+        foreach (var dummy in existingDummies)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
+
+        var dummiesToAdd = GenerateDummies(toAddCount);
+        var dummiesToAddOrUpdate = dummiesToAdd.Concat(existingDummies);
 
         // Act
-        var addOrUpdatedTeachers = await AppDbContext.Teachers.AddOrUpdateManyAsync(teachersToAddOrUpdate);
-        await AppDbContext.SaveChangesAsync();
+        var addOrUpdatedDummies = await DbContext.Dummies.AddOrUpdateManyAsync(dummiesToAddOrUpdate);
+        await DbContext.SaveChangesAsync();
 
         // Assert
-        addOrUpdatedTeachers.Should().NotBeNull();
-        addOrUpdatedTeachers.Should().HaveCount(initialCount + toAddCount);
-        addOrUpdatedTeachers.Should().BeEquivalentTo(teachersToAddOrUpdate);
+        addOrUpdatedDummies.Should().NotBeNull();
+        addOrUpdatedDummies.Should().HaveCount(initialCount + toAddCount);
+        addOrUpdatedDummies.Should().BeEquivalentTo(dummiesToAddOrUpdate);
     }
 
     [Test]
     public async Task AttachManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        DbSet<Teacher> dbSet = null;
-        var teachersToAttach = GenerateTeachers(2);
+        DbSet<DummyEntity> dbSet = null;
+        var dummiesToAttach = GenerateDummies(2);
 
         // Act
-        Func<Task> action = () => dbSet.AttachManyAsync(teachersToAttach);
+        Func<Task> action = () => dbSet.AttachManyAsync(dummiesToAttach);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -335,10 +348,10 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     [Test]
     public async Task AttachManyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
-        IEnumerable<Teacher> teachersToAttach = null;
+        IEnumerable<DummyEntity> dummiesToAttach = null;
 
         // Act
-        Func<Task> action = async () => await AppDbContext.Teachers.AttachManyAsync(teachersToAttach);
+        Func<Task> action = async () => await DbContext.Dummies.AttachManyAsync(dummiesToAttach);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -349,20 +362,20 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int toAttachCount = 2;
-        var teachersToAttach = GenerateTeachers(toAttachCount);
+        var dummiesToAttach = GenerateDummies(toAttachCount);
 
         // Act
-        var attachedTeachers = await AppDbContext.Teachers.AttachManyAsync(teachersToAttach);
-        await AppDbContext.SaveChangesAsync();
+        var attachedDummies = await DbContext.Dummies.AttachManyAsync(dummiesToAttach);
+        await DbContext.SaveChangesAsync();
 
         // Assert 
-        attachedTeachers.Should().NotBeNull();
-        attachedTeachers.Should().HaveCount(toAttachCount);
-        attachedTeachers.Should().BeEquivalentTo(attachedTeachers);
-        foreach (var teacher in teachersToAttach)
+        attachedDummies.Should().NotBeNull();
+        attachedDummies.Should().HaveCount(toAttachCount);
+        attachedDummies.Should().BeEquivalentTo(attachedDummies);
+        foreach (var dummy in attachedDummies)
         {
-            var teacherEntityEntry = AppDbContext.Entry(teacher);
-            teacherEntityEntry.State.Should().Be(EntityState.Unchanged);
+            var dummyEntityEntry = DbContext.Entry(dummy);
+            dummyEntityEntry.State.Should().Be(EntityState.Unchanged);
         }
     }
 
@@ -370,11 +383,11 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task AttachManyIfExistAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        DbSet<Teacher> dbSet = null;
-        var teachersToAttach = GenerateTeachers(1);
+        DbSet<DummyEntity> dbSet = null;
+        var dummiesToAttach = GenerateDummies(1);
 
         // Act
-        Func<Task> action = () => dbSet.AttachManyIfExistAsync(teachersToAttach);
+        Func<Task> action = () => dbSet.AttachManyIfExistAsync(dummiesToAttach);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -384,10 +397,10 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task AttachManyIfExistAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        IEnumerable<Teacher> teachersToAttach = null;
+        IEnumerable<DummyEntity> dummiesToAttach = null;
 
         // Act
-        Func<Task> action = () => AppDbContext.Teachers.AttachManyIfExistAsync(teachersToAttach);
+        Func<Task> action = () => DbContext.Dummies.AttachManyIfExistAsync(dummiesToAttach);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -398,18 +411,18 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int initialCount = 2;
-        var existingTeachers = await InsertTeachersAsync(initialCount);
+        var existingDummies = await PreloadDummiesAsync(initialCount);
 
         // Act
-        var attachedTeachers = await AppDbContext.Teachers.AttachManyIfExistAsync(existingTeachers);
-        await AppDbContext.SaveChangesAsync();
+        var attachedDummies = await DbContext.Dummies.AttachManyIfExistAsync(existingDummies);
+        await DbContext.SaveChangesAsync();
 
         // Assert
-        attachedTeachers.Should().NotBeNull();
-        attachedTeachers.Should().HaveCount(initialCount);
-        foreach (var teacher in attachedTeachers)
+        attachedDummies.Should().NotBeNull();
+        attachedDummies.Should().HaveCount(initialCount);
+        foreach (var dummy in attachedDummies)
         {
-            var teacherEntityEntry = AppDbContext.Entry(teacher);
+            var teacherEntityEntry = DbContext.Entry(dummy);
             teacherEntityEntry.State.Should().Be(EntityState.Unchanged);
         }
     }
@@ -418,16 +431,16 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task AttachManyIfExistAsync_WhenEntitiesDoNotExistInDatabase_ShouldNotAttachEntities()
     {
         // Arrange
-        var teachersToAttach = GenerateTeachers(2);
+        var dummiesToAttach = GenerateDummies(2);
 
         // Act
-        var attachedTeachers = await AppDbContext.Teachers.AttachManyIfExistAsync(teachersToAttach);
-        await AppDbContext.SaveChangesAsync();
-        var countAfterAttach = await AppDbContext.Teachers.CountAsync();
+        var attachedDummies = await DbContext.Dummies.AttachManyIfExistAsync(dummiesToAttach);
+        await DbContext.SaveChangesAsync();
+        var countAfterAttach = await DbContext.Dummies.CountAsync();
 
         // Assert
-        attachedTeachers.Should().NotBeNull();
-        attachedTeachers.Should().HaveCount(0);
+        attachedDummies.Should().NotBeNull();
+        attachedDummies.Should().HaveCount(0);
         countAfterAttach.Should().Be(0);
     }
 
@@ -435,8 +448,8 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task AddOrAttachManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        DbSet<Teacher> dbSet = null;
-        var teachersToAddOrAttach = GenerateTeachers(1);
+        DbSet<DummyEntity> dbSet = null;
+        var teachersToAddOrAttach = GenerateDummies(1);
 
         // Act
         Func<Task> action = () => dbSet.AddOrAttachManyAsync(teachersToAddOrAttach);
@@ -449,10 +462,10 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task AddOrAttachManyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        IEnumerable<Teacher> teachersToAddOrAttach = null;
+        IEnumerable<DummyEntity> teachersToAddOrAttach = null;
 
         // Act
-        Func<Task> action = () => AppDbContext.Teachers.AddOrAttachManyAsync(teachersToAddOrAttach);
+        Func<Task> action = () => DbContext.Dummies.AddOrAttachManyAsync(teachersToAddOrAttach);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -463,16 +476,16 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int toAddCount = 2;
-        var teachersToAdd = GenerateTeachers(toAddCount);
+        var dummiesToAdd = GenerateDummies(toAddCount);
 
         // Act
-        var addedTeachers = await AppDbContext.Teachers.AddOrAttachManyAsync(teachersToAdd);
-        await AppDbContext.SaveChangesAsync();
+        var addedDummies = await DbContext.Dummies.AddOrAttachManyAsync(dummiesToAdd);
+        await DbContext.SaveChangesAsync();
 
         // Assert
-        addedTeachers.Should().NotBeNull();
-        addedTeachers.Should().HaveCount(toAddCount);
-        addedTeachers.Should().BeEquivalentTo(teachersToAdd);
+        addedDummies.Should().NotBeNull();
+        addedDummies.Should().HaveCount(toAddCount);
+        addedDummies.Should().BeEquivalentTo(dummiesToAdd);
     }
 
     [Test]
@@ -480,18 +493,18 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     {
         // Arrange
         const int initialCount = 2;
-        var existingTeachers = await InsertTeachersAsync(initialCount);
+        var existingDummies = await PreloadDummiesAsync(initialCount);
 
         // Act
-        var attachedTeachers = await AppDbContext.Teachers.AddOrAttachManyAsync(existingTeachers);
-        await AppDbContext.SaveChangesAsync();
+        var attachedDummies = await DbContext.Dummies.AddOrAttachManyAsync(existingDummies);
+        await DbContext.SaveChangesAsync();
 
         // Assert
-        attachedTeachers.Should().NotBeNull();
-        attachedTeachers.Should().HaveCount(initialCount);
-        foreach (var teacher in attachedTeachers)
+        attachedDummies.Should().NotBeNull();
+        attachedDummies.Should().HaveCount(initialCount);
+        foreach (var dummy in attachedDummies)
         {
-            var teacherEntityEntry = AppDbContext.Entry(teacher);
+            var teacherEntityEntry = DbContext.Entry(dummy);
             teacherEntityEntry.State.Should().Be(EntityState.Unchanged);
         }
     }
@@ -502,30 +515,34 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         // Arrange
         const int initialCount = 5;
         const int toAddCount = 2;
-        var existingTeachers = await InsertTeachersAsync(initialCount);
-        existingTeachers.ForEach(teacher => teacher.Name = $"Updated {teacher.Name}");
-        var teachersToAdd = GenerateTeachers(toAddCount);
-        var teachersToAddOrAttach = teachersToAdd.Concat(existingTeachers);
+        var existingDummies = await PreloadDummiesAsync(initialCount);
+        foreach (var dummy in existingDummies)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
+
+        var dummiesToAdd = GenerateDummies(toAddCount);
+        var teachersToAddOrAttach = dummiesToAdd.Concat(existingDummies);
 
         // Act
-        var addedOrAttachedTeachers = await AppDbContext.Teachers.AddOrAttachManyAsync(teachersToAddOrAttach);
-        await AppDbContext.SaveChangesAsync();
+        var addedOrAttachedDummies = await DbContext.Dummies.AddOrAttachManyAsync(teachersToAddOrAttach);
+        await DbContext.SaveChangesAsync();
 
         // Assert
-        addedOrAttachedTeachers.Should().NotBeNull();
-        addedOrAttachedTeachers.Should().HaveCount(initialCount + toAddCount);
-        AppDbContext.Teachers.Should().BeEquivalentTo(teachersToAddOrAttach);
+        addedOrAttachedDummies.Should().NotBeNull();
+        addedOrAttachedDummies.Should().HaveCount(initialCount + toAddCount);
+        DbContext.Dummies.Should().BeEquivalentTo(teachersToAddOrAttach);
     }
 
     [Test]
     public async Task RemoveByKeyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        DbSet<Teacher> dbSet = null;
-        var teacherToRemove = GenerateTeacher();
+        DbSet<DummyEntity> dbSet = null;
+        var dummiesToRemove = GenerateDummy();
 
         // Act
-        Func<Task> action = () => dbSet.RemoveByKeyAsync(teacherToRemove.Id);
+        Func<Task> action = () => dbSet.RemoveByKeyAsync(dummiesToRemove.Id);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -535,10 +552,10 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task RemoveByKeyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        object teacherIdToRemove = null;
+        object dummyIdToRemove = null;
 
         // Act
-        Func<Task> action = () => AppDbContext.Teachers.RemoveByKeyAsync(teacherIdToRemove);
+        Func<Task> action = () => DbContext.Dummies.RemoveByKeyAsync(dummyIdToRemove);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -548,41 +565,41 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task RemoveByKeyAsync_WhenKeyExists_ShouldRemoveEntityFromDbContext()
     {
         // Arrange 
-        var existingTeacher = (await InsertTeachersAsync(1))[0];
+        var existingDummy = (await PreloadDummiesAsync(1))[0];
 
         // Act
-        var teachersRemovedCount = await AppDbContext.Teachers.RemoveByKeyAsync(existingTeacher.Id);
-        await AppDbContext.SaveChangesAsync();
+        var dummiesRemovedCount = await DbContext.Dummies.RemoveByKeyAsync(existingDummy.Id);
+        await DbContext.SaveChangesAsync();
 
         // Assert
-        teachersRemovedCount.Should().Be(1);
+        dummiesRemovedCount.Should().Be(1);
     }
 
     [Test]
     public async Task RemoveByKeyAsync_WhenKeyNotFound_ShouldNotRemoveEntityFromDbContext()
     {
         // Arrange 
-        var teachersBeforeRemove = await InsertTeachersAsync(1);
+        var dummiesBeforeRemove = await PreloadDummiesAsync(1);
 
         // Act
-        var teachersRemovedCount = await AppDbContext.Teachers.RemoveByKeyAsync(Guid.NewGuid());
-        await AppDbContext.SaveChangesAsync();
-        var teachersAfterRemove = await AppDbContext.Teachers.ToArrayAsync();
+        var dummiesRemovedCount = await DbContext.Dummies.RemoveByKeyAsync(Guid.NewGuid());
+        await DbContext.SaveChangesAsync();
+        var dummiesAfterRemove = await DbContext.Dummies.ToArrayAsync();
 
         // Assert
-        teachersRemovedCount.Should().Be(0);
-        teachersAfterRemove.Should().BeEquivalentTo(teachersBeforeRemove);
+        dummiesRemovedCount.Should().Be(0);
+        dummiesAfterRemove.Should().BeEquivalentTo(dummiesBeforeRemove);
     }
 
     [Test]
     public async Task RemoveManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        DbSet<Teacher> dbSet = null;
-        var teachersToRemove = GenerateTeachers(1);
+        DbSet<DummyEntity> dbSet = null;
+        var dummiesToRemove = GenerateDummies(1);
 
         // Act
-        Func<Task> action = () => dbSet.RemoveManyAsync(teachersToRemove);
+        Func<Task> action = () => dbSet.RemoveManyAsync(dummiesToRemove);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -592,10 +609,10 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
     public async Task RemoveManyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        IEnumerable<Teacher> teachersToRemove = null;
+        IEnumerable<DummyEntity> dummiesToRemove = null;
 
         // Act
-        Func<Task> action = () => AppDbContext.Teachers.RemoveManyAsync(teachersToRemove);
+        Func<Task> action = () => DbContext.Dummies.RemoveManyAsync(dummiesToRemove);
 
         // Assert
         await action.Should().ThrowAsync<ArgumentNullException>();
@@ -607,17 +624,17 @@ public sealed class DbSetExtensionsTests : AppDbContextTestsBase
         // Arrange
         const int initialCount = 5;
         const int toRemoveCount = 3;
-        var existingTeachers = await InsertTeachersAsync(initialCount);
-        var teachersToRemove = existingTeachers.Take(toRemoveCount);
+        var existingDummies = await PreloadDummiesAsync(initialCount);
+        var dummiesToRemove = existingDummies.Take(toRemoveCount);
 
         // Act
-        await AppDbContext.Teachers.RemoveManyAsync(teachersToRemove);
-        await AppDbContext.SaveChangesAsync();
-        var teachersAfterRemove = await AppDbContext.Teachers.ToArrayAsync();
+        await DbContext.Dummies.RemoveManyAsync(dummiesToRemove);
+        await DbContext.SaveChangesAsync();
+        var dummiesAfterRemove = await DbContext.Dummies.ToArrayAsync();
 
         // Assert
-        teachersAfterRemove.Should().HaveCount(initialCount - toRemoveCount);
-        teachersAfterRemove.Should().NotContain(teachersToRemove);
+        dummiesAfterRemove.Should().HaveCount(initialCount - toRemoveCount);
+        dummiesAfterRemove.Should().NotContain(dummiesToRemove);
     }
 }
 

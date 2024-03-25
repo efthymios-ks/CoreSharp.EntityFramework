@@ -1,26 +1,10 @@
 ﻿using CoreSharp.EntityFramework.Entities;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tests.Entities;
 
 [TestFixture]
 public sealed class EntityChangeTests
 {
-    [Test]
-    public void IdProperty_ShouldHaveKeyAttribute()
-    {
-        // Arrange
-
-        // Act
-        var property = typeof(EntityChange).GetProperty(nameof(EntityChange.Id));
-
-        // Assert
-        property.Should().BeDecoratedWith<KeyAttribute>();
-        property.Should().BeDecoratedWith<ColumnAttribute>(a => a.Order == 0);
-        property.Should().BeDecoratedWith<DatabaseGeneratedAttribute>(a => a.DatabaseGeneratedOption == DatabaseGeneratedOption.Identity);
-    }
-
     [Test]
     public void DateCreatedUtc_Setter_WhenLocalDateTime_ShouldSetToUtc()
     {

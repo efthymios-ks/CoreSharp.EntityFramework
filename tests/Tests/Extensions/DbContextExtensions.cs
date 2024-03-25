@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 namespace Tests.Extensions;
 
 [TestFixture]
-public sealed class DbContextExtensionsTests : AppDbContextTestsBase
+public sealed class DbContextExtensionsTests : DummyDbContextTestsBase
 {
     [Test]
     public async Task RollbackAsync_WhenNoChanges_ShouldNotThrowException()
     {
         // Act
-        Func<Task> action = () => AppDbContext.RollbackAsync();
+        Func<Task> action = () => DbContext.RollbackAsync();
 
         // Assert
         await action.Should().NotThrowAsync();
@@ -20,13 +20,13 @@ public sealed class DbContextExtensionsTests : AppDbContextTestsBase
     public async Task RollbackAsync_WhenEntityAdded_ShouldRemoveAddedEntity()
     {
         // Arrange
-        var teacher = GenerateTeacher();
-        var initialCount = await AppDbContext.Teachers.CountAsync();
+        var dummy = GenerateDummy();
+        var initialCount = await DbContext.Dummies.CountAsync();
 
         // Act
-        await AppDbContext.Teachers.AddAsync(teacher);
-        await AppDbContext.RollbackAsync();
-        var finalCount = await AppDbContext.Teachers.CountAsync();
+        await DbContext.Dummies.AddAsync(dummy);
+        await DbContext.RollbackAsync();
+        var finalCount = await DbContext.Dummies.CountAsync();
 
         // Assert
         finalCount.Should().Be(initialCount);
@@ -36,36 +36,34 @@ public sealed class DbContextExtensionsTests : AppDbContextTestsBase
     public async Task RollbackAsync_WhenEntityModified_ShouldRestoreEntityToOriginalState()
     {
         // Arrange
-        await InsertTeachersAsync(1);
-        var teacher = await AppDbContext.Teachers.FirstOrDefaultAsync();
-        var originalName = teacher.Name;
+        var existingDummy = (await PreloadDummiesAsync(1))[0];
+        var originalName = existingDummy.Name;
 
         // Act
-        teacher.Name = Guid.NewGuid().ToString();
-        await AppDbContext.RollbackAsync();
-        var modifiedTeacher = await AppDbContext.Teachers.FindAsync(teacher.Id);
+        existingDummy.Name = Guid.NewGuid().ToString();
+        await DbContext.RollbackAsync();
+        var modifiedDummy = await DbContext.Dummies.FindAsync(existingDummy.Id);
 
         // Assert 
-        modifiedTeacher.Should().NotBeNull();
-        modifiedTeacher.Name.Should().Be(originalName);
+        modifiedDummy.Should().NotBeNull();
+        modifiedDummy.Name.Should().Be(originalName);
     }
 
     [Test]
     public async Task RollbackAsync_WhenEntityDeleted_ShouldRestoreEntityToOriginalState()
     {
         // Arrange
-        await InsertTeachersAsync(1);
-        var teacher = await AppDbContext.Teachers.FirstOrDefaultAsync();
-        var initialCount = await AppDbContext.Teachers.CountAsync();
+        var existingDummy = (await PreloadDummiesAsync(1))[0];
+        var initialCount = await DbContext.Dummies.CountAsync();
 
         // Act
-        AppDbContext.Teachers.Remove(teacher);
-        await AppDbContext.RollbackAsync();
-        var finalCount = await AppDbContext.Teachers.CountAsync();
+        DbContext.Dummies.Remove(existingDummy);
+        await DbContext.RollbackAsync();
+        var restoredDummy = await DbContext.Dummies.FindAsync(existingDummy.Id);
+        var finalCount = await DbContext.Dummies.CountAsync();
 
         // Assert 
         finalCount.Should().Be(initialCount);
-        var restoredTeacher = await AppDbContext.Teachers.FindAsync(teacher.Id);
-        restoredTeacher.Should().NotBeNull();
+        restoredDummy.Should().NotBeNull();
     }
 }

@@ -13,9 +13,10 @@ internal sealed class CourseEntityTypeConfiguration : IEntityTypeConfiguration<C
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.Property(course => course.Name)
-               .IsRequired()
-               .HasMaxLength(100);
+        builder
+            .Property(course => course.Name)
+            .IsRequired()
+            .HasMaxLength(100);
 
         // Many-to-many enums
         builder.HasEnums(course => course.Fields);

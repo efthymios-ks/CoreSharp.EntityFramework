@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 var services = Startup.ConfigureServices();
 var mediatR = services.GetRequiredService<IMediator>();
 
-await EnsureInMemoryDatabaseExitsAsync(services);
+await EnsureInMemoryDatabaseExistsAsync(services);
 await AddInitialTeachersAsync(mediatR);
 var teacher = await GetFirstTeacherAsync(mediatR);
 teacher ??= await CreateTeacherAsync(mediatR);
@@ -24,9 +24,9 @@ await AddTeacherCoursesAsync(mediatR, teacher);
 Console.ReadLine();
 
 // Methods 
-async Task EnsureInMemoryDatabaseExitsAsync(IServiceProvider serviceProvider)
+async Task EnsureInMemoryDatabaseExistsAsync(IServiceProvider serviceProvider)
 {
-    var appDbContext = services.GetRequiredService<AppDbContext>();
+    var appDbContext = serviceProvider.GetRequiredService<AppDbContext>();
     await appDbContext.Database.EnsureCreatedAsync();
 }
 

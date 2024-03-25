@@ -1,5 +1,5 @@
 ﻿using CoreSharp.EntityFramework.Entities;
-using Tests.Internal.Models;
+using Tests.Internal.Database.Models;
 
 namespace Tests.Entities;
 

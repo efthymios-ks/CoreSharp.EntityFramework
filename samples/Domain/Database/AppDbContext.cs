@@ -7,17 +7,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Domain.Database;
 
-public class AppDbContext : AuditableDbContextBase
+public class AppDbContext : AuditDbContextBase
 {
     // Fields
     private readonly ILoggerFactory _loggerFactory;
 
-    // Constructors
-    public AppDbContext(ILoggerFactory loggerFactory)
-        : base()
-        => _loggerFactory = loggerFactory;
-
-    public AppDbContext(DbContextOptions<AppDbContext> options, ILoggerFactory loggerFactory)
+    // Constructors 
+    public AppDbContext(DbContextOptions<AppDbContext> options, ILoggerFactory loggerFactory = null)
         : base(options)
         => _loggerFactory = loggerFactory;
 

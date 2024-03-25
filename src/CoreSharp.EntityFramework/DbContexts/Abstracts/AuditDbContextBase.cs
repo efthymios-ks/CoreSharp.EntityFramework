@@ -12,19 +12,14 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.DbContexts.Abstracts;
 
-public abstract class AuditableDbContextBase : DbContext
+public abstract class AuditDbContextBase : DbContext
 {
     private static readonly string _auditEntityDateCreatedPropertyName = nameof(IAuditEntity.DateCreatedUtc);
     private static readonly string _auditEntityDateModifiedPropertyName = nameof(IAuditEntity.DateModifiedUtc);
 
     // Constructors
-    protected AuditableDbContextBase(DbContextOptions options)
+    protected AuditDbContextBase(DbContextOptions options)
         : base(options)
-    {
-    }
-
-    protected AuditableDbContextBase()
-        : base()
     {
     }
 
@@ -194,11 +189,11 @@ public abstract class AuditableDbContextBase : DbContext
         static bool PropertyEntryFilter(PropertyEntry entry)
         {
             var propertyName = entry.Metadata.Name;
-            if (propertyName == nameof(IAuditEntity.DateCreatedUtc))
+            if (propertyName == _auditEntityDateCreatedPropertyName)
             {
                 return false;
             }
-            else if (propertyName == nameof(IAuditEntity.DateModifiedUtc))
+            else if (propertyName == _auditEntityDateModifiedPropertyName)
             {
                 return false;
             }
@@ -210,7 +205,7 @@ public abstract class AuditableDbContextBase : DbContext
     private static EntityChange[] FinalizeAndGetChangesAfterSave(TemporaryEntityChange[] temporaryEntityChanges)
     {
         // Check temporary changes with temporary properties only. 
-        var temporaryChanges = temporaryEntityChanges.Where(c => c.TemporaryProperties.Count > 0);
+        var temporaryChanges = temporaryEntityChanges.Where(change => change.TemporaryProperties.Count > 0);
         foreach (var temporaryChange in temporaryChanges)
         {
             // Get the final value of the temporary properties. 
@@ -234,7 +229,7 @@ public abstract class AuditableDbContextBase : DbContext
 
         // Convert and return all temporary changes, regardless. 
         return temporaryEntityChanges
-            .Select(c => c.ToEntityChange())
+            .Select(change => change.ToEntityChange())
             .ToArray();
     }
 

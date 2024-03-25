@@ -193,7 +193,7 @@ public sealed class EntityBaseTests
         // Arrange
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
         var date = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture);
-        var entity = new Teacher
+        var entity = new TestEntity
         {
             DateModifiedUtc = date
         };
@@ -274,7 +274,7 @@ public sealed class EntityBaseTests
         const string dateAsString = "2022-12-01T12:30:45.1234567Z";
         var expectedDate = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture).ToUniversalTime();
         var entityAsJson = /*lang=json,strict*/ @"
-        { 
+        {
             ""Id"": ""00000000-0000-0000-0000-000000000000"",
             ""DateCreatedUtc"": ""2020-01-01T00:00:00.0000000Z"",
             ""DateModifiedUtc"": ""{Date}""
