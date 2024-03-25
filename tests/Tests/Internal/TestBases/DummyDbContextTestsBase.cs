@@ -42,7 +42,7 @@ public abstract class DummyDbContextTestsBase
     protected static async Task<DummyEntity[]> PreloadDummiesAsync(int count)
     {
         var dummies = GenerateDummies(count);
-        await DbContext.AddRangeAsync(dummies);
+        await DbContext.Dummies.AddRangeAsync(dummies);
         await DbContext.SaveChangesAsync();
         return dummies;
     }
