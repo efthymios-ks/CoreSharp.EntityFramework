@@ -12,8 +12,8 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Stores.Abstracts;
 
-public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtendedStore<TEntity>
-    where TEntity : class, IEntity
+public abstract class ExtendedStoreBase<TEntity, TKey> : StoreBase<TEntity, TKey>, IExtendedStore<TEntity, TKey>
+    where TEntity : class, IEntity<TKey>
 {
     // Constructors
     protected ExtendedStoreBase(DbContext dbContext)
@@ -28,7 +28,7 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        var addedEntities = await Table.AddManyAsync(entities, cancellationToken);
+        var addedEntities = await Table.AddManyAsync<TEntity, TKey>(entities, cancellationToken);
         await Context.SaveChangesAsync(cancellationToken);
         return addedEntities;
     }
@@ -39,7 +39,7 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        var updatedEntities = await Table.AttachManyAsync(entities);
+        var updatedEntities = await Table.AttachManyAsync<TEntity, TKey>(entities);
         await Context.SaveChangesAsync(cancellationToken);
         return updatedEntities;
     }
@@ -50,27 +50,27 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        await Table.RemoveManyAsync(entities);
+        await Table.RemoveManyAsync<TEntity, TKey>(entities);
         await Context.SaveChangesAsync(cancellationToken);
     }
 
-    public virtual async Task RemoveByKeyAsync(
-        object key,
+    public virtual async Task RemoveAsync(
+        TKey key,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        await Context.Set<TEntity>()
-                     .RemoveByKeyAsync(key, cancellationToken);
+        await Table.RemoveByKeyAsync(key, cancellationToken);
+        await Context.SaveChangesAsync(cancellationToken);
     }
 
-    public virtual async Task<bool> ExistsAsync(
-        object key,
+    public virtual Task<bool> ExistsAsync(
+        TKey key,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        return await ExistsAsync(q => q.Where(e => Equals(e.Id, key)), cancellationToken);
+        return ExistsAsync(q => q.Where(e => Equals(e.Id, key)), cancellationToken);
     }
 
     public virtual async Task<bool> ExistsAsync(
@@ -78,10 +78,10 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
         CancellationToken cancellationToken = default)
     {
         var query = NavigateTable(navigation);
-        var foundIds = await query.Select(e => e.Id)
-                                  .Take(1)
-                                  .AsNoTracking()
-                                  .ToArrayAsync(cancellationToken);
+        var foundIds = await query
+            .Select(e => e.Id)
+            .Take(1)
+            .ToArrayAsync(cancellationToken);
         return foundIds.Length > 0;
     }
 
@@ -100,8 +100,8 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
         ArgumentNullException.ThrowIfNull(entity);
 
         return await ExistsAsync(entity.Id, cancellationToken)
-                ? await UpdateAsync(entity, cancellationToken)
-                : await AddAsync(entity, cancellationToken);
+            ? await UpdateAsync(entity, cancellationToken)
+            : await AddAsync(entity, cancellationToken);
     }
 
     public virtual async Task<IEnumerable<TEntity>> AddOrUpdateAsync(
@@ -110,9 +110,9 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        var finalEntities = await Table.AddOrAttachManyAsync(entities, cancellationToken);
+        var entitiesAddedorUpdated = await Table.AddOrAttachManyAsync<TEntity, TKey>(entities, cancellationToken);
         await Context.SaveChangesAsync(cancellationToken);
-        return finalEntities;
+        return entitiesAddedorUpdated;
     }
 
     public virtual async Task<TEntity> AddIfNotExistAsync(
@@ -131,7 +131,9 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        return await Table.AddManyIfNotExistAsync(entities, cancellationToken);
+        var entitiesAdded = await Table.AddManyIfNotExistAsync<TEntity, TKey>(entities, cancellationToken);
+        await Context.SaveChangesAsync(cancellationToken);
+        return entitiesAdded;
     }
 
     public virtual async Task<TEntity> UpdateIfExistAsync(
@@ -142,6 +144,7 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
         if (await ExistsAsync(entity.Id, cancellationToken))
         {
             entity = await UpdateAsync(entity, cancellationToken);
+            await Context.SaveChangesAsync(cancellationToken);
         }
 
         return entity;
@@ -153,16 +156,18 @@ public abstract class ExtendedStoreBase<TEntity> : StoreBase<TEntity>, IExtended
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        return await Table.AttachManyIfExistAsync(entities, cancellationToken);
+        var entitiesUpdated = await Table.AttachManyIfExistAsync<TEntity, TKey>(entities, cancellationToken);
+        await Context.SaveChangesAsync(cancellationToken);
+        return entitiesUpdated;
     }
 
-    public virtual async Task<Page<TEntity>> GetPageAsync(
+    public virtual Task<Page<TEntity>> GetPageAsync(
         int pageNumber,
         int pageSize,
         Query<TEntity> navigation = null,
         CancellationToken cancellationToken = default)
     {
         var query = NavigateTable(navigation);
-        return await query.GetPageAsync(pageNumber, pageSize, cancellationToken);
+        return query.GetPageAsync(pageNumber, pageSize, cancellationToken);
     }
 }

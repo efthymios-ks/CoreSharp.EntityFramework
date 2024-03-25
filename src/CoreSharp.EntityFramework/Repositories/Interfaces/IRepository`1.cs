@@ -12,31 +12,32 @@ namespace CoreSharp.EntityFramework.Repositories.Interfaces;
 /// <summary>
 /// Repository interface used for transactional querying.
 /// Used with <see cref="IUnitOfWork"/> for commiting transactions.
-/// Suggested implementation base with <see cref="RepositoryBase{TEntity}"/>.
+/// Suggested implementation base with <see cref="RepositoryBase{TEntity, TKey}"/>.
 /// </summary>
 /// <typeparam name="TEntity">Suggested implementation base with <see cref="EntityBase{TKey}"/>.</typeparam>
-public interface IRepository<TEntity>
-    where TEntity : class, IEntity
+/// <typeparam name="TKey">PK type of TEntity.</typeparam>
+public interface IRepository<TEntity, TKey>
+    where TEntity : class, IEntity<TKey>
 {
     // Methods
     /// <summary>
     /// Get single entity by given key.
     /// </summary>
     /// <param name="key">Primary key to match.</param>
-    /// <param name="navigation">Optional argument to build query.</param>
+    /// <param name="query">Optional argument to build query.</param>
     /// <param name="cancellationToken"></param>
     Task<TEntity> GetAsync(
-        object key,
-        Query<TEntity> navigation = null,
+        TKey key,
+        Query<TEntity> query = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Get all entities.
     /// </summary>
-    /// <param name="navigation">Optional argument to build query.</param>
+    /// <param name="query">Optional argument to build query.</param>
     /// <param name="cancellationToken"></param>
     Task<IEnumerable<TEntity>> GetAsync(
-        Query<TEntity> navigation = null,
+        Query<TEntity> query = null,
         CancellationToken cancellationToken = default);
 
     /// <inheritdoc cref="DbContext.AddAsync{TEntity}(TEntity, CancellationToken)" />

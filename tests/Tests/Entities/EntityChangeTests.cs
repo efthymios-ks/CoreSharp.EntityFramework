@@ -6,7 +6,7 @@ namespace Tests.Entities;
 public sealed class EntityChangeTests
 {
     [Test]
-    public void DateCreatedUtc_Setter_WhenLocalDateTime_ShouldSetToUtc()
+    public void DateCreatedUtc_Setter_WhenDateTimeIsLocal_ShouldSetToUtc()
     {
         // Arrange
         var entity = new EntityChange();
@@ -21,7 +21,7 @@ public sealed class EntityChangeTests
     }
 
     [Test]
-    public void DateCreatedUtc_Setter_WhenUtcDateTime_ShouldSetToUtc()
+    public void DateCreatedUtc_Setter_WhenDateTimeIsUtc_ShouldSetToUtc()
     {
         // Arrange
         var entity = new EntityChange();
@@ -36,7 +36,7 @@ public sealed class EntityChangeTests
     }
 
     [Test]
-    public void DateCreatedUtc_Setter_WhenUndefinedDateTime_ShouldSetToUtc()
+    public void DateCreatedUtc_Setter_WhenDateTimeisUnspecified_ShouldSetToUtc()
     {
         // Arrange
         var entity = new EntityChange();

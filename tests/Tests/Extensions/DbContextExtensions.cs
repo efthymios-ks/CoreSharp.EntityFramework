@@ -1,5 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using Tests.Internal.Database.Models;
 
 namespace Tests.Extensions;
 
@@ -7,7 +9,7 @@ namespace Tests.Extensions;
 public sealed class DbContextExtensionsTests : DummyDbContextTestsBase
 {
     [Test]
-    public async Task RollbackAsync_WhenNoChanges_ShouldNotThrowException()
+    public async Task RollbackAsync_WhenHasNoChanges_ShouldNotThrowException()
     {
         // Act
         Func<Task> action = () => DbContext.RollbackAsync();
@@ -20,50 +22,89 @@ public sealed class DbContextExtensionsTests : DummyDbContextTestsBase
     public async Task RollbackAsync_WhenEntityAdded_ShouldRemoveAddedEntity()
     {
         // Arrange
-        var dummy = GenerateDummy();
-        var initialCount = await DbContext.Dummies.CountAsync();
+        var dummyToAdd = GenerateDummy();
+        var addedDummyCountBeforeAdding = GetAddedCount();
 
         // Act
-        await DbContext.Dummies.AddAsync(dummy);
+        await DbContext.Dummies.AddAsync(dummyToAdd);
+        var addedDummyCountAfterAdding = GetAddedCount();
         await DbContext.RollbackAsync();
-        var finalCount = await DbContext.Dummies.CountAsync();
+        var addedDummyCountAfterRollback = GetAddedCount();
 
         // Assert
-        finalCount.Should().Be(initialCount);
+        addedDummyCountAfterRollback.Should().Be(addedDummyCountBeforeAdding);
+        addedDummyCountAfterAdding.Should().Be(1);
+
+        static int GetAddedCount()
+            => GetEntryCount(EntityState.Added);
     }
 
     [Test]
     public async Task RollbackAsync_WhenEntityModified_ShouldRestoreEntityToOriginalState()
     {
         // Arrange
-        var existingDummy = (await PreloadDummiesAsync(1))[0];
-        var originalName = existingDummy.Name;
+        var dummyBeforeModification = await PreloadDummyAsync();
+        var dummyBeforeModificationAsJson = SerializeDummy(dummyBeforeModification);
+        var modifiedDummyCountBeforeModify = GetModifiedCount();
+        dummyBeforeModification.Name = Guid.NewGuid().ToString();
+        var modifiedDummyCountAfterModify = GetModifiedCount();
 
         // Act
-        existingDummy.Name = Guid.NewGuid().ToString();
         await DbContext.RollbackAsync();
-        var modifiedDummy = await DbContext.Dummies.FindAsync(existingDummy.Id);
+        var modifiedDummyCountAfterRollback = GetModifiedCount();
+        var dummyAfterRollback = await DbContext.Dummies.FindAsync(dummyBeforeModification.Id);
+        var dummyAfterRollbackAsJson = SerializeDummy(dummyAfterRollback);
 
         // Assert 
-        modifiedDummy.Should().NotBeNull();
-        modifiedDummy.Name.Should().Be(originalName);
+        modifiedDummyCountAfterRollback.Should().Be(modifiedDummyCountBeforeModify);
+        modifiedDummyCountAfterModify.Should().Be(1);
+        dummyAfterRollbackAsJson.Should().Be(dummyBeforeModificationAsJson);
+
+        static string SerializeDummy(DummyEntity dummy)
+            => JsonSerializer.Serialize(dummy);
+
+        static int GetModifiedCount()
+            => GetEntryCount(EntityState.Modified);
+    }
+
+    [Test]
+    public async Task RollbackAsync_WhenEntityDeletedAndCancellationIsRequested_ShouldThrowTaskCancelledException()
+    {
+        // Arrange
+        var dummyToRemove = await PreloadDummyAsync();
+        DbContext.Dummies.Remove(dummyToRemove);
+        using var cancellationTokenSource = new CancellationTokenSource();
+        cancellationTokenSource.Cancel();
+
+        // Act  
+        Func<Task> action = () => DbContext.RollbackAsync(cancellationTokenSource.Token);
+
+        // Assert 
+        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
     }
 
     [Test]
     public async Task RollbackAsync_WhenEntityDeleted_ShouldRestoreEntityToOriginalState()
     {
         // Arrange
-        var existingDummy = (await PreloadDummiesAsync(1))[0];
-        var initialCount = await DbContext.Dummies.CountAsync();
+        var dummyToRemove = await PreloadDummyAsync();
+        var deletedDummyCountBeforeDelete = GetDeletedCount();
 
         // Act
-        DbContext.Dummies.Remove(existingDummy);
+        DbContext.Dummies.Remove(dummyToRemove);
+        var deletedDummyCountAfterDelete = GetDeletedCount();
         await DbContext.RollbackAsync();
-        var restoredDummy = await DbContext.Dummies.FindAsync(existingDummy.Id);
-        var finalCount = await DbContext.Dummies.CountAsync();
+        var deletedDummyCountAfterRollback = GetDeletedCount();
 
-        // Assert 
-        finalCount.Should().Be(initialCount);
-        restoredDummy.Should().NotBeNull();
+        // Assert
+        deletedDummyCountAfterRollback.Should().Be(deletedDummyCountBeforeDelete);
+        deletedDummyCountAfterDelete.Should().Be(1);
+
+        static int GetDeletedCount()
+            => GetEntryCount(EntityState.Deleted);
+
     }
+
+    private static int GetEntryCount(EntityState entityState)
+        => GetDummyEntries(entityState).Length;
 }

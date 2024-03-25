@@ -61,6 +61,7 @@ public sealed class IQueryableExtensionsTests
         const int pageNumber = 2;
         const int pageSize = 5;
         var query = Enumerable.Range(1, 20).AsQueryable();
+        var expectedItems = new[] { 11, 12, 13, 14, 15 };
 
         // Act
         var result = await query.GetPageAsync(pageNumber, pageSize);
@@ -68,7 +69,7 @@ public sealed class IQueryableExtensionsTests
         // Assert
         result.Should().NotBeNull();
         result.Items.Should().HaveCount(pageSize);
-        result.Items.Should().ContainInOrder(11, 12, 13, 14, 15);
+        result.Items.Should().BeEquivalentTo(expectedItems);
     }
 
     [Test]
@@ -83,7 +84,7 @@ public sealed class IQueryableExtensionsTests
         Func<Task> action = () => query.GetPageAsync(pageNumber, pageSize);
 
         // Assert
-        await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
+        await action.Should().ThrowExactlyAsync<ArgumentOutOfRangeException>();
     }
 
     [Test]
@@ -98,7 +99,7 @@ public sealed class IQueryableExtensionsTests
         Func<Task> action = () => query.GetPageAsync(pageNumber, pageSize);
 
         // Assert
-        await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
+        await action.Should().ThrowExactlyAsync<ArgumentOutOfRangeException>();
     }
 
     [Test]
@@ -113,6 +114,6 @@ public sealed class IQueryableExtensionsTests
         Func<Task> action = () => query.GetPageAsync(pageNumber, pageSize);
 
         // Assert
-        await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
+        await action.Should().ThrowExactlyAsync<ArgumentOutOfRangeException>();
     }
 }

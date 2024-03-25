@@ -50,6 +50,28 @@ public abstract class AuditDbContextBase : DbContext
         return databaseChangeCount;
     }
 
+    public override void Dispose()
+    {
+        if (IsDisposed)
+        {
+            return;
+        }
+
+        IsDisposed = true;
+        base.Dispose();
+    }
+
+    public override ValueTask DisposeAsync()
+    {
+        if (IsDisposed)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        IsDisposed = true;
+        return base.DisposeAsync();
+    }
+
     private static void ConfigureAuditEntities(ModelBuilder modelBuilder)
     {
         var auditEntities = modelBuilder.Model.FindEntityTypes(typeof(IAuditEntity));
@@ -72,7 +94,7 @@ public abstract class AuditDbContextBase : DbContext
     private TemporaryEntityChange[] OnBeforeSaveChanges()
     {
         UpdateAuditEntities();
-        return CacheChangesBeforeSave();
+        return GetChangesBeforeSave();
     }
 
     private void OnAfterSaveChanges(bool acceptAllChangesOnSuccess, TemporaryEntityChange[] temporaryEntityChanges)
@@ -89,27 +111,7 @@ public abstract class AuditDbContextBase : DbContext
         await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 
-    private void UpdateAuditEntities()
-    {
-        var auditEntityEntries = ChangeTracker.Entries().Where(e => e.Entity is IAuditEntity);
-        foreach (var auditEntityEntry in auditEntityEntries)
-        {
-            var auditEntity = auditEntityEntry.Entity as IAuditEntity;
-            switch (auditEntityEntry.State)
-            {
-                case EntityState.Added:
-                    auditEntity.DateCreatedUtc = DateTime.UtcNow;
-                    auditEntityEntry.Property(_auditEntityDateModifiedPropertyName).IsModified = false;
-                    break;
-                case EntityState.Modified:
-                    auditEntity.DateModifiedUtc = DateTime.UtcNow;
-                    auditEntityEntry.Property(_auditEntityDateCreatedPropertyName).IsModified = false;
-                    break;
-            }
-        }
-    }
-
-    private TemporaryEntityChange[] CacheChangesBeforeSave()
+    private TemporaryEntityChange[] GetChangesBeforeSave()
     {
         // Force scan for changes to be sure.
         ChangeTracker.DetectChanges();
@@ -202,6 +204,26 @@ public abstract class AuditDbContextBase : DbContext
         }
     }
 
+    private void UpdateAuditEntities()
+    {
+        var auditEntityEntries = ChangeTracker.Entries<IAuditEntity>();
+        foreach (var auditEntityEntry in auditEntityEntries)
+        {
+            var auditEntity = auditEntityEntry.Entity;
+            switch (auditEntityEntry.State)
+            {
+                case EntityState.Added:
+                    auditEntity.DateCreatedUtc = DateTime.UtcNow;
+                    auditEntityEntry.Property(_auditEntityDateModifiedPropertyName).IsModified = false;
+                    break;
+                case EntityState.Modified:
+                    auditEntity.DateModifiedUtc = DateTime.UtcNow;
+                    auditEntityEntry.Property(_auditEntityDateCreatedPropertyName).IsModified = false;
+                    break;
+            }
+        }
+    }
+
     private static EntityChange[] FinalizeAndGetChangesAfterSave(TemporaryEntityChange[] temporaryEntityChanges)
     {
         // Check temporary changes with temporary properties only. 
@@ -231,27 +253,5 @@ public abstract class AuditDbContextBase : DbContext
         return temporaryEntityChanges
             .Select(change => change.ToEntityChange())
             .ToArray();
-    }
-
-    public override void Dispose()
-    {
-        if (IsDisposed)
-        {
-            return;
-        }
-
-        IsDisposed = true;
-        base.Dispose();
-    }
-
-    public override ValueTask DisposeAsync()
-    {
-        if (IsDisposed)
-        {
-            return ValueTask.CompletedTask;
-        }
-
-        IsDisposed = true;
-        return base.DisposeAsync();
     }
 }

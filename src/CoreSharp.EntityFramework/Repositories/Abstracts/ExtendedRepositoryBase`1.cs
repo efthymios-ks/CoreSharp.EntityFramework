@@ -13,8 +13,8 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Abstracts;
 
-public abstract class ExtendedRepositoryBase<TEntity> : RepositoryBase<TEntity>, IExtendedRepository<TEntity>
-    where TEntity : class, IEntity
+public abstract class ExtendedRepositoryBase<TEntity, TKey> : RepositoryBase<TEntity, TKey>, IExtendedRepository<TEntity, TKey>
+    where TEntity : class, IEntity<TKey>
 {
     // Constructors
     protected ExtendedRepositoryBase(DbContext dbContext)
@@ -23,49 +23,49 @@ public abstract class ExtendedRepositoryBase<TEntity> : RepositoryBase<TEntity>,
     }
 
     // Methods 
-    public virtual async Task<IEnumerable<TEntity>> AddAsync(
+    public virtual Task<IEnumerable<TEntity>> AddAsync(
         IEnumerable<TEntity> entities,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        return await Table.AddManyAsync(entities, cancellationToken);
+        return Table.AddManyAsync<TEntity, TKey>(entities, cancellationToken);
     }
 
-    public virtual async Task<IEnumerable<TEntity>> UpdateAsync(
-        IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(entities);
-
-        return await Table.AttachManyAsync(entities);
-    }
-
-    public virtual async Task RemoveAsync(
+    public virtual Task<IEnumerable<TEntity>> UpdateAsync(
         IEnumerable<TEntity> entities,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        await Table.RemoveManyAsync(entities);
+        return Table.AttachManyAsync<TEntity, TKey>(entities);
     }
 
-    public virtual async Task RemoveByKeyAsync(
-        object key,
+    public virtual Task RemoveAsync(
+        IEnumerable<TEntity> entities,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(entities);
+
+        return Table.RemoveManyAsync<TEntity, TKey>(entities);
+    }
+
+    public virtual Task RemoveAsync(
+        TKey key,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        await Context.Set<TEntity>()
-            .RemoveByKeyAsync(key, cancellationToken);
+        return Table.RemoveByKeyAsync(key, cancellationToken);
     }
 
-    public virtual async Task<bool> ExistsAsync(
-        object key,
+    public virtual Task<bool> ExistsAsync(
+        TKey key,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        return await ExistsAsync(q => q.Where(e => Equals(e.Id, key)), cancellationToken);
+        return ExistsAsync(q => q.Where(e => Equals(e.Id, key)), cancellationToken);
     }
 
     public virtual async Task<bool> ExistsAsync(
@@ -76,17 +76,16 @@ public abstract class ExtendedRepositoryBase<TEntity> : RepositoryBase<TEntity>,
         var foundIds = await query
             .Select(e => e.Id)
             .Take(1)
-            .AsNoTracking()
             .ToArrayAsync(cancellationToken);
         return foundIds.Length > 0;
     }
 
-    public virtual async Task<long> CountAsync(
+    public virtual Task<long> CountAsync(
         Query<TEntity> navigation = null,
         CancellationToken cancellationToken = default)
     {
         var query = NavigateTable(navigation).AsNoTracking();
-        return await query.LongCountAsync(cancellationToken);
+        return query.LongCountAsync(cancellationToken);
     }
 
     public virtual async Task<TEntity> AddOrUpdateAsync(
@@ -100,13 +99,13 @@ public abstract class ExtendedRepositoryBase<TEntity> : RepositoryBase<TEntity>,
             : await AddAsync(entity, cancellationToken);
     }
 
-    public virtual async Task<IEnumerable<TEntity>> AddOrUpdateAsync(
+    public virtual Task<IEnumerable<TEntity>> AddOrUpdateAsync(
         IEnumerable<TEntity> entities,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        return await Table.AddOrAttachManyAsync(entities, cancellationToken);
+        return Table.AddOrAttachManyAsync<TEntity, TKey>(entities, cancellationToken);
     }
 
     public virtual async Task<TEntity> AddIfNotExistAsync(
@@ -119,13 +118,13 @@ public abstract class ExtendedRepositoryBase<TEntity> : RepositoryBase<TEntity>,
         return existing ?? await AddAsync(entity, cancellationToken);
     }
 
-    public virtual async Task<IEnumerable<TEntity>> AddIfNotExistAsync(
+    public virtual Task<IEnumerable<TEntity>> AddIfNotExistAsync(
         IEnumerable<TEntity> entities,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        return await Table.AddManyIfNotExistAsync(entities, cancellationToken);
+        return Table.AddManyIfNotExistAsync<TEntity, TKey>(entities, cancellationToken);
     }
 
     public virtual async Task<TEntity> UpdateIfExistAsync(
@@ -142,22 +141,22 @@ public abstract class ExtendedRepositoryBase<TEntity> : RepositoryBase<TEntity>,
         return entity;
     }
 
-    public virtual async Task<IEnumerable<TEntity>> UpdateIfExistAsync(
+    public virtual Task<IEnumerable<TEntity>> UpdateIfExistAsync(
         IEnumerable<TEntity> entities,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        return await Table.AttachManyIfExistAsync(entities, cancellationToken);
+        return Table.AttachManyIfExistAsync<TEntity, TKey>(entities, cancellationToken);
     }
 
-    public virtual async Task<Page<TEntity>> GetPageAsync(
+    public virtual Task<Page<TEntity>> GetPageAsync(
         int pageNumber,
         int pageSize,
         Query<TEntity> navigation = null,
         CancellationToken cancellationToken = default)
     {
         var query = NavigateTable(navigation);
-        return await query.GetPageAsync(pageNumber, pageSize, cancellationToken);
+        return query.GetPageAsync(pageNumber, pageSize, cancellationToken);
     }
 }

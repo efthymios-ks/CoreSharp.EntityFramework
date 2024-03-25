@@ -27,7 +27,7 @@ public sealed class EntityChange
     public DateTime DateCreatedUtc
     {
         get => _dateCreated;
-        set => _dateCreated = SetDateTimeKindToUtc(value);
+        set => _dateCreated = value.ToUniversalTime();
     }
 
     [Required]
@@ -47,11 +47,4 @@ public sealed class EntityChange
 
     [Column(Order = 6)]
     public string NewState { get; set; }
-
-    /// <summary>
-    /// Avoid <see cref="DateTime.SpecifyKind(DateTime, DateTimeKind)"/> which converts (and ruins) the value.
-    /// Use <see cref="TimeZoneInfo.ConvertTimeToUtc(DateTime)"/> which only sets the <see cref="DateTime.Kind"/>.
-    /// </summary>
-    private static DateTime SetDateTimeKindToUtc(DateTime dateTime)
-        => TimeZoneInfo.ConvertTimeToUtc(dateTime);
 }

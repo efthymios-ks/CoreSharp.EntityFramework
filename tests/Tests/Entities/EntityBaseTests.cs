@@ -7,10 +7,10 @@ namespace Tests.Entities;
 public sealed class EntityBaseTests
 {
     [Test]
-    public void DateCreatedUtc_Setter_WhenLocalDateTime_ShouldSetToUtc()
+    public void DateCreatedUtc_Setter_WhenDateTimeIsLocal_ShouldSetToUtc()
     {
         // Arrange
-        var entity = new TestEntity();
+        var entity = new DummyEntity();
         var localDateTime = new DateTime(2024, 3, 22, 12, 0, 0, DateTimeKind.Local);
 
         // Act
@@ -22,10 +22,10 @@ public sealed class EntityBaseTests
     }
 
     [Test]
-    public void DateCreatedUtc_Setter_WhennUtcDateTime_ShouldSetToUtc()
+    public void DateCreatedUtc_Setter_WhenDateTimeIsUtc_ShouldSetToUtc()
     {
         // Arrange
-        var entity = new TestEntity();
+        var entity = new DummyEntity();
         var utcDateTime = new DateTime(2024, 3, 22, 12, 0, 0, DateTimeKind.Utc);
 
         // Act
@@ -37,25 +37,25 @@ public sealed class EntityBaseTests
     }
 
     [Test]
-    public void DateCreatedUtc_Setter_WhenUndefinedDateTime_ShouldSetToUtc()
+    public void DateCreatedUtc_Setter_WhenDateTimeIsUnspecified_ShouldSetToUtc()
     {
         // Arrange
-        var entity = new TestEntity();
-        var undefinedDateTime = new DateTime(2024, 3, 22, 12, 0, 0, DateTimeKind.Unspecified);
+        var entity = new DummyEntity();
+        var unspecifiedDateTime = new DateTime(2024, 3, 22, 12, 0, 0, DateTimeKind.Unspecified);
 
         // Act
-        entity.DateCreatedUtc = undefinedDateTime;
+        entity.DateCreatedUtc = unspecifiedDateTime;
 
         // Assert
         entity.DateCreatedUtc.Kind.Should().Be(DateTimeKind.Utc);
-        entity.DateCreatedUtc.Should().Be(undefinedDateTime.ToUniversalTime());
+        entity.DateCreatedUtc.Should().Be(unspecifiedDateTime.ToUniversalTime());
     }
 
     [Test]
-    public void DateModifiedUtcy_Setter_WhenNull_ShouldSetToNull()
+    public void DateModifiedUtc_Setter_WhenNull_ShouldSetToNull()
     {
         // Arrange
-        var entity = new TestEntity
+        var entity = new DummyEntity
         {
             DateModifiedUtc = DateTime.UtcNow
         };
@@ -68,25 +68,10 @@ public sealed class EntityBaseTests
     }
 
     [Test]
-    public void DateModifiedUtc_Setter_WhenUtcDateTime_ShouldSetToUtc()
+    public void DateModifiedUtc_Setter_WhenDateTimeIsLocal_ShouldSetToUtc()
     {
         // Arrange
-        var entity = new TestEntity();
-        var utcDateTime = new DateTime(2024, 3, 22, 12, 0, 0, DateTimeKind.Utc);
-
-        // Act
-        entity.DateModifiedUtc = utcDateTime;
-
-        // Assert
-        entity.DateModifiedUtc.Should().NotBeNull();
-        entity.DateModifiedUtc.Should().Be(utcDateTime);
-    }
-
-    [Test]
-    public void DateModifiedUtc_Setter_WhenLocalDateTime_ShouldSetToUtc()
-    {
-        // Arrange
-        var entity = new TestEntity();
+        var entity = new DummyEntity();
         var localDateTime = new DateTime(2024, 3, 22, 12, 0, 0, DateTimeKind.Local);
 
         // Act
@@ -99,10 +84,10 @@ public sealed class EntityBaseTests
     }
 
     [Test]
-    public void DateModifiedUtc_Setter_WhennUtcDateTime_ShouldSetToUtc()
+    public void DateModifiedUtc_Setter_WhenDateTimeIsUtc_ShouldSetToUtc()
     {
         // Arrange
-        var entity = new TestEntity();
+        var entity = new DummyEntity();
         var utcDateTime = new DateTime(2024, 3, 22, 12, 0, 0, DateTimeKind.Utc);
 
         // Act
@@ -115,10 +100,10 @@ public sealed class EntityBaseTests
     }
 
     [Test]
-    public void DateModifiedUtc_Setter_WhenUndefinedDateTime_ShouldSetToUtc()
+    public void DateModifiedUtc_Setter_WhenDateTimeIsUnspecified_ShouldSetToUtc()
     {
         // Arrange
-        var entity = new TestEntity();
+        var entity = new DummyEntity();
         var undefinedDateTime = new DateTime(2024, 3, 22, 12, 0, 0, DateTimeKind.Unspecified);
 
         // Act
@@ -134,13 +119,13 @@ public sealed class EntityBaseTests
     public void DateCreatedUtc_WhenSerializedToJsonWithJsonNet_ShouldUseFormatO()
     {
         // Arrange
-        const string dateAsString = "2022-12-01T12:30:45.1234567Z";
-        var date = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture);
-        var entity = new TestEntity
+        const string dateAsJson = "2022-12-01T12:30:45.1234567Z";
+        var date = DateTime.ParseExact(dateAsJson, "O", CultureInfo.InvariantCulture);
+        var entity = new DummyEntity
         {
             DateCreatedUtc = date
         };
-        var expectedDate = $"\"{dateAsString}\"";
+        var expectedDate = $"\"{dateAsJson}\"";
 
         // Act 
         var serializedDate = JsonNet.JsonConvert.SerializeObject(entity.DateCreatedUtc);
@@ -153,13 +138,13 @@ public sealed class EntityBaseTests
     public void DateCreatedUtc_WhenSerializedToJsonUsingTextJson_ShouldUseFormatO()
     {
         // Arrange
-        const string dateAsString = "2022-12-01T12:30:45.1234567Z";
-        var date = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture);
-        var entity = new TestEntity
+        const string dateAsJson = "2022-12-01T12:30:45.1234567Z";
+        var date = DateTime.ParseExact(dateAsJson, "O", CultureInfo.InvariantCulture);
+        var entity = new DummyEntity
         {
             DateCreatedUtc = date
         };
-        var expectedDate = $"\"{dateAsString}\"";
+        var expectedDate = $"\"{dateAsJson}\"";
 
         // Act 
         var serializedDate = TextJson.JsonSerializer.Serialize(entity.DateCreatedUtc);
@@ -172,13 +157,13 @@ public sealed class EntityBaseTests
     public void DateModifiedUtc_WhenSerializedToJsonUsingJsonNet_ShouldUseFormatO()
     {
         // Arrange
-        const string dateAsString = "2022-12-01T12:30:45.1234567Z";
-        var date = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture);
-        var entity = new TestEntity
+        const string dateAsJson = "2022-12-01T12:30:45.1234567Z";
+        var date = DateTime.ParseExact(dateAsJson, "O", CultureInfo.InvariantCulture);
+        var entity = new DummyEntity
         {
             DateModifiedUtc = date
         };
-        var expectedDate = $"\"{dateAsString}\"";
+        var expectedDate = $"\"{dateAsJson}\"";
 
         // Act 
         var serializedDate = JsonNet.JsonConvert.SerializeObject(entity.DateModifiedUtc);
@@ -191,13 +176,13 @@ public sealed class EntityBaseTests
     public void DateModifiedUtc_WhenSerializedToJsonUsingTextJson_ShouldUseFormatO()
     {
         // Arrange
-        const string dateAsString = "2022-12-01T12:30:45.1234567Z";
-        var date = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture);
-        var entity = new TestEntity
+        const string dateAsJson = "2022-12-01T12:30:45.1234567Z";
+        var date = DateTime.ParseExact(dateAsJson, "O", CultureInfo.InvariantCulture);
+        var entity = new DummyEntity
         {
             DateModifiedUtc = date
         };
-        var expectedDate = $"\"{dateAsString}\"";
+        var expectedDate = $"\"{dateAsJson}\"";
 
         // Act 
         var serializedDate = TextJson.JsonSerializer.Serialize(entity.DateModifiedUtc);
@@ -210,16 +195,16 @@ public sealed class EntityBaseTests
     public void DateCreatedUtc_WhenDeserializedFromJsonUsingJsonNet_ShouldRetainDateTimeKindUtc()
     {
         // Arrange
-        const string dateAsString = "2022-12-01T12:30:45.1234567Z";
-        var expectedDate = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture).ToUniversalTime();
+        const string dateAsJson = "2022-12-01T12:30:45.1234567Z";
+        var expectedDate = DateTime.ParseExact(dateAsJson, "O", CultureInfo.InvariantCulture).ToUniversalTime();
         var entityAsJson = /*lang=json,strict*/ @"
         {
             ""DateCreatedUtc"": ""{Date}"",
             ""DateModifiedUtc"": null
-        }".Replace("{Date}", dateAsString);
+        }".Replace("{Date}", dateAsJson);
 
         // Act 
-        var entity = JsonNet.JsonConvert.DeserializeObject<TestEntity>(entityAsJson);
+        var entity = JsonNet.JsonConvert.DeserializeObject<DummyEntity>(entityAsJson);
 
         // Assert
         entity.DateCreatedUtc.Should().Be(expectedDate);
@@ -230,16 +215,16 @@ public sealed class EntityBaseTests
     public void DateCreatedUtc_WhenDeserializedFromJsonUsingTextJson_ShouldRetainDateTimeKindUtc()
     {
         // Arrange
-        const string dateAsString = "2022-12-01T12:30:45.1234567Z";
-        var expectedDate = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture).ToUniversalTime();
+        const string dateAsJson = "2022-12-01T12:30:45.1234567Z";
+        var expectedDate = DateTime.ParseExact(dateAsJson, "O", CultureInfo.InvariantCulture).ToUniversalTime();
         var entityAsJson = /*lang=json,strict*/ @"
         {
             ""DateCreatedUtc"": ""{Date}"",
             ""DateModifiedUtc"": null
-        }".Replace("{Date}", dateAsString);
+        }".Replace("{Date}", dateAsJson);
 
         // Act 
-        var entity = TextJson.JsonSerializer.Deserialize<TestEntity>(entityAsJson);
+        var entity = TextJson.JsonSerializer.Deserialize<DummyEntity>(entityAsJson);
 
         // Assert
         entity.DateCreatedUtc.Should().Be(expectedDate);
@@ -247,19 +232,19 @@ public sealed class EntityBaseTests
     }
 
     [Test]
-    public void DateModifiedUtc_WhenDeserializedFromFromJsonUsingJsonNet_RetainsDateTimeKindUtc()
+    public void DateModifiedUtc_WhenDeserializedFromJsonUsingJsonNet_RetainsDateTimeKindUtc()
     {
         // Arrange
-        const string dateAsString = "2022-12-01T12:30:45.1234567Z";
-        var expectedDate = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture).ToUniversalTime();
+        const string dateAsJson = "2022-12-01T12:30:45.1234567Z";
+        var expectedDate = DateTime.ParseExact(dateAsJson, "O", CultureInfo.InvariantCulture).ToUniversalTime();
         var entityAsJson = /*lang=json,strict*/ @"
         {
             ""DateCreatedUtc"": ""2020-01-01T00:00:00.0000000Z"",
             ""DateModifiedUtc"": ""{Date}""
-        }".Replace("{Date}", dateAsString);
+        }".Replace("{Date}", dateAsJson);
 
         // Act 
-        var entity = JsonNet.JsonConvert.DeserializeObject<TestEntity>(entityAsJson);
+        var entity = JsonNet.JsonConvert.DeserializeObject<DummyEntity>(entityAsJson);
 
         // Assert
         entity.DateModifiedUtc.Should().NotBeNull();
@@ -268,20 +253,20 @@ public sealed class EntityBaseTests
     }
 
     [Test]
-    public void DateModifiedUtc_WhenDeserializedFromFromJsonUsingTextJson_ShouldRetainDateTimeKindUtc()
+    public void DateModifiedUtc_WhenDeserializedFromJsonUsingTextJson_ShouldRetainDateTimeKindUtc()
     {
         // Arrange
-        const string dateAsString = "2022-12-01T12:30:45.1234567Z";
-        var expectedDate = DateTime.ParseExact(dateAsString, "O", CultureInfo.InvariantCulture).ToUniversalTime();
+        const string dateAsJson = "2022-12-01T12:30:45.1234567Z";
+        var expectedDate = DateTime.ParseExact(dateAsJson, "O", CultureInfo.InvariantCulture).ToUniversalTime();
         var entityAsJson = /*lang=json,strict*/ @"
         {
             ""Id"": ""00000000-0000-0000-0000-000000000000"",
             ""DateCreatedUtc"": ""2020-01-01T00:00:00.0000000Z"",
             ""DateModifiedUtc"": ""{Date}""
-        }".Replace("{Date}", dateAsString);
+        }".Replace("{Date}", dateAsJson);
 
         // Act 
-        var entity = TextJson.JsonSerializer.Deserialize<TestEntity>(entityAsJson);
+        var entity = TextJson.JsonSerializer.Deserialize<DummyEntity>(entityAsJson);
 
         // Assert 
         entity.DateModifiedUtc.Should().NotBeNull();
@@ -293,9 +278,9 @@ public sealed class EntityBaseTests
     public void ToString_WhenNotOverriden_ShouldReturnId()
     {
         // Arrange
-        var entity = new TestEntity();
+        var entity = new DummyEntity();
         var id = Guid.NewGuid();
-        (entity as IUniqueEntity).Id = id;
+        ((IUniqueEntity)entity).Id = id;
         var expected = id.ToString();
 
         // Act
@@ -305,7 +290,7 @@ public sealed class EntityBaseTests
         entityAsString.Should().Be(expected);
     }
 
-    private sealed class TestEntity : EntityBase
+    private sealed class DummyEntity : EntityBase
     {
     }
 }

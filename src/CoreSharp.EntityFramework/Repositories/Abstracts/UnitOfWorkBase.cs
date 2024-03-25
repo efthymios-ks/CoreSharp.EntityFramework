@@ -24,7 +24,7 @@ public abstract class UnitOfWorkBase : IUnitOfWork
     protected DbContext Context { get; }
 
     // Methods   
-    public virtual Task CommitAsync(CancellationToken cancellationToken = default)
+    public virtual Task<int> CommitAsync(CancellationToken cancellationToken = default)
         => Context.SaveChangesAsync(cancellationToken);
 
     public virtual Task RollbackAsync(CancellationToken cancellationToken = default)

@@ -10,35 +10,35 @@ using System.Threading.Tasks;
 namespace CoreSharp.EntityFramework.Repositories.Interfaces;
 
 /// <inheritdoc />
-public interface IExtendedRepository<TEntity> : IRepository<TEntity>
-    where TEntity : class, IEntity
+public interface IExtendedRepository<TEntity, TKey> : IRepository<TEntity, TKey>
+    where TEntity : class, IEntity<TKey>
 {
     // Methods 
-    /// <inheritdoc cref="IRepository{TEntity}.AddAsync(TEntity, CancellationToken)" />
+    /// <inheritdoc cref="IRepository{TEntity, TKey}.AddAsync(TEntity, CancellationToken)" />
     Task<IEnumerable<TEntity>> AddAsync(
         IEnumerable<TEntity> entities,
         CancellationToken cancellationToken = default);
 
-    /// <inheritdoc cref="IRepository{TEntity}.UpdateAsync(TEntity, CancellationToken)" />
+    /// <inheritdoc cref="IRepository{TEntity, TKey}.UpdateAsync(TEntity, CancellationToken)" />
     Task<IEnumerable<TEntity>> UpdateAsync(
         IEnumerable<TEntity> entities,
         CancellationToken cancellationToken = default);
 
-    /// <inheritdoc cref="IRepository{TEntity}.RemoveAsync(TEntity, CancellationToken)" />
+    /// <inheritdoc cref="IRepository{TEntity, TKey}.RemoveAsync(TEntity, CancellationToken)" />
     Task RemoveAsync(
         IEnumerable<TEntity> entities,
         CancellationToken cancellationToken = default);
 
-    /// <inheritdoc cref="IRepository{TEntity}.RemoveAsync(TEntity, CancellationToken)" />
-    Task RemoveByKeyAsync(
-        object key,
+    /// <inheritdoc cref="IRepository{TEntity, TKey}.RemoveAsync(TEntity, CancellationToken)" />
+    Task RemoveAsync(
+        TKey key,
         CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Check any entity exists with given id.
     /// </summary>
     Task<bool> ExistsAsync(
-        object key,
+        TKey key,
         CancellationToken cancellationToken = default);
 
     /// <summary>

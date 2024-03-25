@@ -1,6 +1,5 @@
 ﻿using CoreSharp.EntityFramework.Repositories.Abstracts;
 using Microsoft.EntityFrameworkCore;
-using Tests.Internal.Database.Models;
 
 namespace Tests.Repositories.Abstracts;
 
@@ -21,85 +20,84 @@ public sealed class UnitOfWorkBaseTests : DummyDbContextTestsBase
     }
 
     [Test]
-    public async Task CommitAsync_WhenCalled_ShouldSaveChanges()
-    {
-        // Arrange   
-        var dummyToAdd = new DummyEntity
-        {
-            Name = Guid.NewGuid().ToString()
-        };
-        var unitOfWork = new DummyUnitOfWork(DbContext);
-
-        // Act
-        await DbContext.Dummies.AddAsync(dummyToAdd);
-        await unitOfWork.CommitAsync();
-        var dummies = await DbContext.Dummies.ToArrayAsync();
-
-        // Assert  
-        dummies.Should().BeEquivalentTo(new[] { dummyToAdd });
-    }
-
-    [Test]
-    public async Task CommitAsync_WhenCancellationTokenIsSet_ShouldThrowTaskCancelledException()
+    public async Task CommitAsync_WhenCalled_ShouldSaveChangesAndReturnChangeCount()
     {
         // Arrange 
         var unitOfWork = new DummyUnitOfWork(DbContext);
+        var dummiesToAdd = GenerateDummies(1);
+        await DbContext.Dummies.AddRangeAsync(dummiesToAdd);
+
+        // Act
+        var changeCount = await unitOfWork.CommitAsync();
+        var dummiesRead = await DbContext.Dummies.ToArrayAsync();
+
+        // Assert  
+        changeCount.Should().Be(1);
+        dummiesRead.Should().BeEquivalentTo(dummiesToAdd);
+    }
+
+    [Test]
+    public async Task CommitAsync_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
+    {
+        // Arrange 
+        var unitOfWork = new DummyUnitOfWork(DbContext);
+        var dummyToAdd = GenerateDummy();
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
         // Act
-        await DbContext.Dummies.AddAsync(new());
-        Func<Task> func = () => unitOfWork.CommitAsync(cancellationTokenSource.Token);
+        await DbContext.Dummies.AddAsync(dummyToAdd);
+        Func<Task> action = () => unitOfWork.CommitAsync(cancellationTokenSource.Token);
 
         // Assert  
-        await func.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
     }
 
     [Test]
     public async Task RollbackAsync_WhenCalled_ShouldRollbackPendingChanges()
     {
-        // Arrange   
-        var dummyToAdd = new DummyEntity();
+        // Arrange 
         var unitOfWork = new DummyUnitOfWork(DbContext);
+        var dummyToAdd = GenerateDummy();
+        await DbContext.Dummies.AddAsync(dummyToAdd);
 
         // Act
-        await DbContext.Dummies.AddAsync(dummyToAdd);
         await unitOfWork.RollbackAsync();
-        var dummies = await DbContext.Dummies.ToArrayAsync();
+        var dummiesRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert 
-        dummies.Should().BeEmpty();
+        dummiesRead.Should().BeEmpty();
     }
 
     [Test]
-    public async Task RollbackAsync_WhenCancellationTokenIsSetAndEntityDeleted_ShouldThrowTaskCancelledException()
+    public async Task RollbackAsync_WhenEntityDeletedAndCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
         var unitOfWork = new DummyUnitOfWork(DbContext);
-        var existingDummies = await PreloadDummiesAsync(1);
-        DbContext.Dummies.RemoveRange(existingDummies);
+        var dummyToRemove = await PreloadDummiesAsync(1);
+        DbContext.Dummies.RemoveRange(dummyToRemove);
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
         // Act 
-        Func<Task> func = () => unitOfWork.RollbackAsync(cancellationTokenSource.Token);
+        Func<Task> action = () => unitOfWork.RollbackAsync(cancellationTokenSource.Token);
 
         // Assert  
-        await func.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
     }
 
     [Test]
-    public async Task DisposeAsync_ShouldCallDisposeAsyncOnContext()
+    public async Task DisposeAsync_WhenCalled_ShouldCallDisposeAsyncOnContext()
     {
         // Arrange 
         var unitOfWork = new DummyUnitOfWork(DbContext);
-        await unitOfWork.DisposeAsync();
 
         // Act
-        Func<Task> func = () => unitOfWork.CommitAsync();
+        await unitOfWork.DisposeAsync();
+        Func<Task> action = () => unitOfWork.CommitAsync();
 
         // Assert
-        await func.Should().ThrowExactlyAsync<ObjectDisposedException>();
+        await action.Should().ThrowExactlyAsync<ObjectDisposedException>();
     }
 
     private sealed class DummyUnitOfWork : UnitOfWorkBase

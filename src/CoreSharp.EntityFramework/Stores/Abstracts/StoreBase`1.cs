@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Stores.Abstracts;
 
-public abstract class StoreBase<TEntity> : RepositoryBase<TEntity>, IStore<TEntity>
-    where TEntity : class, IEntity
+public abstract class StoreBase<TEntity, TKey> : RepositoryBase<TEntity, TKey>, IStore<TEntity, TKey>
+    where TEntity : class, IEntity<TKey>
 {
     // Constructors
     protected StoreBase(DbContext dbContext)

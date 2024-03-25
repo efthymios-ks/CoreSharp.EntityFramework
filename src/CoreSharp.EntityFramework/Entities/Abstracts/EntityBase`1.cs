@@ -11,11 +11,11 @@ public abstract class EntityBase<TKey> : EntityBase, IEntity<TKey>
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public TKey Id
     {
-        get => (this as IUniqueEntity).Id is TKey key ? key : default;
-        set => (this as IUniqueEntity).Id = value;
+        get => ((IUniqueEntity)this).Id is TKey key ? key : default;
+        set => ((IUniqueEntity)this).Id = value;
     }
 
     // Methods 
     public override string ToString()
-        => $"{Id}";
+        => Id.ToString();
 }

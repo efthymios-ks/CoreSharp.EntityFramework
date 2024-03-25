@@ -7,6 +7,7 @@ namespace Tests.Extensions;
 [TestFixture]
 public sealed class DbSetExtensionsTests : DummyDbContextTestsBase
 {
+    // AddManyAsync
     [Test]
     public async Task AddManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
@@ -15,10 +16,10 @@ public sealed class DbSetExtensionsTests : DummyDbContextTestsBase
         var dummiesToAdd = Enumerable.Empty<DummyEntity>();
 
         // Act
-        Func<Task> action = () => dbSet.AddManyAsync(dummiesToAdd);
+        Func<Task> action = () => dbSet.AddManyAsync<DummyEntity, Guid>(dummiesToAdd);
 
         // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
     }
 
     [Test]
@@ -28,99 +29,108 @@ public sealed class DbSetExtensionsTests : DummyDbContextTestsBase
         IEnumerable<DummyEntity> dummiesToAdd = null;
 
         // Act
-        Func<Task> action = () => DbContext.Dummies.AddManyAsync(dummiesToAdd);
+        Func<Task> action = () => DbContext.Dummies.AddManyAsync<DummyEntity, Guid>(dummiesToAdd);
 
         // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
     }
 
     [Test]
-    public async Task AddManyAsync_WhenCalled_ShouldAddMultipleEntitiesToDatabase()
+    public async Task AddManyAsync_WhenEntitiesDoNotExistInDatabase_ShouldSetEntitiesAsAddedAndReturnThem()
     {
-        // Arrange
-        const int toAddCount = 2;
-        var dummiesToAdd = GenerateDummies(toAddCount);
+        // Arrange 
+        var dummiesToAdd = GenerateDummies(1);
 
         // Act
-        var addedDummies = await DbContext.Dummies.AddManyAsync(dummiesToAdd);
-        await DbContext.SaveChangesAsync();
-        var afterAddCount = await DbContext.Dummies.CountAsync();
+        var dummiesReturned = await DbContext.Dummies.AddManyAsync<DummyEntity, Guid>(dummiesToAdd);
+        var dummyEntries = GetDummyEntries(EntityState.Added);
 
         // Assert
-        addedDummies.Should().NotBeNull();
-        addedDummies.Should().HaveCount(toAddCount);
-        afterAddCount.Should().Be(toAddCount);
+        dummiesReturned.Should().BeEquivalentTo(dummiesToAdd);
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToAdd);
     }
 
     [Test]
-    public async Task AddManyIfNotExistAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
+    public async Task AddManyAsync_WhenEntitiesExistInDatabase_ShouldSetEntitiesAsAddedAndReturnThem()
+    {
+        // Arrange 
+        var dummiesToAdd = await PreloadDummiesAsync(1);
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.AddManyAsync<DummyEntity, Guid>(dummiesToAdd);
+        var dummyEntries = GetDummyEntries(EntityState.Added);
+
+        // Assert
+        dummiesReturned.Should().BeEquivalentTo(dummiesToAdd);
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToAdd);
+    }
+
+    // AttachManyAsync
+    [Test]
+    public async Task AttachManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
         DbSet<DummyEntity> dbSet = null;
-        var dummiesToAdd = Enumerable.Empty<DummyEntity>();
+        var dummiesToAttach = GenerateDummies(1);
 
         // Act
-        Func<Task> action = () => dbSet.AddManyIfNotExistAsync(dummiesToAdd);
+        Func<Task> action = () => dbSet.AttachManyAsync<DummyEntity, Guid>(dummiesToAttach);
 
         // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
     }
 
     [Test]
-    public async Task AddManyIfNotExistAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
+    public async Task AttachManyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
-        // Arrange
-        IEnumerable<DummyEntity> dummiesToAdd = null;
+        IEnumerable<DummyEntity> dummiesToAttach = null;
 
         // Act
-        Func<Task> action = () => DbContext.Dummies.AddManyIfNotExistAsync(dummiesToAdd);
+        Func<Task> action = () => DbContext.Dummies.AttachManyAsync<DummyEntity, Guid>(dummiesToAttach);
 
         // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
     }
 
     [Test]
-    public async Task AddManyIfNotExistAsync_WhenEntitiesDoNotExistInDatabase_ShouldAddNewEntities()
+    public async Task AttachManyAsync_WhenEntitiesExistInDatabase_ShouldSetEntitiesAsModifiedAndReturnThem()
     {
-        // Arrange
-        const int toAddCount = 2;
-        var dummiesToAdd = GenerateDummies(toAddCount);
-
-        // Act
-        var addedDummies = await DbContext.Dummies.AddManyIfNotExistAsync(dummiesToAdd);
-        await DbContext.SaveChangesAsync();
-        var afterAddCount = await DbContext.Dummies.CountAsync();
-
-        // Assert
-        addedDummies.Should().NotBeNull();
-        addedDummies.Should().HaveCount(toAddCount);
-        afterAddCount.Should().Be(toAddCount);
-    }
-
-    [Test]
-    public async Task AddManyIfNotExistAsync_WhenEntitiesAlreadyExistInDatabase_ShouldNotAddEntities()
-    {
-        // Arrange  
-        var existingDummy = (await PreloadDummiesAsync(1))[0];
-        var dummyToAdd = GenerateDummy();
-        var teachersToTryAdd = new[]
+        // Arrange 
+        var dummiesToAttach = await PreloadDummiesAsync(1);
+        foreach (var dummy in dummiesToAttach)
         {
-            existingDummy,
-            dummyToAdd
-        };
+            dummy.Name = Guid.NewGuid().ToString();
+        }
 
         // Act
-        var addedDummies = await DbContext.Dummies.AddManyIfNotExistAsync(teachersToTryAdd);
-        await DbContext.SaveChangesAsync();
-        var afterAddCount = await DbContext.Dummies.CountAsync();
+        var dummiesReturned = await DbContext.Dummies.AttachManyAsync<DummyEntity, Guid>(dummiesToAttach);
+        var dummyEntries = GetDummyEntries(EntityState.Modified);
 
         // Assert
-        addedDummies.Should().NotBeNull();
-        addedDummies.Should().HaveCount(1);
-        addedDummies.Should().ContainEquivalentOf(dummyToAdd);
-        afterAddCount.Should().Be(2);
+        dummiesReturned.Should().BeEquivalentTo(dummiesToAttach);
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToAttach);
     }
 
+    [Test(Description = "By default, 'DbContext.Attach' will add and start tracking entities when PK is not found.")]
+    public async Task AttachManyAsync_WhenEntitiesDoNotExistInDatabase_ShouldSetEntitiesAsAddedAndReturnThem()
+    {
+        // Arrange 
+        var dummiesToAttach = GenerateDummies(1);
+        foreach (var dummy in dummiesToAttach)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.AttachManyAsync<DummyEntity, Guid>(dummiesToAttach);
+        var dummyEntries = GetDummyEntries(EntityState.Added);
+
+        // Assert
+        dummiesReturned.Should().BeEquivalentTo(dummiesToAttach);
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToAttach);
+    }
+
+    // UpdateManyAsync
     [Test]
     public async Task UpdateManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
@@ -129,10 +139,10 @@ public sealed class DbSetExtensionsTests : DummyDbContextTestsBase
         var dummies = Enumerable.Empty<DummyEntity>();
 
         // Act
-        Func<Task> action = () => dbSet.UpdateManyAsync(dummies);
+        Func<Task> action = () => dbSet.UpdateManyAsync<DummyEntity, Guid>(dummies);
 
         // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
     }
 
     [Test]
@@ -142,467 +152,63 @@ public sealed class DbSetExtensionsTests : DummyDbContextTestsBase
         IEnumerable<DummyEntity> dummiesToUpdate = null;
 
         // Act
-        Func<Task> action = () => DbContext.Dummies.UpdateManyAsync(dummiesToUpdate);
+        Func<Task> action = () => DbContext.Dummies.UpdateManyAsync<DummyEntity, Guid>(dummiesToUpdate);
 
         // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
     }
 
     [Test]
-    public async Task UpdateManyAsync_WhenEntitiesExistInDatabase_ShouldUpdateEntities()
+    public async Task UpdateManyAsync_WhenEntitiesExistInDatabase_ShouldSetEntitiesAsModifiedAndReturnThem()
     {
-        // Arrange
-        const int initialCount = 2;
-        var existingDummies = await PreloadDummiesAsync(initialCount);
-        foreach (var dummy in existingDummies)
+        // Arrange 
+        var dummiesToUpdate = await PreloadDummiesAsync(1);
+        foreach (var dummy in dummiesToUpdate)
         {
             dummy.Name = Guid.NewGuid().ToString();
         }
 
         // Act
-        var updatedDummies = await DbContext.Dummies.UpdateManyAsync(existingDummies);
-        await DbContext.SaveChangesAsync();
+        var dummiesReturned = await DbContext.Dummies.UpdateManyAsync<DummyEntity, Guid>(dummiesToUpdate);
+        var dummyEntries = GetDummyEntries(EntityState.Modified);
 
         // Assert
-        updatedDummies.Should().NotBeNull();
-        updatedDummies.Should().HaveCount(initialCount);
-        updatedDummies.Should().BeEquivalentTo(existingDummies);
+        dummiesReturned.Should().BeEquivalentTo(dummiesToUpdate);
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToUpdate);
     }
 
+    [Test(Description = "By default, 'DbContext.Update' will add and start tracking entities when PK is not found.")]
+    public async Task UpdateManyAsync_WhenEntitiesDoNotExistInDatabase_ShouldSetEntitiesAsAddedAndReturnThem()
+    {
+        // Arrange 
+        var dummiesToUpdate = GenerateDummies(1);
+        foreach (var dummy in dummiesToUpdate)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.UpdateManyAsync<DummyEntity, Guid>(dummiesToUpdate);
+        var dummyEntries = GetDummyEntries(EntityState.Added);
+
+        // Assert
+        dummiesReturned.Should().BeEquivalentTo(dummiesToUpdate);
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToUpdate);
+    }
+
+    // RemoveManyAsync
     [Test]
-    public async Task UpdateManyIfExistAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
+    public async Task RemoveManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
         DbSet<DummyEntity> dbSet = null;
         var dummiesToUpdate = Enumerable.Empty<DummyEntity>();
 
         // Act
-        Func<Task> action = () => dbSet.UpdateManyIfExistAsync(dummiesToUpdate);
+        Func<Task> action = () => dbSet.RemoveManyAsync<DummyEntity, Guid>(dummiesToUpdate);
 
         // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task UpdateManyIfExistAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        IEnumerable<DummyEntity> dummiesToUpdate = null;
-
-        // Act
-        Func<Task> action = () => DbContext.Dummies.UpdateManyIfExistAsync(dummiesToUpdate);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task UpdateManyIfExistAsync_WhenEntitiesExistInDatabase_ShouldUpdateEntities()
-    {
-        // Arrange
-        const int initialCount = 2;
-        var existingDummies = await PreloadDummiesAsync(initialCount);
-        foreach (var dummy in existingDummies)
-        {
-            dummy.Name = Guid.NewGuid().ToString();
-        }
-
-        // Act
-        var updatedDummies = await DbContext.Dummies.UpdateManyIfExistAsync(existingDummies);
-        await DbContext.SaveChangesAsync();
-
-        // Assert
-        updatedDummies.Should().NotBeNull();
-        updatedDummies.Should().HaveCount(initialCount);
-        updatedDummies.Should().BeEquivalentTo(existingDummies);
-    }
-
-    [Test]
-    public async Task UpdateManyIfExistAsync_WhenEntitiesDoNotExistInDatabase_ShouldNotUpdateEntities()
-    {
-        // Arrange  
-        var existingDummy = (await PreloadDummiesAsync(1))[0];
-        var nonExistingDummy = GenerateDummy();
-        var dummiesToUpdate = new[]
-        {
-            existingDummy,
-            nonExistingDummy
-        };
-
-        // Act
-        existingDummy.Name = Guid.NewGuid().ToString();
-        var updatedDummies = await DbContext.Dummies.UpdateManyIfExistAsync(dummiesToUpdate);
-        await DbContext.SaveChangesAsync();
-
-        // Assert
-        updatedDummies.Should().NotBeNull();
-        updatedDummies.Should().HaveCount(1);
-        updatedDummies.Should().ContainEquivalentOf(existingDummy);
-        updatedDummies.Should().NotContainEquivalentOf(nonExistingDummy);
-    }
-
-    [Test]
-    public async Task AddOrUpdateManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        DbSet<DummyEntity> dbSet = null;
-        var dummiesToAddOrUpdate = Enumerable.Empty<DummyEntity>();
-
-        // Act
-        Func<Task> action = () => dbSet.AddOrUpdateManyAsync(dummiesToAddOrUpdate);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task AddOrUpdateManyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        IEnumerable<DummyEntity> dummiesToAddOrUpdate = null;
-
-        // Act
-        Func<Task> action = () => DbContext.Dummies.AddOrUpdateManyAsync(dummiesToAddOrUpdate);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task AddOrUpdateManyAsync_WhenEntitiesDoNotExistInDatabase_ShouldAddNewEntities()
-    {
-        // Arrange
-        const int toAddCount = 2;
-        var dummiesToAdd = GenerateDummies(toAddCount);
-
-        // Act
-        var addedDummies = await DbContext.Dummies.AddOrUpdateManyAsync(dummiesToAdd);
-        await DbContext.SaveChangesAsync();
-
-        // Assert
-        addedDummies.Should().NotBeNull();
-        addedDummies.Should().HaveCount(toAddCount);
-        addedDummies.Should().BeEquivalentTo(dummiesToAdd);
-    }
-
-    [Test]
-    public async Task AddOrUpdateManyAsync_WhenEntitiesExistInDatabase_ShouldUpdateExistingEntities()
-    {
-        // Arrange
-        const int initialCount = 2;
-        var existingDummies = await PreloadDummiesAsync(initialCount);
-        foreach (var dummy in existingDummies)
-        {
-            dummy.Name = Guid.NewGuid().ToString();
-        }
-
-        // Act
-        var updatedDummies = await DbContext.Dummies.AddOrUpdateManyAsync(existingDummies);
-        await DbContext.SaveChangesAsync();
-
-        // Assert
-        updatedDummies.Should().NotBeNull();
-        updatedDummies.Should().HaveCount(initialCount);
-        updatedDummies.Should().BeEquivalentTo(existingDummies);
-    }
-
-    [Test]
-    public async Task AddOrUpdateManyAsync_WhenCalled_ShouldAddNewEntitiesAndUpdateExistingEntities()
-    {
-        // Arrange
-        const int initialCount = 2;
-        const int toAddCount = 2;
-        var existingDummies = await PreloadDummiesAsync(initialCount);
-        foreach (var dummy in existingDummies)
-        {
-            dummy.Name = Guid.NewGuid().ToString();
-        }
-
-        var dummiesToAdd = GenerateDummies(toAddCount);
-        var dummiesToAddOrUpdate = dummiesToAdd.Concat(existingDummies);
-
-        // Act
-        var addOrUpdatedDummies = await DbContext.Dummies.AddOrUpdateManyAsync(dummiesToAddOrUpdate);
-        await DbContext.SaveChangesAsync();
-
-        // Assert
-        addOrUpdatedDummies.Should().NotBeNull();
-        addOrUpdatedDummies.Should().HaveCount(initialCount + toAddCount);
-        addOrUpdatedDummies.Should().BeEquivalentTo(dummiesToAddOrUpdate);
-    }
-
-    [Test]
-    public async Task AttachManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        DbSet<DummyEntity> dbSet = null;
-        var dummiesToAttach = GenerateDummies(2);
-
-        // Act
-        Func<Task> action = () => dbSet.AttachManyAsync(dummiesToAttach);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task AttachManyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
-    {
-        IEnumerable<DummyEntity> dummiesToAttach = null;
-
-        // Act
-        Func<Task> action = async () => await DbContext.Dummies.AttachManyAsync(dummiesToAttach);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task AttachManyAsync_WhenCalled_ShouldAttachEntitiesToDbContext()
-    {
-        // Arrange
-        const int toAttachCount = 2;
-        var dummiesToAttach = GenerateDummies(toAttachCount);
-
-        // Act
-        var attachedDummies = await DbContext.Dummies.AttachManyAsync(dummiesToAttach);
-        await DbContext.SaveChangesAsync();
-
-        // Assert 
-        attachedDummies.Should().NotBeNull();
-        attachedDummies.Should().HaveCount(toAttachCount);
-        attachedDummies.Should().BeEquivalentTo(attachedDummies);
-        foreach (var dummy in attachedDummies)
-        {
-            var dummyEntityEntry = DbContext.Entry(dummy);
-            dummyEntityEntry.State.Should().Be(EntityState.Unchanged);
-        }
-    }
-
-    [Test]
-    public async Task AttachManyIfExistAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        DbSet<DummyEntity> dbSet = null;
-        var dummiesToAttach = GenerateDummies(1);
-
-        // Act
-        Func<Task> action = () => dbSet.AttachManyIfExistAsync(dummiesToAttach);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task AttachManyIfExistAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        IEnumerable<DummyEntity> dummiesToAttach = null;
-
-        // Act
-        Func<Task> action = () => DbContext.Dummies.AttachManyIfExistAsync(dummiesToAttach);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task AttachManyIfExistAsync_WhenEntitiesExistInDatabase_ShouldAttachExistingEntities()
-    {
-        // Arrange
-        const int initialCount = 2;
-        var existingDummies = await PreloadDummiesAsync(initialCount);
-
-        // Act
-        var attachedDummies = await DbContext.Dummies.AttachManyIfExistAsync(existingDummies);
-        await DbContext.SaveChangesAsync();
-
-        // Assert
-        attachedDummies.Should().NotBeNull();
-        attachedDummies.Should().HaveCount(initialCount);
-        foreach (var dummy in attachedDummies)
-        {
-            var teacherEntityEntry = DbContext.Entry(dummy);
-            teacherEntityEntry.State.Should().Be(EntityState.Unchanged);
-        }
-    }
-
-    [Test]
-    public async Task AttachManyIfExistAsync_WhenEntitiesDoNotExistInDatabase_ShouldNotAttachEntities()
-    {
-        // Arrange
-        var dummiesToAttach = GenerateDummies(2);
-
-        // Act
-        var attachedDummies = await DbContext.Dummies.AttachManyIfExistAsync(dummiesToAttach);
-        await DbContext.SaveChangesAsync();
-        var countAfterAttach = await DbContext.Dummies.CountAsync();
-
-        // Assert
-        attachedDummies.Should().NotBeNull();
-        attachedDummies.Should().HaveCount(0);
-        countAfterAttach.Should().Be(0);
-    }
-
-    [Test]
-    public async Task AddOrAttachManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        DbSet<DummyEntity> dbSet = null;
-        var teachersToAddOrAttach = GenerateDummies(1);
-
-        // Act
-        Func<Task> action = () => dbSet.AddOrAttachManyAsync(teachersToAddOrAttach);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task AddOrAttachManyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        IEnumerable<DummyEntity> teachersToAddOrAttach = null;
-
-        // Act
-        Func<Task> action = () => DbContext.Dummies.AddOrAttachManyAsync(teachersToAddOrAttach);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task AddOrAttachManyAsync_WhenEntitiesDoNotExistInDatabase_ShouldAddNewEntities()
-    {
-        // Arrange
-        const int toAddCount = 2;
-        var dummiesToAdd = GenerateDummies(toAddCount);
-
-        // Act
-        var addedDummies = await DbContext.Dummies.AddOrAttachManyAsync(dummiesToAdd);
-        await DbContext.SaveChangesAsync();
-
-        // Assert
-        addedDummies.Should().NotBeNull();
-        addedDummies.Should().HaveCount(toAddCount);
-        addedDummies.Should().BeEquivalentTo(dummiesToAdd);
-    }
-
-    [Test]
-    public async Task AddOrAttachManyAsync_WhenEntitiesExistInDatabase_ShouldAttachExistingEntities()
-    {
-        // Arrange
-        const int initialCount = 2;
-        var existingDummies = await PreloadDummiesAsync(initialCount);
-
-        // Act
-        var attachedDummies = await DbContext.Dummies.AddOrAttachManyAsync(existingDummies);
-        await DbContext.SaveChangesAsync();
-
-        // Assert
-        attachedDummies.Should().NotBeNull();
-        attachedDummies.Should().HaveCount(initialCount);
-        foreach (var dummy in attachedDummies)
-        {
-            var teacherEntityEntry = DbContext.Entry(dummy);
-            teacherEntityEntry.State.Should().Be(EntityState.Unchanged);
-        }
-    }
-
-    [Test]
-    public async Task AddOrAttachManyAsync_WhenCalled_ShouldAddNewEntitiesAndUpdateExistingEntities()
-    {
-        // Arrange
-        const int initialCount = 5;
-        const int toAddCount = 2;
-        var existingDummies = await PreloadDummiesAsync(initialCount);
-        foreach (var dummy in existingDummies)
-        {
-            dummy.Name = Guid.NewGuid().ToString();
-        }
-
-        var dummiesToAdd = GenerateDummies(toAddCount);
-        var teachersToAddOrAttach = dummiesToAdd.Concat(existingDummies);
-
-        // Act
-        var addedOrAttachedDummies = await DbContext.Dummies.AddOrAttachManyAsync(teachersToAddOrAttach);
-        await DbContext.SaveChangesAsync();
-
-        // Assert
-        addedOrAttachedDummies.Should().NotBeNull();
-        addedOrAttachedDummies.Should().HaveCount(initialCount + toAddCount);
-        DbContext.Dummies.Should().BeEquivalentTo(teachersToAddOrAttach);
-    }
-
-    [Test]
-    public async Task RemoveByKeyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        DbSet<DummyEntity> dbSet = null;
-        var dummiesToRemove = GenerateDummy();
-
-        // Act
-        Func<Task> action = () => dbSet.RemoveByKeyAsync(dummiesToRemove.Id);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task RemoveByKeyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        object dummyIdToRemove = null;
-
-        // Act
-        Func<Task> action = () => DbContext.Dummies.RemoveByKeyAsync(dummyIdToRemove);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task RemoveByKeyAsync_WhenKeyExists_ShouldRemoveEntityFromDbContext()
-    {
-        // Arrange 
-        var existingDummy = (await PreloadDummiesAsync(1))[0];
-
-        // Act
-        var dummiesRemovedCount = await DbContext.Dummies.RemoveByKeyAsync(existingDummy.Id);
-        await DbContext.SaveChangesAsync();
-
-        // Assert
-        dummiesRemovedCount.Should().Be(1);
-    }
-
-    [Test]
-    public async Task RemoveByKeyAsync_WhenKeyNotFound_ShouldNotRemoveEntityFromDbContext()
-    {
-        // Arrange 
-        var dummiesBeforeRemove = await PreloadDummiesAsync(1);
-
-        // Act
-        var dummiesRemovedCount = await DbContext.Dummies.RemoveByKeyAsync(Guid.NewGuid());
-        await DbContext.SaveChangesAsync();
-        var dummiesAfterRemove = await DbContext.Dummies.ToArrayAsync();
-
-        // Assert
-        dummiesRemovedCount.Should().Be(0);
-        dummiesAfterRemove.Should().BeEquivalentTo(dummiesBeforeRemove);
-    }
-
-    [Test]
-    public async Task RemoveManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        DbSet<DummyEntity> dbSet = null;
-        var dummiesToRemove = GenerateDummies(1);
-
-        // Act
-        Func<Task> action = () => dbSet.RemoveManyAsync(dummiesToRemove);
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
     }
 
     [Test]
@@ -612,29 +218,539 @@ public sealed class DbSetExtensionsTests : DummyDbContextTestsBase
         IEnumerable<DummyEntity> dummiesToRemove = null;
 
         // Act
-        Func<Task> action = () => DbContext.Dummies.RemoveManyAsync(dummiesToRemove);
+        Func<Task> action = () => DbContext.Dummies.RemoveManyAsync<DummyEntity, Guid>(dummiesToRemove);
 
         // Assert
-        await action.Should().ThrowAsync<ArgumentNullException>();
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
     }
 
     [Test]
-    public async Task RemoveManyAsync_WhenCalled_ShouldRemoveEntitiesFromDbContext()
+    public async Task RemoveManyAsync_WhenEntitiesExistInDatabase_ShouldSetEntitiesAsDeleted()
     {
-        // Arrange
-        const int initialCount = 5;
-        const int toRemoveCount = 3;
-        var existingDummies = await PreloadDummiesAsync(initialCount);
-        var dummiesToRemove = existingDummies.Take(toRemoveCount);
+        // Arrange 
+        var dummiesToRemove = await PreloadDummiesAsync(1);
 
         // Act
-        await DbContext.Dummies.RemoveManyAsync(dummiesToRemove);
-        await DbContext.SaveChangesAsync();
-        var dummiesAfterRemove = await DbContext.Dummies.ToArrayAsync();
+        await DbContext.Dummies.RemoveManyAsync<DummyEntity, Guid>(dummiesToRemove);
+        var dummyEntries = GetDummyEntries(EntityState.Deleted);
+
+        // Assert  
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToRemove);
+    }
+
+    [Test]
+    public async Task RemoveManyAsync_WhenEntitiesDoNotExistInDatabase_ShouldDoNothing()
+    {
+        // Arrange 
+        var dummiesToRemove = GenerateDummies(1);
+
+        // Act
+        await DbContext.Dummies.RemoveManyAsync<DummyEntity, Guid>(dummiesToRemove);
+        var dummyEntries = GetDummyEntries(EntityState.Deleted);
+
+        // Assert  
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToRemove);
+    }
+
+    // RemoveByKeyAsync
+    [Test]
+    public async Task RemoveAsync_ByKey_WhenDbSetIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        DbSet<DummyEntity> dbSet = null;
+        var dummyToRemove = await PreloadDummyAsync();
+
+        // Act
+        Func<Task> action = () => dbSet.RemoveByKeyAsync(dummyToRemove.Id);
 
         // Assert
-        dummiesAfterRemove.Should().HaveCount(initialCount - toRemoveCount);
-        dummiesAfterRemove.Should().NotContain(dummiesToRemove);
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task RemoveAsync_ByKey_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
+    {
+        // Arrange
+        var existingDummy = await PreloadDummyAsync();
+        using var cancellationTokenSource = new CancellationTokenSource();
+        cancellationTokenSource.Cancel();
+
+        // Act
+        Func<Task> action = () => DbContext.Dummies.RemoveByKeyAsync(existingDummy.Id, cancellationTokenSource.Token);
+
+        // Assert 
+        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+    }
+
+    [Test]
+    public async Task RemoveAsync_ByKey_WhenKeyExists_ShouldRemoveEntityFromDbContext()
+    {
+        // Arrange 
+        var existingDummy = await PreloadDummyAsync();
+
+        // Act
+        var removed = await DbContext.Dummies.RemoveByKeyAsync(existingDummy.Id);
+        var dummyEntry = GetDummyEntry(EntityState.Deleted);
+
+        // Assert 
+        removed.Should().BeTrue();
+        dummyEntry.Should().NotBeNull();
+        dummyEntry.Entity.Should().BeEquivalentTo(existingDummy);
+    }
+
+    [Test]
+    public async Task RemoveAsync_ByKey_WhenKeyNotFound_ShouldNotRemoveEntityFromDbContext()
+    {
+        // Arrange
+        var dummyIdToRemove = Guid.NewGuid();
+
+        // Act
+        var removed = await DbContext.Dummies.RemoveByKeyAsync(dummyIdToRemove);
+        var dummyEntry = GetDummyEntry(EntityState.Deleted);
+
+        // Assert 
+        removed.Should().BeFalse();
+        dummyEntry.Should().BeNull();
+    }
+
+    // AddManyIfExistAsync
+    [Test]
+    public async Task AddManyIfNotExistAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        DbSet<DummyEntity> dbSet = null;
+        var dummiesToAdd = Enumerable.Empty<DummyEntity>();
+
+        // Act
+        Func<Task> action = () => dbSet.AddManyIfNotExistAsync<DummyEntity, Guid>(dummiesToAdd);
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task AddManyIfNotExistAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        IEnumerable<DummyEntity> dummiesToAdd = null;
+
+        // Act
+        Func<Task> action = () => DbContext.Dummies.AddManyIfNotExistAsync<DummyEntity, Guid>(dummiesToAdd);
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task AddManyIfNotExistAsync_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
+    {
+        // Arrange 
+        var dummiesToAdd = GenerateDummies(1);
+        using var cancellationTokenSource = new CancellationTokenSource();
+        cancellationTokenSource.Cancel();
+
+        // Act
+        Func<Task> action = () => DbContext.Dummies.AddManyIfNotExistAsync<DummyEntity, Guid>(dummiesToAdd, cancellationTokenSource.Token);
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+    }
+
+    [Test]
+    public async Task AddManyIfNotExistAsync_WhenEntitiesDoNotExistInDatabase_ShouldSetEntitiesAsAddedAndReturnThem()
+    {
+        // Arrange 
+        var dummiesToAdd = GenerateDummies(1);
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.AddManyIfNotExistAsync<DummyEntity, Guid>(dummiesToAdd);
+        var dummyEntries = GetDummyEntries(EntityState.Added);
+
+        // Assert
+        dummiesReturned.Should().BeEquivalentTo(dummiesToAdd);
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToAdd);
+    }
+
+    [Test]
+    public async Task AddManyIfNotExistAsync_WhenEntitiesExistInDatabase_ShouldDoNothing()
+    {
+        // Arrange  
+        var dummiesToAdd = await PreloadDummiesAsync(1);
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.AddManyIfNotExistAsync<DummyEntity, Guid>(dummiesToAdd);
+        var dummyEntries = GetDummyEntries(EntityState.Added);
+
+        // Assert 
+        dummiesReturned.Should().BeEmpty();
+        dummyEntries.Should().BeEmpty();
+    }
+
+    // AttachManyIfExistAsync
+    [Test]
+    public async Task AttachManyIfExistAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        DbSet<DummyEntity> dbSet = null;
+        var dummiesToUpdate = Enumerable.Empty<DummyEntity>();
+
+        // Act
+        Func<Task> action = () => dbSet.AttachManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate);
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task AttachManyIfExistAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        IEnumerable<DummyEntity> dummiesToAttach = null;
+
+        // Act
+        Func<Task> action = () => DbContext.Dummies.AttachManyIfExistAsync<DummyEntity, Guid>(dummiesToAttach);
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task AttachManyIfExistAsync_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
+    {
+        // Arrange 
+        var dummiesToAttach = await PreloadDummiesAsync(1);
+        foreach (var dummy in dummiesToAttach)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
+
+        using var cancellationTokenSource = new CancellationTokenSource();
+        cancellationTokenSource.Cancel();
+
+        // Act
+        Func<Task> action = () => DbContext.Dummies.AttachManyIfExistAsync<DummyEntity, Guid>(dummiesToAttach, cancellationTokenSource.Token);
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+    }
+
+    [Test]
+    public async Task AttachManyIfExistAsync_WhenEntitiesExistInDatabase_ShouldSetEntitiesAsModifiedAndReturnThem()
+    {
+        // Arrange 
+        var dummiesToAttach = await PreloadDummiesAsync(1);
+        foreach (var dummy in dummiesToAttach)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.AttachManyIfExistAsync<DummyEntity, Guid>(dummiesToAttach);
+        var dummyEntries = GetDummyEntries(EntityState.Modified);
+
+        // Assert 
+        dummiesReturned.Should().BeEquivalentTo(dummiesToAttach);
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToAttach);
+    }
+
+    [Test]
+    public async Task AttachManyIfExistAsync_WhenEntitiesDoNotExistInDatabase_ShouldDoNothing()
+    {
+        // Arrange  
+        var dummiesToAttach = GenerateDummies(1);
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.AttachManyIfExistAsync<DummyEntity, Guid>(dummiesToAttach);
+        var dummyEntries = GetDummyEntries(EntityState.Modified);
+
+        // Assert
+        dummiesReturned.Should().BeEmpty();
+        dummyEntries.Should().BeEmpty();
+    }
+
+    // UpdateManyIfExist
+    [Test]
+    public async Task UpdateManyIfExistAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        DbSet<DummyEntity> dbSet = null;
+        var dummiesToUpdate = Enumerable.Empty<DummyEntity>();
+
+        // Act
+        Func<Task> action = () => dbSet.UpdateManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate);
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task UpdateManyIfExistAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        IEnumerable<DummyEntity> dummiesToUpdate = null;
+
+        // Act
+        Func<Task> action = () => DbContext.Dummies.UpdateManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate);
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task UpdateManyIfExistAsync_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
+    {
+        // Arrange 
+        var dummiesToUpdate = await PreloadDummiesAsync(1);
+        foreach (var dummy in dummiesToUpdate)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
+
+        using var cancellationTokenSource = new CancellationTokenSource();
+        cancellationTokenSource.Cancel();
+
+        // Act
+        Func<Task> action = () => DbContext.Dummies.UpdateManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate, cancellationTokenSource.Token);
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+    }
+
+    [Test]
+    public async Task UpdateManyIfExistAsync_WhenEntitiesExistInDatabase_ShouldSetEntitiesAsModifiedAndReturnThem()
+    {
+        // Arrange 
+        var dummiesToUpdate = await PreloadDummiesAsync(1);
+        foreach (var dummy in dummiesToUpdate)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.UpdateManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate);
+        var dummyEntries = GetDummyEntries(EntityState.Modified);
+
+        // Assert 
+        dummiesReturned.Should().BeEquivalentTo(dummiesToUpdate);
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToUpdate);
+    }
+
+    [Test]
+    public async Task UpdateManyIfExistAsync_WhenEntitiesDoNotExistInDatabase_ShouldDoNothing()
+    {
+        // Arrange  
+        var dummiesToUpdate = GenerateDummies(1);
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.UpdateManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate);
+        var dummyEntries = GetDummyEntries(EntityState.Modified);
+
+        // Assert
+        dummiesReturned.Should().BeEmpty();
+        dummyEntries.Should().BeEmpty();
+    }
+
+    // AddOrAttachManyAsync
+    [Test]
+    public async Task AddOrAttachManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        DbSet<DummyEntity> dbSet = null;
+        var dummiesToAddOrUpdate = Enumerable.Empty<DummyEntity>();
+
+        // Act
+        Func<Task> action = () => dbSet.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAddOrUpdate);
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task AddOrAttachManyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        IEnumerable<DummyEntity> dummiesToAddOrAttach = null;
+
+        // Act
+        Func<Task> action = () => DbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAddOrAttach);
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task AddOrAttachManyAsync_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
+    {
+        // Arrange 
+        var dummiesToAddOrAttach = GenerateDummies(1);
+        using var cancellationTokenSource = new CancellationTokenSource();
+        cancellationTokenSource.Cancel();
+
+        // Act
+        Func<Task> action = () => DbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAddOrAttach, cancellationTokenSource.Token);
+
+        // Assert 
+        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+    }
+
+    [Test]
+    public async Task AddOrAttachManyAsync_WhenEntitiesDoNotExistInDatabase_ShouldSetEntitiesAsAddedAndReturnThem()
+    {
+        // Arrange 
+        var dummiesToAdd = GenerateDummies(1);
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAdd);
+        var dummyEntries = GetDummyEntries(EntityState.Added);
+
+        // Assert 
+        dummiesReturned.Should().BeEquivalentTo(dummiesToAdd);
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToAdd);
+    }
+
+    [Test]
+    public async Task AddOrAttachManyAsync_WhenEntitiesExistInDatabase_ShouldSetEntitiesAsModifiedAndReturnThem()
+    {
+        // Arrange 
+        var dummiesToAttach = await PreloadDummiesAsync(1);
+        foreach (var dummy in dummiesToAttach)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAttach);
+        var dummyEntries = GetDummyEntries(EntityState.Modified);
+
+        // Assert 
+        dummiesReturned.Should().BeEquivalentTo(dummiesToAttach);
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToAttach);
+    }
+
+    [Test]
+    public async Task AddOrAttachManyAsync_WhenMixedEntities_ShouldSetNewEntitiesAsAddedAndExistingEntitiesAsModifiedAndReturnThem()
+    {
+        // Arrange 
+        var dummiesToAttach = await PreloadDummiesAsync(1);
+        foreach (var dummy in dummiesToAttach)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
+
+        var dummiesToAdd = GenerateDummies(1);
+        var dummiesToAddOrAttach = dummiesToAttach.Concat(dummiesToAdd).ToArray();
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAddOrAttach);
+        var addedEntries = GetDummyEntries(EntityState.Added);
+        var mofidiedEntries = GetDummyEntries(EntityState.Modified);
+
+        // Assert 
+        dummiesReturned.Should().BeEquivalentTo(dummiesToAddOrAttach);
+        addedEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToAdd);
+        mofidiedEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToAttach);
+    }
+
+    // AddOrUpdateManyAsync
+    [Test]
+    public async Task AddOrUpdateManyAsync_WhenDbSetIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        DbSet<DummyEntity> dbSet = null;
+        var dummiesToAddOrUpdate = Enumerable.Empty<DummyEntity>();
+
+        // Act
+        Func<Task> action = () => dbSet.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToAddOrUpdate);
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task AddOrUpdateManyAsync_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        IEnumerable<DummyEntity> dummiesToAddOrUpdate = null;
+
+        // Act
+        Func<Task> action = () => DbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToAddOrUpdate);
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task AddOrUpdateManyAsync_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
+    {
+        // Arrange 
+        var dummiesToAddOrUpdate = GenerateDummies(1);
+        using var cancellationTokenSource = new CancellationTokenSource();
+        cancellationTokenSource.Cancel();
+
+        // Act
+        Func<Task> action = () => DbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToAddOrUpdate, cancellationTokenSource.Token);
+
+        // Assert 
+        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+    }
+
+    [Test]
+    public async Task AddOrUpdateManyAsync_WhenEntitiesDoNotExistInDatabase_ShouldSetEntitiesAsAddedAndReturnThem()
+    {
+        // Arrange 
+        var dummiesToAdd = GenerateDummies(1);
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToAdd);
+        var dummyEntries = GetDummyEntries(EntityState.Added);
+
+        // Assert 
+        dummiesReturned.Should().BeEquivalentTo(dummiesToAdd);
+        dummyEntries.Should().AllSatisfy(entry => entry.State.Should().Be(EntityState.Added));
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToAdd);
+    }
+
+    [Test]
+    public async Task AddOrUpdateManyAsync_WhenEntitiesExistInDatabase_ShouldSetEntitiesAsModifiedAndReturnThem()
+    {
+        // Arrange 
+        var dummiesToUpdate = await PreloadDummiesAsync(1);
+        foreach (var dummy in dummiesToUpdate)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToUpdate);
+        var dummyEntries = GetDummyEntries(EntityState.Modified);
+
+        // Assert 
+        dummiesReturned.Should().BeEquivalentTo(dummiesToUpdate);
+        dummyEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToUpdate);
+    }
+
+    [Test]
+    public async Task AddOrUpdateManyAsync_WhenMixedEntities_ShouldSetNewEntitiesAsAddedAndExistingEntitiesAsModifiedAndReturnThem()
+    {
+        // Arrange 
+        var dummiesToUpdate = await PreloadDummiesAsync(1);
+        foreach (var dummy in dummiesToUpdate)
+        {
+            dummy.Name = Guid.NewGuid().ToString();
+        }
+
+        var dummiesToAdd = GenerateDummies(1);
+        var dummiesToAddOrUpdate = dummiesToUpdate.Concat(dummiesToAdd).ToArray();
+
+        // Act
+        var dummiesReturned = await DbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToAddOrUpdate);
+        var addedEntries = GetDummyEntries(EntityState.Added);
+        var mofidiedEntries = GetDummyEntries(EntityState.Modified);
+
+        // Assert 
+        dummiesReturned.Should().BeEquivalentTo(dummiesToAddOrUpdate);
+        addedEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToAdd);
+        mofidiedEntries.Select(entry => entry.Entity).Should().BeEquivalentTo(dummiesToUpdate);
     }
 }
 

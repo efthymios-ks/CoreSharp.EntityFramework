@@ -37,14 +37,7 @@ public class AppDbContext : AuditDbContextBase
         // Always call base method 
         base.OnModelCreating(modelBuilder);
 
-        ConfigureEnums(modelBuilder);
         ConfigureModels(modelBuilder);
-    }
-
-    private static void ConfigureEnums(ModelBuilder modelBuilder)
-    {
-        modelBuilder.HasEnum<TeacherType>();
-        modelBuilder.HasEnum<CourseField>();
     }
 
     private static void ConfigureModels(ModelBuilder modelBuilder)

@@ -8,28 +8,28 @@ public sealed class EntityBase_1_Tests
 {
     // Methods 
     [Test]
-    public void Id_Setter_ShouldSetBaseId()
+    public void Id_Set_ShouldSetBaseId()
     {
         // Arrange
-        var entity = new GenericTestEntity
+        var entity = new DummyEntity
         {
             Id = Guid.NewGuid()
         };
 
         // Act
-        var baseId = (entity as IUniqueEntity)!.Id;
+        var baseId = ((IUniqueEntity)entity).Id;
 
         // Assert
         baseId.Should().Be(entity.Id);
     }
 
     [Test]
-    public void Id_Getter_ShouldGetBaseId()
+    public void Id_Get_ShouldGetBaseId()
     {
         // Arrange
-        var entity = new GenericTestEntity();
+        var entity = new DummyEntity();
         var baseId = Guid.NewGuid();
-        (entity as IUniqueEntity).Id = baseId;
+        ((IUniqueEntity)entity).Id = baseId;
 
         // Act
         var id = entity.Id;
@@ -42,7 +42,7 @@ public sealed class EntityBase_1_Tests
     public void ToString_WhenNotOverriden_ShouldReturnId()
     {
         // Arrange 
-        var entity = new GenericTestEntity
+        var entity = new DummyEntity
         {
             Id = Guid.NewGuid()
         };
@@ -55,7 +55,7 @@ public sealed class EntityBase_1_Tests
         entityAsString.Should().Be(expected);
     }
 
-    private sealed class GenericTestEntity : EntityBase<Guid>
+    private sealed class DummyEntity : EntityBase<Guid>
     {
     }
 }

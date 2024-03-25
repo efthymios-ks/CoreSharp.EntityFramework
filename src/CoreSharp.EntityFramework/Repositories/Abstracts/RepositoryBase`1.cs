@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 
 namespace CoreSharp.EntityFramework.Repositories.Abstracts;
 
-public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
-    where TEntity : class, IEntity
+public abstract class RepositoryBase<TEntity, TKey> : IRepository<TEntity, TKey>
+    where TEntity : class, IEntity<TKey>
 {
     // Constructors
     protected RepositoryBase(DbContext dbContext)
@@ -28,23 +28,21 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
     protected DbSet<TEntity> Table { get; }
 
     // Methods 
-    public virtual async Task<TEntity> GetAsync(
-        object key,
-        Query<TEntity> navigation = null,
+    public virtual Task<TEntity> GetAsync(
+        TKey key,
+        Query<TEntity> query = null,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(key);
-
-        var query = NavigateTable(navigation);
-        return await query.SingleOrDefaultAsync(e => Equals(e.Id, key), cancellationToken);
+        var queyrable = NavigateTable(query);
+        return queyrable.SingleOrDefaultAsync(e => Equals(e.Id, key), cancellationToken);
     }
 
     public virtual async Task<IEnumerable<TEntity>> GetAsync(
-        Query<TEntity> navigation = null,
+        Query<TEntity> query = null,
         CancellationToken cancellationToken = default)
     {
-        var query = NavigateTable(navigation);
-        return await query.ToArrayAsync(cancellationToken);
+        var queryable = NavigateTable(query);
+        return await queryable.ToArrayAsync(cancellationToken);
     }
 
     public virtual async Task<TEntity> AddAsync(
@@ -57,30 +55,30 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity>
         return entity;
     }
 
-    public virtual async Task<TEntity> UpdateAsync(
+    public virtual Task<TEntity> UpdateAsync(
         TEntity entity,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
         Table.Attach(entity);
-        return await Task.FromResult(entity);
+        return Task.FromResult(entity);
     }
 
-    public virtual async Task RemoveAsync(
+    public virtual Task RemoveAsync(
         TEntity entity,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
         Table.Remove(entity);
-        await Task.CompletedTask;
+        return Task.CompletedTask;
     }
 
-    protected IQueryable<TEntity> NavigateTable(Query<TEntity> navigation)
+    protected IQueryable<TEntity> NavigateTable(Query<TEntity> query)
     {
-        navigation ??= queryable => queryable;
-        var query = Table.AsQueryable();
-        return navigation(query);
+        query ??= queryable => queryable;
+        var queryable = Table.AsQueryable();
+        return query(queryable);
     }
 }

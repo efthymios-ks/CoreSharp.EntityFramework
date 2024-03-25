@@ -8,7 +8,7 @@ namespace Tests.Delegates;
 public sealed class QueryDelegateTests
 {
     [Test]
-    public void FilterQuery_WhenEvenNumbers_OnlyEvenNumbersShouldBeReturned()
+    public void FilterQuery_WheQueryFilters_ShouldReturnedFilteredItems()
     {
         // Arrange
         var query = new[] { 1, 2, 3, 4, 5 }.AsQueryable();
@@ -24,7 +24,7 @@ public sealed class QueryDelegateTests
     }
 
     [Test]
-    public void SortQuery_WhenUnsortedData_DataShouldBeSorted()
+    public void SortQuery_WhenQuerySorts_ShouldReturnSortedItems()
     {
         // Arrange
         var query = new[] { 3, 1, 2 }.AsQueryable();
@@ -40,7 +40,7 @@ public sealed class QueryDelegateTests
     }
 
     [Test]
-    public void IdentityQuery_WhenNoCondition_DataShouldRemainUnchanged()
+    public void IdentityQuery_WhenQueryIsEmpty_ShouldReturnUnchangedItems()
     {
         // Arrange
         var query = new[] { 1, 2, 3 }.AsQueryable();
@@ -56,7 +56,7 @@ public sealed class QueryDelegateTests
     }
 
     [Test]
-    public void FilterQuery_WhenNoMatchingData_ReturnEmptyResult()
+    public void FilterQuery_WhenQueryMatchesNothing_ShouldReturnNoItems()
     {
         // Arrange
         var query = new[] { 1, 3, 5 }.AsQueryable();
@@ -71,7 +71,7 @@ public sealed class QueryDelegateTests
     }
 
     [Test]
-    public void FilterQuery_WhenEmptyData_ReturnEmptyResult()
+    public void FilterQuery_WhenSourceIsEmpty_ShouldReturnNoData()
     {
         // Arrange
         var query = Enumerable.Empty<int>().AsQueryable();

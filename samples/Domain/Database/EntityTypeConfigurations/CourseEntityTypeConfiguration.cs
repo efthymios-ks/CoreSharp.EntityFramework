@@ -19,6 +19,8 @@ internal sealed class CourseEntityTypeConfiguration : IEntityTypeConfiguration<C
             .HasMaxLength(100);
 
         // Many-to-many enums
-        builder.HasEnums(course => course.Fields);
+        builder
+            .Property(course => course.Fields)
+            .HasJsonConversion();
     }
 }

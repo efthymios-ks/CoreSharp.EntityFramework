@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -14,13 +15,13 @@ internal sealed class TemporaryEntityChange
     // Constructors
     public TemporaryEntityChange(EntityEntry entry)
     {
-        Entry = entry;
-        TableName = Entry.Metadata.GetTableName();
-        Action = $"{Entry.State}";
+        ArgumentNullException.ThrowIfNull(entry);
+
+        TableName = entry.Metadata.GetTableName();
+        Action = entry.State.ToString();
     }
 
-    // Properties
-    public EntityEntry Entry { get; }
+    // Properties 
     public string TableName { get; }
     public string Action { get; }
     public IDictionary<string, object> Keys { get; } = new Dictionary<string, object>();

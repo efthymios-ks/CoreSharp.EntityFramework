@@ -86,7 +86,7 @@ public static class PropertyBuilderExtensions
 
         var converter = new ValueConverter<DateTime, DateTime>(
             appValue => appValue.ToUniversalTime(),
-            dbValue => TimeZoneInfo.ConvertTimeToUtc(dbValue, TimeZoneInfo.Utc)
+            dbValue => dbValue.ToUniversalTime()
         );
 
         var comparer = new ValueComparer<DateTime>(
@@ -111,7 +111,7 @@ public static class PropertyBuilderExtensions
 
         var converter = new ValueConverter<DateTime?, DateTime?>(
             appValue => appValue == null ? null : appValue.Value.ToUniversalTime(),
-            dbValue => dbValue == null ? null : TimeZoneInfo.ConvertTimeToUtc(dbValue.Value, TimeZoneInfo.Utc)
+            dbValue => dbValue == null ? null : dbValue.Value.ToUniversalTime()
         );
 
         var comparer = new ValueComparer<DateTime?>(

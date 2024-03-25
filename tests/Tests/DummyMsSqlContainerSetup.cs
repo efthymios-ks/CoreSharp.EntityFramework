@@ -4,23 +4,21 @@ using Tests.Internal.Database.DbContexts;
 namespace Tests;
 
 [SetUpFixture]
-public sealed class DummyMsSqlContainerSetup
+public static class DummyMsSqlContainerSetup
 {
-    private static readonly MsSqlContainer _sqlContainer = new MsSqlBuilder()
-        .Build();
+    private static readonly MsSqlContainer _sqlContainer = new MsSqlBuilder().Build();
 
-    private static DummyDbContext DbContext
-        => DummyDbContextTestsBase.DbContext;
+    internal static DummyDbContext DbContext { get; set; }
 
     internal static string SqlConnectionString
         => _sqlContainer.GetConnectionString();
 
     [OneTimeSetUp]
-    public Task OneTimeSetUpAsync()
+    public static Task OneTimeSetUpAsync()
         => _sqlContainer.StartAsync();
 
     [OneTimeTearDown]
-    public async Task OneTimeTearDownAsync()
+    public async static Task OneTimeTearDownAsync()
     {
         if (DbContext is not null)
         {
@@ -28,5 +26,6 @@ public sealed class DummyMsSqlContainerSetup
         }
 
         await _sqlContainer.StopAsync();
+        await _sqlContainer.DisposeAsync();
     }
 }

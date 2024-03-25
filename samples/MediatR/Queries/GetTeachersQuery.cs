@@ -22,5 +22,5 @@ public class GetTeachersQueryHandler : IRequestHandler<GetTeachersQuery, IEnumer
 
     // Methods
     public async Task<IEnumerable<Teacher>> Handle(GetTeachersQuery request, CancellationToken cancellationToken)
-        => await _appUnitOfWork.Teachers.GetAsync(navigation: request.Navigation, cancellationToken: cancellationToken);
+        => await _appUnitOfWork.Teachers.GetAsync(query: request.Navigation, cancellationToken: cancellationToken);
 }

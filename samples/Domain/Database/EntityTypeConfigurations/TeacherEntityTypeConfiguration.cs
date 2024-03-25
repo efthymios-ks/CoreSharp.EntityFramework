@@ -24,8 +24,5 @@ internal sealed class TeacherEntityTypeConfiguration : IEntityTypeConfiguration<
             .WithOne(course => course.Teacher)
             .HasForeignKey(course => course.TeacherId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        // One enum 
-        builder.HasEnum(teacher => teacher.TeacherType);
     }
 }
