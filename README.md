@@ -1,335 +1,234 @@
 # CoreSharp.EntityFramework 
 
 [![Nuget](https://img.shields.io/nuget/v/CoreSharp.EntityFramework)](https://www.nuget.org/packages/CoreSharp.EntityFramework/)
-[![Nuget](https://img.shields.io/nuget/dt/CoreSharp.EntityFramework)](https://www.nuget.org/packages/CoreSharp.EntityFramework/)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=efthymios-ks_CoreSharp.EntityFramework&metric=coverage)](https://sonarcloud.io/summary/new_code?id=efthymios-ks_CoreSharp.EntityFramework)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=efthymios-ks_CoreSharp.EntityFramework&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=efthymios-ks_CoreSharp.EntityFramework)
+![GitHub License](https://img.shields.io/github/license/efthymios-ks/CoreSharp.EntityFramework)
 
-## Description 
-`CoreSharp.EntityFramework` contains a set of interfaces, abstracts and model bases for the commonest Entity Framework use scenarios. 
+> A set of reusable and optimized code for EF Core.
 
-## Features 
-- Interfaces for `Entity`, `Repository`, `UnitOfWork` and `Store`. 
-- Common base implementations for `Entity`, `Repository`, `UnitOfWork` and `Store`. 
-- Various extensions for `enum`, conversions, `DbContext` etc. 
+## Features
+- Implementations for `UnitOfWork` and `Repository` pattern.
+- Implementations for `Store` pattern.
+- Track and store `DbContext` changes.
 
-## Steps for `UnitOfWork` scenario 
-### 1. Create database specific `DbContext`. 
-Implement with `DbContextBase` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Models/Common/DbContextBase.cs). 
-``` 
-using CoreSharp.EntityFramework.Models.Common;
-using Microsoft.EntityFrameworkCore; 
+## Installation
+Install the package with [Nuget](https://www.nuget.org/packages/CoreSharp.EntityFramework/).  
+```
+dotnet add package CoreSharp.EntityFramework --version 7.5.0
+```
 
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
-{
-    public class AppDbContext : DbContextBase
+## Terminology
+- `Entity`: Represents a domain object or business object.
+- `DbContext`: Manages database sessions and operations.
+- `UnitOfWork` (UoW): Manages transactions and database connections (a wrapper around `DbContext`).
+- `Repository`: Abstracts data access, typically **read-only**.
+- `Store`: Manages data state, with **read** and **write** access.
+
+## Documentation
+### Important files
+- Interfaces
+    - [IRepository](/src/CoreSharp.EntityFramework/Repositories/Interfaces/IRepository%601.cs)
+    - [IExtendedRepository](/src/CoreSharp.EntityFramework/Repositories/Interfaces/IExtendedRepository%601.cs)
+    - [IUnitOfWork](/src/CoreSharp.EntityFramework/Repositories/Interfaces/IUnitOfWork.cs)
+    - [IStore](/src/CoreSharp.EntityFramework/Stores/Interfaces/IStore%601.cs)
+    - [IExtendedStore](/src/CoreSharp.EntityFramework/Stores/Interfaces/IExtendedStore%601.cs)
+- Abstracts
+    - [RepositoryBase](/src/CoreSharp.EntityFramework/Repositories/Abstracts/RepositoryBase%601.cs)
+    - [ExtendedRepositoryBase](/src/CoreSharp.EntityFramework/Repositories/Abstracts/ExtendedRepositoryBase%601.cs)
+    - [UnitOfWorkBase](/src/CoreSharp.EntityFramework/Repositories/Abstracts/UnitOfWorkBase.cs)
+    - [StoreBase](/src/CoreSharp.EntityFramework/Stores/Abstracts/StoreBase%601.cs)
+    - [ExtendedStoreBase](/src/CoreSharp.EntityFramework/Stores/Abstracts/ExtendedStoreBase%601.cs)
+    - [AuditDbContextBase](/src/CoreSharp.EntityFramework/DbContexts/Abstracts/AuditDbContextBase.cs)
+
+### Query object
+The [Query](/src/CoreSharp.EntityFramework/Delegates/Query%601.cs) object is just a convention for  
+```
+delegate IQueryable<TEntity> Query<TEntity>(IQueryable<TEntity> query);
+```  
+
+It is used optionally in `Repositories` and `Stores` overloads to adjust the `DbSet<TEntity>` before querying it.
+```
+var highSchoolTeacherIds = (await teacherRepository
+    .GetAsync(query => query
+    .Where(teacher => teacher.TeacherType == TeacherType.HighSchool) // Filter
+    .Select(teacher => new Teacher // Project
     {
-        //Methods
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        { 
-            //Always call base method first
-            base.OnModelCreating(modelBuilder);
-            
-            //Other configurations 
-        }
-    }
-}
-``` 
+        Id = teacher.Id
+    })
+    .AsNoTracking())
+    .Select(teacher => teacher.Id)
+    .ToArray();
+```
 
-### 2. Create an `Entity`. 
-Implement with `EntityBase<TKey>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Models/Common/EntityBase%601.cs). 
-``` 
-using CoreSharp.EntityFramework.Models.Common; 
-using System;
+## Use cases
+### Table of Contents
+- [Repository pattern](#repository-pattern)
+- [Store pattern](#store-pattern)
 
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models
+### Repository pattern
+1. Define your entity.
+```
+using CoreSharp.EntityFramework.Entities.Abstracts;
+
+public sealed class Teacher : EntityBase<Guid>
 {
-    public class Teacher : EntityBase<Guid>
-    {
-    }
+    // Properties
+    public string Name { get; set; }
 }
-``` 
+```
+```
+public sealed class SchoolDbContext : DbContext
+{
+    // Properties
+    public DbSet<Teacher> Teachers { get; set; } 
+}
+```
 
-### 3. Create a `Repository` interface. 
-Inherit from `IRepository<TEntity>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Repositories/Interfaces/IRepository%601.cs). 
-``` 
+2. Define your repository.
+```
 using CoreSharp.EntityFramework.Repositories.Interfaces;
 
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories.Interfaces
+public interface ITeacherRepository : IRepository<Teacher, Guid>
 {
-    public interface ITeacherRepository : IRepository<Teacher>
-    {
-    }
 }
-``` 
+```
+```
+using CoreSharp.EntityFramework.Repositories.Abstracts;
 
-### 4. Implement the `Repository`. 
-Implement with `RepositoryBase<TEntity>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Repositories/Common/RepositoryBase%601.cs). 
-``` 
-using CoreSharp.EntityFramework.Repositories.Common;
-using Microsoft.EntityFrameworkCore;
-
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Repositories
+public sealed class TeacherRepository : RepositoryBase<Teacher, Guid>, ITeacherRepository
 {
-    public class TeacherRepository : RepositoryBase<Teacher>, ITeacherRepository
+    // Constructors
+    public TeacherRepository(DbContext dbContext)
+        : base(dbContext)
     {
-        //Constructors
-        public TeacherRepository(SchoolDbContext schoolDbContext) 
-            : base(schoolDbContext)
-        {
-        }        
-        
-        //Methods 
-        //If needed, you may override base methods 
-        public override Task RemoveAsync(Teacher entity, CancellationToken cancellationToken = default)
-        {
-            //Different approach 
-        }
     }
 }
 ```
 
-### 5. Create a `UnitOfWork` interface. 
-Inherit from `IUnitOfWork` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Repositories/Interfaces/IUnitOfWork.cs). 
-``` 
+3. Define your UnitOfWork.
+```
 using CoreSharp.EntityFramework.Repositories.Interfaces;
 
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWorks.Interfaces
+public interface ISchoolUnitOfWork : IUnitOfWork
 {
-    public interface IAppUnitOfWork : IUnitOfWork
+    // Properties
+    ITeacherRepository Teachers { get; }
+}
+```
+```
+using CoreSharp.EntityFramework.Repositories.Abstracts;
+
+public sealed class SchoolUnitOfWork : UnitOfWorkBase, ISchoolUnitOfWork
+{
+    // Fields
+    private ITeacherRepository _teachers;
+
+    // Constructors
+    public AppUnitOfWork(SchoolDbContext schoolDbContext)
+        : base(schoolDbContext)
     {
-        //Properties
-        public ITeacherRepository Teachers { get; }
+    }
+
+    // Properties
+    public ITeacherRepository Teachers
+        => _teachers ??= new TeacherRepository(Context);
+}
+```
+
+4. Register UnitOfWork.
+```
+public static IServiceProvider AddDatabase(this IServiceCollection serviceCollection)
+{
+    serviceCollection.AddScoped<ISchoolUnitOfWork, SchoolUnitOfWork>();
+
+    return serviceCollection;
+}
+```
+
+5. Inject and use UnitOfWork.
+```
+public sealed class SchoolManager
+{
+    private readonly ISchoolUnitOfWork _unitOfWork;
+
+    public SchoolManager(ISchoolUnitOfWork unitOfWork)
+        => _unitOfWork = unitOfWork;
+
+    public Task<IEnumerable<Teacher>> GetTeachersAsync()
+        => _unitOfWork.Teachers.GetAsync();
+
+    public async Task AddTeachersAsync(Teacher teacherToAdd)
+    {
+        await _unitOfWork.Teachers.AddAsync(teacherToAdd);
+        await _unitOfWork.CommitAsync();
     }
 }
 ```
 
-### 6. Implement the `UnitOfWork`. 
-Implement with `UnitOfWorkBase` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Repositories/Common/UnitOfWorkBase.cs). 
-``` 
-using CoreSharp.EntityFramework.Repositories.Common;
+### Store pattern
+1. Define your entity.
+```
+using CoreSharp.EntityFramework.Entities.Abstracts;
 
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.UnitOfWorks
+public sealed class Teacher : EntityBase<Guid>
 {
-    public class AppUnitOfWork : UnitOfWorkBase, IAppUnitOfWork
-    {
-        //Fields 
-        private ITeacherRepository _teachers = null;
-
-        //Constructors
-        public SchoolUnitOfWork(SchoolDbContext schoolDbContext) 
-            : base(schoolDbContext)
-        {
-        }
-
-        //Properties
-        public ITeacherRepository Teachers 
-            => _teachers ??= new TeacherRepository(Context as SchoolDbContext);
-    }
+    // Properties
+    public string Name { get; set; }
+}
+```
+```
+public sealed class SchoolDbContext : DbContext
+{
+    // Properties
+    public DbSet<Teacher> Teachers { get; set; } 
 }
 ```
 
-### 7. Register everything. 
-``` 
-using CoreSharp.EntityFramework.Extensions;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace CoreSharp.EntityFramework.Examples.CodeFirst
-{
-    /// <summary>
-    /// Pseudo-startup class.
-    /// </summary>
-    internal static class Startup
-    {
-        //Methods 
-        public static IServiceProvider ConfigureServices()
-        {
-            var serviceCollection = new ServiceCollection();
-
-            //1. Add DbContext 
-            serviceCollection.AddDbContext<AppDbContext>();
-            
-            //2. Add Repositories
-            serviceCollection.AddRepositories(typeof(SchoolDbContext).Assembly);
-
-            //3. Add UnitOfWork 
-            serviceCollection.AddScoped<ISchoolUnitOfWork, SchoolUnitOfWork>();
-            
-            return serviceCollection.BuildServiceProvider();
-        }
-    }
-}
-```
-
-### 8. Inject and use. 
-``` 
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
-{
-    public class AddTeacherCommand : IRequest<Teacher>
-    {
-        //Constructors
-        public AddTeacherCommand(Teacher teacher)
-            => Teacher = teacher ?? throw new ArgumentNullException(nameof(teacher));
-
-        //Properties
-        public Teacher Teacher { get; }
-    }
-
-    public class AddTeacherCommandHandler : IRequestHandler<AddTeacherCommand, Teacher>
-    {
-        //Fields
-        private readonly IAppUnitOfWork _appUnitOfWork;
-
-        //Constructors
-        public AddTeacherCommandHandler(IAppUnitOfWork appUnitOfWork)
-            => _appUnitOfWork = appUnitOfWork;
-
-        //Methods
-        public async Task<Teacher> Handle(AddTeacherCommand request, CancellationToken cancellationToken)
-        {
-            _ = request.Teacher ?? throw new NullReferenceException($"{nameof(request.Teacher)} cannot be null.");
-
-            var createdTeacher = await _appUnitOfWork.Teachers.AddAsync(request.Teacher, cancellationToken);
-            await _appUnitOfWork.CommitAsync(cancellationToken);
-            return createdTeacher;
-        }
-    }
-}
-```
-
-## Steps for `Store` scenario 
-### 1. Create database specific `DbContext`. 
-Implement with `DbContextBase` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Models/Common/DbContextBase.cs). 
-```
-using CoreSharp.EntityFramework.Models.Common;
-using Microsoft.EntityFrameworkCore; 
-
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database
-{
-    public class AppDbContext : DbContextBase
-    {
-        //Methods
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        { 
-            //Always call base method first 
-            base.OnModelCreating(modelBuilder);
-            
-            //Other configurations... 
-        }
-    }
-}
-```
-
-### 2. Create an `Entity`. 
-Implement with `EntityBase<TKey>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Models/Common/EntityBase%601.cs). 
-```
-using CoreSharp.EntityFramework.Models.Common; 
-using System;
-
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Models
-{
-    public class Teacher : EntityBase<Guid>
-    {
-    }
-}
-```
-
-### 3. Create a `Store` interface. 
-Inherit from `IStore<TEntity>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Stores/Interfaces/IStore%601.cs). 
+2. Define your store.
 ```
 using CoreSharp.EntityFramework.Stores.Interfaces;
 
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores.Interfaces
+public interface ITeacherStore : IStore<Teacher, Guid>
 {
-    public interface ITeacherStore : IStore<Teacher>
+}
+```
+```
+using CoreSharp.EntityFramework.Stores.Abstracts;
+
+public sealed class TeacherStore : StoreBase<Teacher, Guid>, ITeacherStore
+{
+    // Constructors
+    public TeacherStore(DbContext dbContext)
+        : base(dbContext)
     {
     }
 }
 ```
 
-### 4. Implement the `Store`. 
-Implement with `StoreBase<TEntity>` [(link)](https://github.com/efthymios-ks/CoreSharp.EntityFramework/blob/master/CoreSharp.EntityFramework/Stores/Common/StoreBase%601.cs). 
+3. Register store.
 ```
-using CoreSharp.EntityFramework.Stores.Common;
-using Microsoft.EntityFrameworkCore;
-
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.Domain.Database.Stores
+public static IServiceProvider AddDatabase(this IServiceCollection serviceCollection)
 {
-    public class TeacherStore : StoreBase<Teacher>, ITeacherStore
-    {
-        //Constructors
-        public TeacherStore(AppDbContext appDbContext) 
-            : base(appDbContext)
-        {
-        }        
-        
-        //Methods 
-        //If needed, you may override base methods 
-        public override Task RemoveAsync(Teacher entity, CancellationToken cancellationToken = default)
-        {
-            //Different approach 
-        }
-    }
+    serviceCollection.AddScoped<ISteacherStore, TeacherStore>();
+
+    return serviceCollection;
 }
 ```
 
-### 5. Register everything. 
-``` 
-using CoreSharp.EntityFramework.Extensions;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace CoreSharp.EntityFramework.Examples.CodeFirst
-{
-    /// <summary>
-    /// Pseudo-startup class.
-    /// </summary>
-    internal static class Startup
-    {
-        //Methods 
-        public static IServiceProvider ConfigureServices()
-        {
-            var serviceCollection = new ServiceCollection();
-
-            //1. Add DbContext 
-            serviceCollection.AddDbContext<AppDbContext>();
-            
-            //2. Add Stores
-            serviceCollection.AddStores(typeof(SchoolDbContext).Assembly);
-
-            return serviceCollection.BuildServiceProvider();
-        }
-    }
-}
+4. Inject and use store.
 ```
-
-### 6. Inject and use. 
-``` 
-namespace CoreSharp.EntityFramework.Examples.CodeFirst.MediatR.Handlers.Commands
+public sealed class SchoolManager
 {
-     public class UpdateTeacherCommand : IRequest<Teacher>
-    {
-        //Constructors
-        public UpdateTeacherCommand(Teacher teacher)
-            => Teacher = teacher ?? throw new ArgumentNullException(nameof(teacher));
+    private readonly ITeacherStore _teacherStore;
 
-        //Properties
-        public Teacher Teacher { get; }
-    }
+    public SchoolManager(ITeacherStore teacherStore)
+        => _teacherStore = teacherStore;
 
-    public class UpdateTeacherCommandHandler : IRequestHandler<UpdateTeacherCommand, Teacher>
-    {
-        //Fields
-        private readonly ITeacherStore _teacherStore;
+    public Task<IEnumerable<Teacher>> GetTeachersAsync()
+        => _teacherStore.Teachers.GetAsync();
 
-        //Constructors
-        public UpdateTeacherCommandHandler(ITeacherStore teacherStore)
-            => _teacherStore = teacherStore;
-
-        //Methods
-        public async Task<Teacher> Handle(UpdateTeacherCommand request, CancellationToken cancellationToken)
-        {
-            _ = request.Teacher ?? throw new NullReferenceException($"{nameof(request.Teacher)} cannot be null.");
-
-            return await _teacherStore.UpdateAsync(request.Teacher, cancellationToken);
-        }
-    }
+    public Task AddTeachersAsync(Teacher teacherToAdd)
+        => _teacherStore.Teachers.AddAsync(teacherToAdd); 
 }
 ```
