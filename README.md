@@ -24,7 +24,33 @@ Install the package with [Nuget](https://www.nuget.org/packages/CoreSharp.Entity
 - `Store`: Manages data state, with **read** and **write** access.
 
 ## Documentation
+- Interfaces
+    - [IRepository](/src/CoreSharp.EntityFramework/Repositories/Interfaces/IRepository%601.cs)
+    - [IExtendedRepository](/src/CoreSharp.EntityFramework/Repositories/Interfaces/IExtendedRepository%601.cs)
+    - [IUnitOfWork](/src/CoreSharp.EntityFramework/Repositories/Interfaces/IUnitOfWork.cs)
+    - [IStore](/src/CoreSharp.EntityFramework/Stores/Interfaces/IStore%601.cs)
+    - [IExtendedStore](/src/CoreSharp.EntityFramework/Stores/Interfaces/IExtendedStore%601.cs)
+- Abstracts
+    - [RepositoryBase](/src/CoreSharp.EntityFramework/Repositories/Abstracts/RepositoryBase%601.cs)
+    - [ExtendedRepositoryBase](/src/CoreSharp.EntityFramework/Repositories/Abstracts/ExtendedRepositoryBase%601.cs)
+    - [UnitOfWorkBase](/src/CoreSharp.EntityFramework/Repositories/Abstracts/UnitOfWorkBase.cs)
+    - [StoreBase](/src/CoreSharp.EntityFramework/Stores/Abstracts/StoreBase%601.cs)
+    - [ExtendedStoreBase](/src/CoreSharp.EntityFramework/Stores/Abstracts/ExtendedStoreBase%601.cs)
+    - [AuditDbContextBase](src/CoreSharp.EntityFramework/DbContexts/Abstracts/AuditDbContextBase.cs)
 
+### Query object
+The [Query](/src/CoreSharp.EntityFramework/Delegates/Query%601.cs) object is just a convention delegate for  
+```delegate IQueryable<TEntity> Query<TEntity>(IQueryable<TEntity> query);```.  
+It is used optionally in `repository` and `store` overloads to adjust the `DbSet<TEntity>` before querying it.
+```
+await teacherRepository.GetAsync(query => query // Overload that accepts query
+    .Where(teacher => teacher.TeacherType == TeacherType.HighSchool) // Filter
+    .Select(teacher => new Teacher // Project
+    {
+        Id = teacher.Id
+    })
+    .AsNoTracking();
+```
 
 ## Use cases
 ### Table of Contents
