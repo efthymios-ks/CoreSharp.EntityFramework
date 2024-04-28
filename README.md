@@ -118,7 +118,7 @@ public interface ISchoolUnitOfWork : IUnitOfWork
 ```
 using CoreSharp.EntityFramework.Repositories.Abstracts;
 
-public sealed class SchoolUnitOfWork : UnitOfWorkBase, IAppUnitOfWork
+public sealed class SchoolUnitOfWork : UnitOfWorkBase, ISchoolUnitOfWork
 {
     // Fields
     private ITeacherRepository _teachers;
