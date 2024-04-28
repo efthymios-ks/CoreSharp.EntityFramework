@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using CoreSharp.EntityFramework.ValueComparers;
+using CoreSharp.EntityFramework.ValueConverters;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
@@ -75,33 +77,19 @@ public static class PropertyBuilderExtensions
         builder.HasConversion(converter);
         builder.Metadata.SetValueConverter(converter);
         builder.Metadata.SetValueComparer(comparer);
-
         return builder;
     }
 
-    /// <inheritdoc cref="HasUtcConversion(PropertyBuilder{DateTime?})" />
+    /// <inheritdoc cref="HasUtcConversion(PropertyBuilder{DateTime?})"/>
     public static PropertyBuilder<DateTime> HasUtcConversion(this PropertyBuilder<DateTime> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        var converter = new ValueConverter<DateTime, DateTime>(
-            appValue => appValue.ToUniversalTime(),
-            dbValue => dbValue.ToUniversalTime()
-        );
-
-        var comparer = new ValueComparer<DateTime>(
-            (left, right) => left == right,
-            value => value.GetHashCode(),
-            value => value  // DateTime is a struct, so an assignment will copy the value. 
-        );
-
-        builder.HasConversion(converter);
-        builder.Metadata.SetValueConverter(converter);
-        builder.Metadata.SetValueComparer(comparer);
-
+        builder.HasConversion(UtcDateTimeValueConverter.Instance, UtcDateTimeValueComparer.Instance);
+        builder.Metadata.SetValueConverter(UtcDateTimeValueConverter.Instance);
+        builder.Metadata.SetValueComparer(UtcDateTimeValueComparer.Instance);
         return builder;
     }
-
     /// <summary>
     /// If needed, converts <see cref="DateTime" /> to UTC from and to database.
     /// </summary>
@@ -109,21 +97,9 @@ public static class PropertyBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        var converter = new ValueConverter<DateTime?, DateTime?>(
-            appValue => appValue == null ? null : appValue.Value.ToUniversalTime(),
-            dbValue => dbValue == null ? null : dbValue.Value.ToUniversalTime()
-        );
-
-        var comparer = new ValueComparer<DateTime?>(
-            (left, right) => Equals(left, right),
-            value => value == null ? 0 : value.Value.GetHashCode(),
-            value => value  // DateTime is a struct, so an assignment will copy the value. 
-        );
-
-        builder.HasConversion(converter);
-        builder.Metadata.SetValueConverter(converter);
-        builder.Metadata.SetValueComparer(comparer);
-
+        builder.HasConversion(UtcDateTimeValueConverter.Instance, UtcDateTimeValueComparer.Instance);
+        builder.Metadata.SetValueConverter(UtcDateTimeValueConverter.Instance);
+        builder.Metadata.SetValueComparer(UtcDateTimeValueComparer.Instance);
         return builder;
     }
 }
