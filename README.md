@@ -24,6 +24,7 @@ Install the package with [Nuget](https://www.nuget.org/packages/CoreSharp.Entity
 - `Store`: Manages data state, with **read** and **write** access.
 
 ## Documentation
+### Important files
 - Interfaces
     - [IRepository](/src/CoreSharp.EntityFramework/Repositories/Interfaces/IRepository%601.cs)
     - [IExtendedRepository](/src/CoreSharp.EntityFramework/Repositories/Interfaces/IExtendedRepository%601.cs)
@@ -39,17 +40,20 @@ Install the package with [Nuget](https://www.nuget.org/packages/CoreSharp.Entity
     - [AuditDbContextBase](src/CoreSharp.EntityFramework/DbContexts/Abstracts/AuditDbContextBase.cs)
 
 ### Query object
-The [Query](/src/CoreSharp.EntityFramework/Delegates/Query%601.cs) object is just a convention delegate for  
+The [Query](/src/CoreSharp.EntityFramework/Delegates/Query%601.cs) object is just a convention for  
 ```delegate IQueryable<TEntity> Query<TEntity>(IQueryable<TEntity> query);```.  
 It is used optionally in `repository` and `store` overloads to adjust the `DbSet<TEntity>` before querying it.
 ```
-await teacherRepository.GetAsync(query => query // Overload that accepts query
+var highSchoolTeacherIds = (await teacherRepository
+    .GetAsync(query => query
     .Where(teacher => teacher.TeacherType == TeacherType.HighSchool) // Filter
     .Select(teacher => new Teacher // Project
     {
         Id = teacher.Id
     })
-    .AsNoTracking();
+    .AsNoTracking())
+    .Select(teacher => teacher.Id)
+    .ToArray();
 ```
 
 ## Use cases
