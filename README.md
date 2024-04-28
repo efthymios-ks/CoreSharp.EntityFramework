@@ -27,6 +27,10 @@ Install the package with [Nuget](https://www.nuget.org/packages/CoreSharp.Entity
 
 
 ## Use cases
+### Table of Contents
+- [Repository pattern](#repository-pattern)
+- [Store pattern](#store-pattern)
+
 ### Repository pattern
 1. Define your entity.
 ```
