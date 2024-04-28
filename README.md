@@ -8,13 +8,15 @@
 > A set of reusable and optimized code for EF Core.
 
 ## Features
-- Implementation for `UnitOfWork` and `Repository` pattern.
+- Implementations for `UnitOfWork` and `Repository` pattern.
 - Implementations for `Store` pattern.
 - Track and store DbContext changes.
 
 ## Installation
 Install the package with [Nuget](https://www.nuget.org/packages/CoreSharp.EntityFramework/).  
-```dotnet add package CoreSharp.EntityFramework --version 7.5.0```
+```
+dotnet add package CoreSharp.EntityFramework --version 7.5.0
+```
 
 ## Terminology
 - `Entity`: Represents a domain object or business object.
@@ -41,7 +43,9 @@ Install the package with [Nuget](https://www.nuget.org/packages/CoreSharp.Entity
 
 ### Query object
 The [Query](/src/CoreSharp.EntityFramework/Delegates/Query%601.cs) object is just a convention for  
-```delegate IQueryable<TEntity> Query<TEntity>(IQueryable<TEntity> query);```.  
+```
+delegate IQueryable<TEntity> Query<TEntity>(IQueryable<TEntity> query);
+```  
 It is used optionally in `repository` and `store` overloads to adjust the `DbSet<TEntity>` before querying it.
 ```
 var highSchoolTeacherIds = (await teacherRepository
