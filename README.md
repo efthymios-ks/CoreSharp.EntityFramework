@@ -5,7 +5,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=efthymios-ks_CoreSharp.EntityFramework&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=efthymios-ks_CoreSharp.EntityFramework)
 ![GitHub License](https://img.shields.io/github/license/efthymios-ks/CoreSharp.EntityFramework)
 
-> Set of reusable and optimized code for EF Core.
+> A set of reusable and optimized code for EF Core.
 
 ## Features
 - Implementation for `UnitOfWork` and `Repository` pattern.
