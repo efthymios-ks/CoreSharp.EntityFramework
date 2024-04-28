@@ -16,28 +16,28 @@ namespace App.Extensions;
 internal static class IServiceCollectionExtensions
 {
     /// <summary>
-    /// Register all <see cref="IRepository{TEntity}"/> and <see cref="IUnitOfWork"/>.
+    /// Register all <see cref="IRepository{TEntity, TKey}"/> and <see cref="IUnitOfWork"/>.
     /// </summary>
     public static IServiceCollection AddAppRepositories(this IServiceCollection serviceCollection)
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
 
-        serviceCollection.AddRepositories(typeof(AppDbContext).Assembly);
-        serviceCollection.AddExtendedRepositories(typeof(AppDbContext).Assembly);
+        serviceCollection.AddRepositories(new[] { typeof(AppDbContext).Assembly });
+        serviceCollection.AddExtendedRepositories(new[] { typeof(AppDbContext).Assembly });
         serviceCollection.AddScoped<IAppUnitOfWork, AppUnitOfWork>();
 
         return serviceCollection;
     }
 
     /// <summary>
-    /// Register all <see cref="IStore{TEntity}"/>.
+    /// Register all <see cref="IStore{TEntity, TKey}"/>.
     /// </summary>
     public static IServiceCollection AddAppStores(this IServiceCollection serviceCollection)
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
 
-        serviceCollection.AddStores(typeof(AppDbContext).Assembly);
-        serviceCollection.AddExtendedStores(typeof(AppDbContext).Assembly);
+        serviceCollection.AddStores(new[] { typeof(AppDbContext).Assembly });
+        serviceCollection.AddExtendedStores(new[] { typeof(AppDbContext).Assembly });
 
         return serviceCollection;
     }

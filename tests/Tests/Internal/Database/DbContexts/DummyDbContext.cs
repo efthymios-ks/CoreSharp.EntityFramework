@@ -13,7 +13,6 @@ public sealed class DummyDbContext : AuditDbContextBase
 
     // Properties
     public DbSet<DummyEntity> Dummies { get; set; }
-    public DbSet<NotAuditDummyEntity> NotAuditDummies { get; set; }
 
     // Methods 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

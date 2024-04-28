@@ -1,6 +1,5 @@
-﻿using CoreSharp.EntityFramework.Stores.Abstracts;
-using Microsoft.EntityFrameworkCore;
-using Tests.Internal.Database.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Tests.Internal.Database.Stores;
 
 namespace Tests.Stores.Abstracts;
 
@@ -186,13 +185,5 @@ public sealed class StoreBaseTests : DummyDbContextTestsBase
 
         // Assert 
         dummyRead.Should().BeNull();
-    }
-
-    private sealed class DummyStore : StoreBase<DummyEntity, Guid>
-    {
-        public DummyStore(DbContext dbContext)
-            : base(dbContext)
-        {
-        }
     }
 }

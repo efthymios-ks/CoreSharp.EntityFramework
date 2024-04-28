@@ -1,5 +1,4 @@
-﻿using CoreSharp.EntityFramework.Repositories.Abstracts;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Tests.Internal.Database.Models;
 
 namespace Tests.Repositories.Abstracts;
@@ -11,7 +10,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public void Constructor_WhenDbContextIsNull_ShouldThrowArgumentNullException()
     {
         // Act
-        Action action = () => _ = new DummyRepository(dbContext: null);
+        Action action = () => _ = new ExtendedDummyRepository(dbContext: null);
 
         // Assert
         action.Should().ThrowExactly<ArgumentNullException>();
@@ -22,7 +21,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         IEnumerable<DummyEntity> dummiesToAdd = null;
 
         // Act
@@ -36,7 +35,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddAsync_WithManyEntities_WhenCancellationIsRequested_ShouldDoNothing()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToAdd = GenerateDummies(1);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -52,7 +51,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldSetEntitiesAsAddedAndReturnThem()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToAdd = GenerateDummies(1);
 
         // Act
@@ -68,7 +67,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldSetEntitiesAsAddedAndReturnThem()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToAdd = await PreloadDummiesAsync(1);
 
         // Act
@@ -85,7 +84,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task UpdateAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         IEnumerable<DummyEntity> dummiesToUpdate = null;
 
         // Act
@@ -99,12 +98,13 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task UpdateAsync_WithManyEntities_WhenCancellationIsRequested_ShouldDoNothing()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToUpdate = await PreloadDummiesAsync(1);
         foreach (var dummy in dummiesToUpdate)
         {
             dummy.Name = Guid.NewGuid().ToString();
         }
+
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
@@ -119,7 +119,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task UpdateAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldSetEntitiesAsAddedAndReturnThem()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToUpdate = GenerateDummies(1);
         foreach (var dummy in dummiesToUpdate)
         {
@@ -140,7 +140,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     {
 
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToUpdate = await PreloadDummiesAsync(1);
         foreach (var dummy in dummiesToUpdate)
         {
@@ -161,7 +161,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task RemoveAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         IEnumerable<DummyEntity> dummiesToRemove = null;
 
         // Act
@@ -175,7 +175,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task RemoveAsync_WithManyEntities_WhenCancellationIsRequested_ShouldDoNothing()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToRemove = await PreloadDummiesAsync(1);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -191,7 +191,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task RemoveAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldSetEntitiesAsDeletedAndReturnThem()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToRemove = GenerateDummies(1);
 
         // Act
@@ -206,7 +206,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task RemoveAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldSetEntitiesAsDeletedAndReturnThem()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToRemove = await PreloadDummiesAsync(1);
 
         // Act
@@ -223,7 +223,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task RemoveAsync_ByKey_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var existingDummy = await PreloadDummyAsync();
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -239,7 +239,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task RemoveAsync_ByKey_WhenKeyExists_ShouldSetEntityAsDeleted()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummyToRemove = await PreloadDummyAsync();
 
         // Act
@@ -255,7 +255,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task RemoveAsync_ByKey_WhenKeyNotFound_ShouldDoNothing()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummyIdToRemove = Guid.NewGuid();
 
         // Act
@@ -271,7 +271,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task ExistsAsync_WithKey_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
@@ -286,7 +286,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task ExistsAsync_WithKey_WhenExists_ShouldReturnTrue()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var existingDummy = await PreloadDummyAsync();
 
         // Act
@@ -300,7 +300,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task ExistsAsync_WithKey_WhenDoesNotExist_ShouldReturnFalse()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
 
         // Act
         var exists = await repository.ExistsAsync(Guid.NewGuid());
@@ -314,7 +314,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task ExistsAsync_WithQuery_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
@@ -329,7 +329,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task ExistsAsync_WithQuery_WhenExists_ShouldReturnTrue()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var existingDummy = await PreloadDummyAsync();
 
         // Act
@@ -343,7 +343,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task ExistsAsync_WithQuery_WhenDoesNotExist_ShouldReturnFalse()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
 
         // Act
         var exists = await repository.ExistsAsync(q => q.Where(dummy => dummy.Name == "non-existing-name"));
@@ -357,7 +357,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task CountAsyncAsync_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
@@ -372,7 +372,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task CountAsyncAsync_WhenQueryIsProvided_ShouldReturnCountBasedOnQuery()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var existingDummies = await PreloadDummiesAsync(2);
         var dummyToFilterWith = existingDummies[0];
 
@@ -387,7 +387,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task CountAsyncAsync_WhenCalled_ShouldReturnCount()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         await PreloadDummiesAsync(2);
 
         // Act
@@ -402,7 +402,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddOrUpdateAsync_WithSingleEntity_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         DummyEntity dummyToAddOrUpdate = null;
 
         // Act
@@ -416,7 +416,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddOrUpdateAsync_WithSingleEntity_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummyToAddOrUpdate = GenerateDummy();
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -432,7 +432,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddOrUpdateAsync_WithSingleEntity_WhenEntityDoNotExistInDatabase_ShouldSetEntityAsAddedAndReturnIt()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummyToAdd = GenerateDummy();
 
         // Act
@@ -449,7 +449,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddOrUpdateAsync_WithSingleEntity_WhenEntityExistsInDatabase_ShouldSetEntityAsModifiedAndReturnIt()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummyToUpdate = await PreloadDummyAsync();
         dummyToUpdate.Name = Guid.NewGuid().ToString();
 
@@ -468,7 +468,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddOrUpdateAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         IEnumerable<DummyEntity> dummiesToAddOrUpdate = null;
 
         // Act
@@ -482,7 +482,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddOrUpdateAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToAddOrUpdate = GenerateDummies(1);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -498,7 +498,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddOrUpdateAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldSetEntitiesAsAddedAndReturnThem()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToAdd = GenerateDummies(1);
 
         // Act
@@ -514,7 +514,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddOrUpdateAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldSetEntitiesAsModifiedAndReturnThem()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToUpdate = await PreloadDummiesAsync(1);
         foreach (var dummy in dummiesToUpdate)
         {
@@ -534,7 +534,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddOrUpdateAsync_WithManyEntities_WhenMixedEntities_ShouldSetNewEntitiesAsAddedAndExistingEntitiesAsModifiedAndReturnThem()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToUpdate = await PreloadDummiesAsync(1);
         foreach (var dummy in dummiesToUpdate)
         {
@@ -560,7 +560,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddIfNotExistAsync_WithSingleEntity_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         DummyEntity dummyToAdd = null;
 
         // Act
@@ -574,7 +574,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddIfNotExistAsync_WithSingleEntity_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummyToAdd = GenerateDummy();
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -590,7 +590,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddIfNotExistAsync_WithSingleEntity_WhenEntityDoesNotExistInDatabase_ShouldSetEntityAsAddedAndReturnIt()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummyToAdd = GenerateDummy();
 
         // Act
@@ -607,7 +607,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddIfNotExistAsync_WithSingleEntity_WhenEntitysExistsInDatabase_ShouldDoNothing()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummyToAdd = await PreloadDummyAsync();
 
         // Act
@@ -624,7 +624,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddIfNotExistAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         IEnumerable<DummyEntity> dummiesToAdd = null;
 
         // Act
@@ -638,7 +638,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddIfNotExistAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToAdd = GenerateDummies(1);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -654,7 +654,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddIfNotExistAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldSetEntitiesAsAddedAndReturnThem()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToAdd = GenerateDummies(1);
 
         // Act
@@ -670,7 +670,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task AddIfNotExistAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldDoNothing()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToAdd = await PreloadDummiesAsync(1);
 
         // Act
@@ -687,7 +687,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task UpdateIfExistAsync_WithSingleEntity_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         DummyEntity dummyToUpdate = null;
 
         // Act
@@ -701,7 +701,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task UpdateIfExistAsync_WithSingleEntity_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummyToUpdate = await PreloadDummyAsync();
         dummyToUpdate.Name = Guid.NewGuid().ToString();
 
@@ -719,7 +719,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task UpdateIfExistAsync_WithSingleEntity_WhenEntityExistInDatabase_ShouldSetEntityAsModifiedAndReturnIt()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummyToUpdate = await PreloadDummyAsync();
         dummyToUpdate.Name = Guid.NewGuid().ToString();
 
@@ -737,7 +737,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task UpdateIfExistAsync_WithSingleEntity_WhenEntityDoNotExistInDatabase_ShouldDoNothing()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummyToUpdate = GenerateDummy();
 
         // Act
@@ -754,7 +754,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task UpdateIfExistAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         IEnumerable<DummyEntity> dummiesToUpdate = null;
 
         // Act
@@ -768,7 +768,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task UpdateIfExistAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToUpdate = await PreloadDummiesAsync(1);
         foreach (var dummy in dummiesToUpdate)
         {
@@ -789,7 +789,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task UpdateIfExistAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldSetEntitiesAsModifiedAndReturnThem()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToUpdate = await PreloadDummiesAsync(1);
         foreach (var dummy in dummiesToUpdate)
         {
@@ -809,7 +809,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
     public async Task UpdateIfExistAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldDoNothing()
     {
         // Arrange 
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var dummiesToUpdate = GenerateDummies(1);
 
         // Act
@@ -829,7 +829,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
         const int totalItems = 5;
         const int pageNumber = 1;
         const int pageSize = 2;
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         await PreloadDummiesAsync(totalItems);
 
         // Act
@@ -848,7 +848,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
         const int totalItems = 5;
         const int pageNumber = 1;
         const int pageSize = 2;
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         await PreloadDummiesAsync(totalItems);
 
         // Act
@@ -866,7 +866,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
         const int totalItems = 5;
         const int pageNumber = 1;
         const int pageSize = 2;
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         await PreloadDummiesAsync(totalItems);
 
         // Act
@@ -884,7 +884,7 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
         const int totalItems = 5;
         const int pageNumber = 1;
         const int pageSize = 2;
-        var repository = new DummyRepository(DbContext);
+        var repository = new ExtendedDummyRepository(DbContext);
         var existingDummies = await PreloadDummiesAsync(totalItems);
         var expectedDummies = existingDummies
             .Skip(pageNumber * pageSize)
@@ -897,13 +897,5 @@ public sealed class ExtendedRepositoryBaseTests : DummyDbContextTestsBase
         result.Should().NotBeNull();
         result.Items.Should().HaveCount(pageSize);
         result.Items.Should().BeEquivalentTo(expectedDummies);
-    }
-
-    private sealed class DummyRepository : ExtendedRepositoryBase<DummyEntity, Guid>
-    {
-        public DummyRepository(DbContext dbContext)
-            : base(dbContext)
-        {
-        }
     }
 }
