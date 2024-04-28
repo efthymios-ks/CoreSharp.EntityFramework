@@ -1,5 +1,4 @@
-﻿using CoreSharp.EntityFramework.Extensions;
-using Domain.Database.Models;
+﻿using Domain.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;

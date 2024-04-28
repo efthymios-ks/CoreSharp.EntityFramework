@@ -1,11 +1,9 @@
-﻿using CoreSharp.EntityFramework.Repositories.Abstracts;
-using Microsoft.EntityFrameworkCore;
-using Tests.Internal.Database.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Tests.Repositories.Abstracts;
 
 [TestFixture]
-public sealed class RepositoryBaseTests : DummyDbContextTestsBase
+public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
 {
     [Test]
     public void Constructor_WhenDbContextIsNull_ShouldThrowArgumentNullException()
@@ -344,13 +342,5 @@ public sealed class RepositoryBaseTests : DummyDbContextTestsBase
         // Assert 
         dummyEntry.Should().NotBeNull();
         dummyEntry.Entity.Should().BeEquivalentTo(dummyToRemove);
-    }
-
-    private sealed class DummyRepository : RepositoryBase<DummyEntity, Guid>
-    {
-        public DummyRepository(DbContext dbContext)
-            : base(dbContext)
-        {
-        }
     }
 }

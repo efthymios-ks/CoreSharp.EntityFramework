@@ -3,8 +3,6 @@ using CoreSharp.EntityFramework.Repositories.Interfaces;
 using CoreSharp.EntityFramework.Stores.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace CoreSharp.EntityFramework.Extensions;
@@ -15,51 +13,19 @@ namespace CoreSharp.EntityFramework.Extensions;
 public static class IServiceCollectionExtensions
 {
     // Methods 
-    /// <inheritdoc cref="AddRepositories(IServiceCollection, Assembly[])" />
-    public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection)
-        => serviceCollection.AddRepositories(Assembly.GetEntryAssembly());
-
-    /// <inheritdoc cref="AddRepositories(IServiceCollection, Assembly[])" />
-    public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
-        => serviceCollection.AddRepositories(assemblies?.ToArray());
-
     /// <inheritdoc cref="DependencyInjection.ByReflection.Extensions.IServiceCollectionExtensions.AddServices(IServiceCollection, Assembly[])" />
-    public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, params Assembly[] assemblies)
+    public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection, Assembly[] assemblies)
         => serviceCollection.AddServices(typeof(IRepository<,>), assemblies);
 
-    /// <inheritdoc cref="AddExtendedRepositories(IServiceCollection, Assembly[])" />
-    public static IServiceCollection AddExtendedRepositories(this IServiceCollection serviceCollection)
-        => serviceCollection.AddExtendedRepositories(Assembly.GetEntryAssembly());
-
-    /// <inheritdoc cref="AddExtendedRepositories(IServiceCollection, Assembly[])" />
-    public static IServiceCollection AddExtendedRepositories(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
-        => serviceCollection.AddExtendedRepositories(assemblies?.ToArray());
-
     /// <inheritdoc cref="DependencyInjection.ByReflection.Extensions.IServiceCollectionExtensions.AddServices(IServiceCollection, Type, Assembly[])" />
-    public static IServiceCollection AddExtendedRepositories(this IServiceCollection serviceCollection, params Assembly[] assemblies)
+    public static IServiceCollection AddExtendedRepositories(this IServiceCollection serviceCollection, Assembly[] assemblies)
         => serviceCollection.AddServices(typeof(IExtendedRepository<,>), assemblies);
 
-    /// <inheritdoc cref="AddStores(IServiceCollection, Assembly[])" />
-    public static IServiceCollection AddStores(this IServiceCollection serviceCollection)
-        => serviceCollection.AddStores(Assembly.GetEntryAssembly());
-
-    /// <inheritdoc cref="AddStores(IServiceCollection, Assembly[])" />
-    public static IServiceCollection AddStores(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
-        => serviceCollection.AddStores(assemblies?.ToArray());
-
     /// <inheritdoc cref="DependencyInjection.ByReflection.Extensions.IServiceCollectionExtensions.AddServices(IServiceCollection, Type, Assembly[])"/>
-    public static IServiceCollection AddStores(this IServiceCollection serviceCollection, params Assembly[] assemblies)
+    public static IServiceCollection AddStores(this IServiceCollection serviceCollection, Assembly[] assemblies)
         => serviceCollection.AddServices(typeof(IStore<,>), assemblies);
 
-    /// <inheritdoc cref="AddExtendedStores(IServiceCollection, Assembly[])" />
-    public static IServiceCollection AddExtendedStores(this IServiceCollection serviceCollection)
-        => serviceCollection.AddExtendedStores(Assembly.GetEntryAssembly());
-
-    /// <inheritdoc cref="AddExtendedStores(IServiceCollection, Assembly[])" />
-    public static IServiceCollection AddExtendedStores(this IServiceCollection serviceCollection, IEnumerable<Assembly> assemblies)
-        => serviceCollection.AddExtendedStores(assemblies?.ToArray());
-
     /// <inheritdoc cref="DependencyInjection.ByReflection.Extensions.IServiceCollectionExtensions.AddServices(IServiceCollection, Type, Assembly[])" />
-    public static IServiceCollection AddExtendedStores(this IServiceCollection serviceCollection, params Assembly[] assemblies)
+    public static IServiceCollection AddExtendedStores(this IServiceCollection serviceCollection, Assembly[] assemblies)
         => serviceCollection.AddServices(typeof(IExtendedStore<,>), assemblies);
 }

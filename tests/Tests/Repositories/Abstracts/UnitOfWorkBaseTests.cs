@@ -1,5 +1,4 @@
-﻿using CoreSharp.EntityFramework.Repositories.Abstracts;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Tests.Repositories.Abstracts;
 
@@ -98,13 +97,5 @@ public sealed class UnitOfWorkBaseTests : DummyDbContextTestsBase
 
         // Assert
         await action.Should().ThrowExactlyAsync<ObjectDisposedException>();
-    }
-
-    private sealed class DummyUnitOfWork : UnitOfWorkBase
-    {
-        public DummyUnitOfWork(DbContext dbContext)
-            : base(dbContext)
-        {
-        }
     }
 }
