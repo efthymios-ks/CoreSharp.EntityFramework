@@ -13,12 +13,15 @@ public sealed class DummyDbContext : AuditDbContextBase
 
     // Properties
     public DbSet<DummyEntity> Dummies { get; set; }
+    public ModelBuilder ModelBuilder { get; private set; }
 
     // Methods 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         ConfigureModels(modelBuilder);
+
+        ModelBuilder = modelBuilder;
     }
 
     private static void ConfigureModels(ModelBuilder modelBuilder)

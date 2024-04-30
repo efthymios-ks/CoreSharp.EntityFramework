@@ -80,21 +80,19 @@ public abstract class AuditDbContextBase : DbContext
             var entityTypeBuilder = modelBuilder.Entity(auditEntity.Name);
 
             // DateCreatedUtc
-            var dateCreatedProperty = entityTypeBuilder
-                .Property(nameof(IAuditEntity.DateCreatedUtc)) as PropertyBuilder<DateTime>;
-            dateCreatedProperty.HasUtcConversion();
+            var dateCreatedPropertyBuilder = (PropertyBuilder<DateTime>)entityTypeBuilder.Property(nameof(IAuditEntity.DateCreatedUtc));
+            dateCreatedPropertyBuilder.HasUtcConversion();
 
             // DateModifiedUtc
-            var dateModifiedProperty = entityTypeBuilder
-                .Property(nameof(IAuditEntity.DateModifiedUtc)) as PropertyBuilder<DateTime?>;
-            dateModifiedProperty.HasUtcConversion();
+            var dateModifiedPropertyBuilder = (PropertyBuilder<DateTime?>)entityTypeBuilder.Property(nameof(IAuditEntity.DateModifiedUtc));
+            dateModifiedPropertyBuilder.HasUtcConversion();
         }
     }
 
     private TemporaryEntityChange[] OnBeforeSaveChanges()
     {
         UpdateAuditEntities();
-        return GetChangesBeforeSave();
+        return GetTemporaryChangesBeforeSave();
     }
 
     private void OnAfterSaveChanges(bool acceptAllChangesOnSuccess, TemporaryEntityChange[] temporaryEntityChanges)
@@ -111,7 +109,7 @@ public abstract class AuditDbContextBase : DbContext
         await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 
-    private TemporaryEntityChange[] GetChangesBeforeSave()
+    private TemporaryEntityChange[] GetTemporaryChangesBeforeSave()
     {
         // Force scan for changes to be sure.
         ChangeTracker.DetectChanges();
@@ -123,7 +121,7 @@ public abstract class AuditDbContextBase : DbContext
             return Array.Empty<TemporaryEntityChange>();
         }
 
-        // Scan entries 
+        // Scan entries.
         var temporaryEntityChanges = new HashSet<TemporaryEntityChange>();
         foreach (var auditEntityEntry in auditEntityEntries)
         {

@@ -18,7 +18,7 @@ public static class PropertyBuilderExtensions
     public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(
         this PropertyBuilder<TProperty> builder)
         where TProperty : class
-        => builder.HasJsonConversion(TextJson.JsonSerializerOptions.Default);
+        => builder.HasJsonConversion(JsonValueConverter<TProperty>.Default, JsonValueComparer<TProperty>.Default);
 
     /// <inheritdoc cref="HasJsonConversionInternal{TProperty}(PropertyBuilder{TProperty}, Func{TProperty, string}, Func{string, TProperty})"/>
     public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(
@@ -65,15 +65,17 @@ public static class PropertyBuilderExtensions
         Func<string, TProperty> fromJson)
         where TProperty : class
     {
-        var converter = new ValueConverter<TProperty, string>(
-            appValue => toJson(appValue),
-            dbValue => fromJson(dbValue));
+        var converter = new JsonValueConverter<TProperty>(toJson, fromJson);
+        var comparer = new JsonValueComparer<TProperty>(toJson, fromJson);
+        return builder.HasJsonConversion(converter, comparer);
+    }
 
-        var comparer = new ValueComparer<TProperty>(
-            (left, right) => toJson(left) == toJson(right),
-            value => value == null ? 0 : value.GetHashCode(),
-            value => fromJson(toJson(value)));  // Clone 
-
+    private static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(
+        this PropertyBuilder<TProperty> builder,
+        ValueConverter<TProperty, string> converter,
+        ValueComparer<TProperty> comparer)
+        where TProperty : class
+    {
         builder.HasConversion(converter);
         builder.Metadata.SetValueConverter(converter);
         builder.Metadata.SetValueComparer(comparer);
@@ -90,6 +92,7 @@ public static class PropertyBuilderExtensions
         builder.Metadata.SetValueComparer(UtcDateTimeValueComparer.Instance);
         return builder;
     }
+
     /// <summary>
     /// If needed, converts <see cref="DateTime" /> to UTC from and to database.
     /// </summary>
