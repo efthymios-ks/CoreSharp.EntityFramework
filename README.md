@@ -15,7 +15,7 @@
 ## Installation
 Install the package with [Nuget](https://www.nuget.org/packages/CoreSharp.EntityFramework/).  
 ```
-dotnet add package CoreSharp.EntityFramework --version 7.5.0
+dotnet add package CoreSharp.EntityFramework
 ```
 
 ## Terminology
