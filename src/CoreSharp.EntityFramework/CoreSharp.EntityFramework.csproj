@@ -2,18 +2,18 @@
 
 	<PropertyGroup Label="Package">
 		<TargetFramework>net7.0</TargetFramework>
-		<Version>7.5.0</Version>
+		<Version>7.6.0</Version>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
 		<Authors>Efthymios Koktsidis</Authors>
 		<Company>Efthymios Koktsidis</Company>
-		<Description>Base interfaces, abstracts, models and extensions for Entity Framework Core.</Description>
+		<Description>A set of reusable and optimized code for EF Core.</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/efthymios-ks/CoreSharp.EntityFramework</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/efthymios-ks/CoreSharp.EntityFramework</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<PackageTags>EF, Entity Framework, Database</PackageTags>
-		<PackageReleaseNotes>-refactor(DbContext): switch to in-memory database.</PackageReleaseNotes>
+		<PackageTags>EF, Entity Framework, Database, Repository, Store, UnitOfWork</PackageTags>
+		<PackageReleaseNotes>-Internal refactorings and unit tests revisiting.</PackageReleaseNotes>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageIconUrl />
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
