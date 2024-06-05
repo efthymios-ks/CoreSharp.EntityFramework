@@ -6,9 +6,6 @@ using MediatR.Commands;
 using MediatR.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 var services = Startup.ConfigureServices();
 var mediatR = services.GetRequiredService<IMediator>();
@@ -41,13 +38,13 @@ async Task AddInitialTeachersAsync(IMediator mediator)
     await mediator.Send(command);
 }
 
-async Task<Teacher> GetFirstTeacherAsync(IMediator mediatR)
+async Task<Teacher?> GetFirstTeacherAsync(IMediator mediatR)
 {
     var query = new GetTeachersQuery
     {
         Navigation = query => query.Include(teacher => teacher.Courses)
     };
-    return (await mediatR.Send(query)).FirstOrDefault();
+    return (await mediatR.Send(query))!.FirstOrDefault();
 }
 
 async Task<Teacher> CreateTeacherAsync(IMediator mediatR)

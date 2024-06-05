@@ -1,7 +1,6 @@
 ﻿using Domain.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace Domain.Extensions;
 

@@ -5,21 +5,16 @@ using Domain.Database.UnitOfWorks.Interfaces;
 
 namespace Domain.Database.UnitOfWorks;
 
-public class AppUnitOfWork : UnitOfWorkBase, IAppUnitOfWork
+public class AppUnitOfWork(AppDbContext schoolDbContext)
+    : UnitOfWorkBase(schoolDbContext), IAppUnitOfWork
 {
     // Fields 
-    private ICourseRepository _courses;
-    private ITeacherRepository _teachers;
-
-    // Constructors
-    public AppUnitOfWork(AppDbContext schoolDbContext)
-        : base(schoolDbContext)
-    {
-    }
+    private ICourseRepository? _courses;
+    private ITeacherRepository? _teachers;
 
     // Properties
     public ICourseRepository Courses
-        => _courses ??= new CourseRepository(Context as AppDbContext);
+        => _courses ??= new CourseRepository(Context);
     public ITeacherRepository Teachers
-        => _teachers ??= new TeacherRepository(Context as AppDbContext);
+        => _teachers ??= new TeacherRepository(Context);
 }

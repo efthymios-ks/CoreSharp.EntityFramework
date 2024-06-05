@@ -6,15 +6,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Domain.Database;
 
-public class AppDbContext : AuditDbContextBase
+public class AppDbContext(DbContextOptions<AppDbContext> options, ILoggerFactory? loggerFactory = null) : AuditDbContextBase(options)
 {
     // Fields
-    private readonly ILoggerFactory _loggerFactory;
-
-    // Constructors 
-    public AppDbContext(DbContextOptions<AppDbContext> options, ILoggerFactory loggerFactory = null)
-        : base(options)
-        => _loggerFactory = loggerFactory;
+    private readonly ILoggerFactory? _loggerFactory = loggerFactory;
 
     // Properties
     public DbSet<Teacher> Teachers { get; set; }
@@ -27,7 +22,7 @@ public class AppDbContext : AuditDbContextBase
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.ConfigureSql(_loggerFactory);
+            optionsBuilder.ConfigureSql(_loggerFactory!);
         }
     }
 

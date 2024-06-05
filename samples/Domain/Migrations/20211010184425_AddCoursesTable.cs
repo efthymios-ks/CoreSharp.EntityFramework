@@ -66,7 +66,7 @@ public partial class AddCoursesTable : Migration
         migrationBuilder.AddPrimaryKey(
             name: "PK_StudentsCourses",
             table: "StudentsCourses",
-            columns: new[] { "CoursesId", "StudentsId" });
+            columns: ["CoursesId", "StudentsId"]);
 
         migrationBuilder.AddPrimaryKey(
             name: "PK_Courses",
@@ -177,7 +177,7 @@ public partial class AddCoursesTable : Migration
         migrationBuilder.AddPrimaryKey(
             name: "PK_CourseStudent",
             table: "CourseStudent",
-            columns: new[] { "CoursesId", "StudentsId" });
+            columns: ["CoursesId", "StudentsId"]);
 
         migrationBuilder.AddPrimaryKey(
             name: "PK_Course",

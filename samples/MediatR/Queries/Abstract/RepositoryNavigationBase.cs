@@ -2,8 +2,4 @@
 
 namespace MediatR.Queries.Abstract;
 
-public abstract class RepositoryNavigationBase<TEntity>
-{
-    // Properties
-    public Query<TEntity> Navigation { get; init; }
-}
+public abstract record RepositoryNavigationBase<TEntity>(Query<TEntity>? Navigation = null);

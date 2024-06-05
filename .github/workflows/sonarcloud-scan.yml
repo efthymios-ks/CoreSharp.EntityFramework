@@ -40,7 +40,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           ./.sonar/scanner/dotnet-sonarscanner begin /k:"efthymios-ks_CoreSharp.EntityFramework" /o:"efthymios-ks" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet build ./src/CoreSharp.EntityFramework/CoreSharp.EntityFramework.csproj --no-incremental
+          dotnet build ./CoreSharp.EntityFramework/CoreSharp.EntityFramework.csproj --no-incremental
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Test coverage
         env:
@@ -48,6 +48,6 @@ jobs:
         run: |
           ./.sonar/scanner/dotnet-sonarscanner begin /k:"efthymios-ks_CoreSharp.EntityFramework" /o:"efthymios-ks" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.coverage.inclusions="./src/CoreSharp.EntityFramework/**/*.cs" /d:sonar.cs.opencover.reportsPaths=coverage.xml
           dotnet tool install coverlet.console --global
-          dotnet build tests/Tests/Tests.csproj --no-incremental
-          coverlet ./tests/Tests/bin/Debug/**/Tests.CoreSharp.EntityFramework.dll --target "dotnet" --targetargs "test --no-build" -f=opencover -o="coverage.xml"
+          dotnet build ./CoreSharp.EntityFramework.Tests/CoreSharp.EntityFramework.Tests.csproj --no-incremental
+          coverlet ./CoreSharp.EntityFramework.Tests/bin/Debug/**/CoreSharp.EntityFramework.Tests.dll --target "dotnet" --targetargs "test --no-build" -f=opencover -o="coverage.xml"
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"

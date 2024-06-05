@@ -2,25 +2,21 @@
 
 	<PropertyGroup Label="Package">
 		<AssemblyName>CoreSharp.EntityFramework.Samples.Domain</AssemblyName>
-		<TargetFramework>net7.0</TargetFramework>
-		<Authors>Efthymios Koktsidis</Authors>
-		<Company>Efthymios Koktsidis</Company>
-		<Product>Efthymios Koktsidis</Product>
 	</PropertyGroup>
 
 	<ItemGroup Label="Package references">
-		<PackageReference Include="CoreSharp" Version="7.5.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.18" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.18" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.18">
+		<PackageReference Include="CoreSharp" Version="7.5.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
 	</ItemGroup>
 
-	<ItemGroup Label="Project references">
-		<ProjectReference Include="..\..\src\CoreSharp.EntityFramework\CoreSharp.EntityFramework.csproj" />
+	<ItemGroup>
+		<ProjectReference Include="..\..\CoreSharp.EntityFramework\CoreSharp.EntityFramework.csproj" />
 	</ItemGroup>
 
 </Project>

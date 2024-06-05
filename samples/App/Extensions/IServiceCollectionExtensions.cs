@@ -6,7 +6,6 @@ using Domain.Database.UnitOfWorks;
 using Domain.Database.UnitOfWorks.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace App.Extensions;
 
@@ -22,8 +21,8 @@ internal static class IServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
 
-        serviceCollection.AddRepositories(new[] { typeof(AppDbContext).Assembly });
-        serviceCollection.AddExtendedRepositories(new[] { typeof(AppDbContext).Assembly });
+        serviceCollection.AddRepositories([typeof(AppDbContext).Assembly]);
+        serviceCollection.AddExtendedRepositories([typeof(AppDbContext).Assembly]);
         serviceCollection.AddScoped<IAppUnitOfWork, AppUnitOfWork>();
 
         return serviceCollection;
@@ -36,8 +35,8 @@ internal static class IServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(serviceCollection);
 
-        serviceCollection.AddStores(new[] { typeof(AppDbContext).Assembly });
-        serviceCollection.AddExtendedStores(new[] { typeof(AppDbContext).Assembly });
+        serviceCollection.AddStores([typeof(AppDbContext).Assembly]);
+        serviceCollection.AddExtendedStores([typeof(AppDbContext).Assembly]);
 
         return serviceCollection;
     }

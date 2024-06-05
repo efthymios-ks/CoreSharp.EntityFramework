@@ -2,7 +2,6 @@
 using Domain.Database;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace App;
 
