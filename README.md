@@ -28,21 +28,21 @@ dotnet add package CoreSharp.EntityFramework
 ## Documentation
 ### Important files
 - Interfaces
-    - [IRepository](/src/CoreSharp.EntityFramework/Repositories/Interfaces/IRepository%601.cs)
-    - [IExtendedRepository](/src/CoreSharp.EntityFramework/Repositories/Interfaces/IExtendedRepository%601.cs)
-    - [IUnitOfWork](/src/CoreSharp.EntityFramework/Repositories/Interfaces/IUnitOfWork.cs)
-    - [IStore](/src/CoreSharp.EntityFramework/Stores/Interfaces/IStore%601.cs)
-    - [IExtendedStore](/src/CoreSharp.EntityFramework/Stores/Interfaces/IExtendedStore%601.cs)
+    - [IRepository](/CoreSharp.EntityFramework/Repositories/Interfaces/IRepository%601.cs)
+    - [IExtendedRepository](/CoreSharp.EntityFramework/Repositories/Interfaces/IExtendedRepository%601.cs)
+    - [IUnitOfWork](/CoreSharp.EntityFramework/Repositories/Interfaces/IUnitOfWork.cs)
+    - [IStore](/CoreSharp.EntityFramework/Stores/Interfaces/IStore%601.cs)
+    - [IExtendedStore](/CoreSharp.EntityFramework/Stores/Interfaces/IExtendedStore%601.cs)
 - Abstracts
-    - [RepositoryBase](/src/CoreSharp.EntityFramework/Repositories/Abstracts/RepositoryBase%601.cs)
-    - [ExtendedRepositoryBase](/src/CoreSharp.EntityFramework/Repositories/Abstracts/ExtendedRepositoryBase%601.cs)
-    - [UnitOfWorkBase](/src/CoreSharp.EntityFramework/Repositories/Abstracts/UnitOfWorkBase.cs)
-    - [StoreBase](/src/CoreSharp.EntityFramework/Stores/Abstracts/StoreBase%601.cs)
-    - [ExtendedStoreBase](/src/CoreSharp.EntityFramework/Stores/Abstracts/ExtendedStoreBase%601.cs)
-    - [AuditDbContextBase](/src/CoreSharp.EntityFramework/DbContexts/Abstracts/AuditDbContextBase.cs)
+    - [RepositoryBase](/CoreSharp.EntityFramework/Repositories/Abstracts/RepositoryBase%601.cs)
+    - [ExtendedRepositoryBase](/CoreSharp.EntityFramework/Repositories/Abstracts/ExtendedRepositoryBase%601.cs)
+    - [UnitOfWorkBase](/CoreSharp.EntityFramework/Repositories/Abstracts/UnitOfWorkBase.cs)
+    - [StoreBase](/CoreSharp.EntityFramework/Stores/Abstracts/StoreBase%601.cs)
+    - [ExtendedStoreBase](/CoreSharp.EntityFramework/Stores/Abstracts/ExtendedStoreBase%601.cs)
+    - [AuditDbContextBase](/CoreSharp.EntityFramework/DbContexts/Abstracts/AuditDbContextBase.cs)
 
 ### Query object
-The [Query](/src/CoreSharp.EntityFramework/Delegates/Query%601.cs) object is just a convention for  
+The [Query](/CoreSharp.EntityFramework/Delegates/Query%601.cs) object is just a convention for  
 ```
 delegate IQueryable<TEntity> Query<TEntity>(IQueryable<TEntity> query);
 ```  
