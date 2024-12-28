@@ -2,10 +2,10 @@
 
 	<PropertyGroup Label="Package">
 		<Title>CoreSharp.EntityFramework</Title>
-		<Version>8.0.0</Version>
+		<Version>8.0.1</Version>
 		<Authors>Efthymios Koktsidis</Authors>
 		<Company>Efthymios Koktsidis</Company>
-		<Description>HttpClient fluent request framework.</Description>
+		<Description>A set of reusable and optimized code for EF Core.</Description>
 		<PackageReleaseNotes>-chore: Update to .NET 8 and refactor nullable conditions.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/efthymios-ks/CoreSharp.HttpClient.FluentApi</PackageProjectUrl>
