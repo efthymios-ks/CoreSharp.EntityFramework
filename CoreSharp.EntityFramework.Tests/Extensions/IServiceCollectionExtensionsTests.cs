@@ -1,15 +1,14 @@
 ﻿using CoreSharp.EntityFramework.Extensions;
+using CoreSharp.EntityFramework.Tests.Internal.Database.Repositories;
+using CoreSharp.EntityFramework.Tests.Internal.Database.Stores;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Tests.Internal.Database.Stores;
-using Tests.Repositories.Abstracts;
 
-namespace Tests.Extensions;
+namespace CoreSharp.EntityFramework.Tests.Extensions;
 
-[TestFixture]
 public sealed class IServiceCollectionExtensionsTests
 {
-    [Test]
+    [Fact]
     public void AddRepositories_WhenCalled_ShouldRegisterRepositoriesFromGivenAssemblies()
     {
         // Arrange 
@@ -20,14 +19,14 @@ public sealed class IServiceCollectionExtensionsTests
         serviceCollection.AddRepositories([assembly]);
 
         // Assert 
-        serviceCollection.Should().Contain(service =>
+        Assert.Contains(serviceCollection, service =>
             service.ServiceType == typeof(IDummyRepository)
             && service.ImplementationType == typeof(DummyRepository)
             && service.Lifetime == ServiceLifetime.Scoped
         );
     }
 
-    [Test]
+    [Fact]
     public void AddExtendedRepositories_WhenCalled_ShouldRegisterExtendedRepositoriesFromGivenAssemblies()
     {
         // Arrange 
@@ -38,14 +37,14 @@ public sealed class IServiceCollectionExtensionsTests
         serviceCollection.AddExtendedRepositories([assembly]);
 
         // Assert 
-        serviceCollection.Should().Contain(service =>
+        Assert.Contains(serviceCollection, service =>
             service.ServiceType == typeof(IExtendedDummyRepository)
             && service.ImplementationType == typeof(ExtendedDummyRepository)
             && service.Lifetime == ServiceLifetime.Scoped
         );
     }
 
-    [Test]
+    [Fact]
     public void AddStores_WhenCalled_ShouldRegisterStoresFromGivenAssemblies()
     {
         // Arrange 
@@ -56,14 +55,14 @@ public sealed class IServiceCollectionExtensionsTests
         serviceCollection.AddStores([assembly]);
 
         // Assert 
-        serviceCollection.Should().Contain(service =>
+        Assert.Contains(serviceCollection, service =>
             service.ServiceType == typeof(IDummyStore)
             && service.ImplementationType == typeof(DummyStore)
             && service.Lifetime == ServiceLifetime.Scoped
         );
     }
 
-    [Test]
+    [Fact]
     public void AddExtendedStores_WhenCalled_ShouldRegisterExtendedStoresFromGivenAssemblies()
     {
         // Arrange 
@@ -74,7 +73,7 @@ public sealed class IServiceCollectionExtensionsTests
         serviceCollection.AddExtendedStores([assembly]);
 
         // Assert 
-        serviceCollection.Should().Contain(service =>
+        Assert.Contains(serviceCollection, service =>
             service.ServiceType == typeof(IExtendedDummyStore)
             && service.ImplementationType == typeof(ExtendedDummyStore)
             && service.Lifetime == ServiceLifetime.Scoped

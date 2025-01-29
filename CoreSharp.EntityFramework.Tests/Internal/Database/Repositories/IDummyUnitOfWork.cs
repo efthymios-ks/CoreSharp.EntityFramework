@@ -1,6 +1,6 @@
 ﻿using CoreSharp.EntityFramework.Repositories.Interfaces;
 
-namespace Tests.Repositories.Abstracts;
+namespace CoreSharp.EntityFramework.Tests.Internal.Database.Repositories;
 
 public interface IDummyUnitOfWork : IUnitOfWork
 {

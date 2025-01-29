@@ -4,15 +4,19 @@
 		<AssemblyName>CoreSharp.EntityFramework.Tests</AssemblyName>
 	</PropertyGroup>
 
-	<ItemGroup Label="Project references">
-		<ProjectReference Include="..\CoreSharp.EntityFramework\CoreSharp.EntityFramework.csproj" />
-	</ItemGroup>
-
 	<ItemGroup Label="Package references">
 		<PackageReference Include="CoreSharp" Version="7.5.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.6" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.6" />
-		<PackageReference Include="Testcontainers" Version="3.8.0" />
-		<PackageReference Include="Testcontainers.MsSql" Version="3.8.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0">
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+		<PackageReference Include="Testcontainers" Version="4.1.0" />
+		<PackageReference Include="Testcontainers.MsSql" Version="4.1.0" />
+	</ItemGroup>
+
+	<ItemGroup Label="Project references">
+		<ProjectReference Include="..\CoreSharp.EntityFramework\CoreSharp.EntityFramework.csproj" />
+		<ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
 	</ItemGroup>
 </Project>

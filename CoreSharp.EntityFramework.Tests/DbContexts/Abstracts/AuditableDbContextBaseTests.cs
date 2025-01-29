@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
-namespace Tests.DbContexts.Abstracts;
+namespace CoreSharp.EntityFramework.Tests.DbContexts.Abstracts;
 
-[TestFixture]
-public sealed class AuditableDbContextBaseTests : DummyDbContextTestsBase
+[Collection(nameof(SharedSqlServerCollection))]
+public sealed class AuditableDbContextBaseTests(SharedSqlServerContainer sqlContainer)
+    : SharedSqlServerTestsBase(sqlContainer)
 {
-    // Methods 
-    [Test]
+    [Fact]
     public async Task SaveChanges_WhenEntityAdded_ShouldSaveChangesAndUpdateDataChanges()
     {
         // Arrange 
@@ -22,13 +22,13 @@ public sealed class AuditableDbContextBaseTests : DummyDbContextTestsBase
             .DataChanges
             .OrderBy(entity => entity.DateCreatedUtc)
             .LastOrDefaultAsync();
-        change.Should().NotBeNull();
-        change!.TableName.Should().Be("Dummies");
-        change.Action.Should().Be(EntityState.Added.ToString());
-        change.Keys.Should().Be(JsonSerializer.Serialize(new { dummyToAdd.Id }));
+        Assert.NotNull(change);
+        Assert.Equal("Dummies", change!.TableName);
+        Assert.Equal(EntityState.Added.ToString(), change.Action);
+        Assert.Equal(JsonSerializer.Serialize(new { dummyToAdd.Id }), change.Keys);
     }
 
-    [Test]
+    [Fact]
     public async Task SaveChangesAsync_WhenEntityChanged_ShouldSaveChangesAndUpdateDataChangesAsync()
     {
         // Arrange 
@@ -43,13 +43,13 @@ public sealed class AuditableDbContextBaseTests : DummyDbContextTestsBase
             .DataChanges
             .OrderBy(entity => entity.DateCreatedUtc)
             .LastOrDefaultAsync();
-        change.Should().NotBeNull();
-        change!.TableName.Should().Be("Dummies");
-        change.Action.Should().Be(EntityState.Modified.ToString());
-        change.Keys.Should().Be(JsonSerializer.Serialize(new { dummyToUpdate.Id }));
+        Assert.NotNull(change);
+        Assert.Equal("Dummies", change!.TableName);
+        Assert.Equal(EntityState.Modified.ToString(), change.Action);
+        Assert.Equal(JsonSerializer.Serialize(new { dummyToUpdate.Id }), change.Keys);
     }
 
-    [Test]
+    [Fact]
     public async Task SaveChangesAsync_WhenUniqueEntityAdded_ShouldGenerateAndReturnPrimaryKey()
     {
         // Arrange 
@@ -60,10 +60,10 @@ public sealed class AuditableDbContextBaseTests : DummyDbContextTestsBase
         await DbContext.SaveChangesAsync();
 
         // Assert
-        dummy.Id.Should().NotBe(Guid.Empty);
+        Assert.NotEqual(Guid.Empty, dummy.Id);
     }
 
-    [Test]
+    [Fact]
     public async Task SaveChangesAsync_WhenAuditableEntityAdded_ShouldSetDateCreatedUtc()
     {
         // Arrange 
@@ -76,10 +76,10 @@ public sealed class AuditableDbContextBaseTests : DummyDbContextTestsBase
         var dateCreatedUtcAfterAdding = dummyToAdd.DateCreatedUtc;
 
         // Assert
-        dateCreatedUtcAfterAdding.Should().BeOnOrAfter(dateCreatedUtcBeforeAdding);
+        Assert.True(dateCreatedUtcAfterAdding >= dateCreatedUtcBeforeAdding);
     }
 
-    [Test]
+    [Fact]
     public async Task SaveChangesAsync_WhenAuditableEntityAdded_ShouldNotChangeDateModifiedUtc()
     {
         // Arrange 
@@ -92,10 +92,10 @@ public sealed class AuditableDbContextBaseTests : DummyDbContextTestsBase
         var dateModifiedUtcAfterAdding = dummyToAdd.DateModifiedUtc;
 
         // Assert
-        dateModifiedUtcAfterAdding.Should().Be(dateModifiedUtcBeforeAdding);
+        Assert.Equal(dateModifiedUtcBeforeAdding, dateModifiedUtcAfterAdding);
     }
 
-    [Test]
+    [Fact]
     public async Task SaveChangesAsync_WhenAuditableEntityUpdated_ShouldNotChangeDateCreatedUtc()
     {
         // Arrange 
@@ -109,10 +109,10 @@ public sealed class AuditableDbContextBaseTests : DummyDbContextTestsBase
         var dateCreatedUtcAfterUpdating = dummyToUpdate.DateCreatedUtc;
 
         // Assert 
-        dateCreatedUtcAfterUpdating.Should().Be(dateCreatedUtcBeforeUpdating);
+        Assert.Equal(dateCreatedUtcBeforeUpdating, dateCreatedUtcAfterUpdating);
     }
 
-    [Test]
+    [Fact]
     public async Task SaveChangesAsync_WhenAuditableEntityUpdated_ShouldSetDateModifiedUtc()
     {
         // Arrange 
@@ -126,7 +126,7 @@ public sealed class AuditableDbContextBaseTests : DummyDbContextTestsBase
         var dateModifiedUtcAfterUpdating = dummyToUpdate.DateModifiedUtc;
 
         // Assert
-        dateModifiedUtcAfterUpdating.Should().NotBeNull();
-        dateModifiedUtcAfterUpdating.Should().BeOnOrAfter(dateModifiedUtcBeforeUpdating);
+        Assert.NotNull(dateModifiedUtcAfterUpdating);
+        Assert.True(dateModifiedUtcAfterUpdating >= dateModifiedUtcBeforeUpdating);
     }
 }

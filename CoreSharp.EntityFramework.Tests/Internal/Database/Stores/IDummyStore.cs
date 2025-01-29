@@ -1,7 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Stores.Interfaces;
-using Tests.Internal.Database.Models;
+using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
 
-namespace Tests.Internal.Database.Stores;
+namespace CoreSharp.EntityFramework.Tests.Internal.Database.Stores;
 
 public interface IDummyStore : IStore<DummyEntity, Guid>
 {

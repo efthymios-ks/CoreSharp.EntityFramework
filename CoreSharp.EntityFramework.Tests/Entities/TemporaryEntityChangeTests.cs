@@ -1,22 +1,24 @@
 ﻿using CoreSharp.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Tests.Entities;
+namespace CoreSharp.EntityFramework.Tests.Entities;
 
-[TestFixture]
-public sealed class TemporaryEntityChangeTests : DummyDbContextTestsBase
+[Collection(nameof(SharedSqlServerCollection))]
+public sealed class TemporaryEntityChangeTests(SharedSqlServerContainer sqlContainer)
+    : SharedSqlServerTestsBase(sqlContainer)
 {
-    [Test]
+    [Fact]
     public void Constructor_WhenEntryIsNull_ShouldThrowArgumentNullException()
     {
         // Act
-        Action action = () => _ = new TemporaryEntityChange(entry: null!);
+        static void Action()
+            => _ = new TemporaryEntityChange(entry: null!);
 
         // Assert
-        action.Should().ThrowExactly<ArgumentNullException>();
+        Assert.Throws<ArgumentNullException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task Constructor_WhenCalled_ShouldInitializeProperties()
     {
         // Arrange
@@ -28,14 +30,14 @@ public sealed class TemporaryEntityChangeTests : DummyDbContextTestsBase
         var temporaryChange = new TemporaryEntityChange(change);
 
         // Assert 
-        temporaryChange.TableName.Should().Be("Dummies");
-        temporaryChange.Keys.Should().NotBeNull();
-        temporaryChange.PreviousState.Should().NotBeNull();
-        temporaryChange.NewState.Should().NotBeNull();
-        temporaryChange.TemporaryProperties.Should().NotBeNull();
+        Assert.Equal("Dummies", temporaryChange.TableName);
+        Assert.NotNull(temporaryChange.Keys);
+        Assert.NotNull(temporaryChange.PreviousState);
+        Assert.NotNull(temporaryChange.NewState);
+        Assert.NotNull(temporaryChange.TemporaryProperties);
     }
 
-    [Test]
+    [Fact]
     public async Task Constructor_WhenEntryAdded_ShouldSetActionToAdded()
     {
         // Arrange
@@ -47,10 +49,10 @@ public sealed class TemporaryEntityChangeTests : DummyDbContextTestsBase
         var temporaryChange = new TemporaryEntityChange(dummyEntry);
 
         // Assert 
-        temporaryChange.Action.Should().Be(EntityState.Added.ToString());
+        Assert.Equal(EntityState.Added.ToString(), temporaryChange.Action);
     }
 
-    [Test]
+    [Fact]
     public async Task Constructor_WhenEntryUpdated_ShouldSetActionToModified()
     {
         // Arrange
@@ -62,10 +64,10 @@ public sealed class TemporaryEntityChangeTests : DummyDbContextTestsBase
         var temporaryChange = new TemporaryEntityChange(dummyEntry);
 
         // Assert 
-        temporaryChange.Action.Should().Be(EntityState.Modified.ToString());
+        Assert.Equal(EntityState.Modified.ToString(), temporaryChange.Action);
     }
 
-    [Test]
+    [Fact]
     public async Task Constructor_WhenEntryRemoved_ShouldSetActionToDeleted()
     {
         // Arrange
@@ -77,10 +79,10 @@ public sealed class TemporaryEntityChangeTests : DummyDbContextTestsBase
         var temporaryChange = new TemporaryEntityChange(dummyEntry);
 
         // Assert 
-        temporaryChange.Action.Should().Be(EntityState.Deleted.ToString());
+        Assert.Equal(EntityState.Deleted.ToString(), temporaryChange.Action);
     }
 
-    [Test]
+    [Fact]
     public async Task Constructor_WhenEntryDetached_ShouldSetActionToDetached()
     {
         // Arrange
@@ -92,10 +94,10 @@ public sealed class TemporaryEntityChangeTests : DummyDbContextTestsBase
         var temporaryChange = new TemporaryEntityChange(dummyEntry);
 
         // Assert 
-        temporaryChange.Action.Should().Be(EntityState.Detached.ToString());
+        Assert.Equal(EntityState.Detached.ToString(), temporaryChange.Action);
     }
 
-    [Test]
+    [Fact]
     public async Task ToEntityChange_WhenDictionariesAreEmpty_ShouldSerializeEmptyProperties()
     {
         // Arrange
@@ -107,15 +109,15 @@ public sealed class TemporaryEntityChangeTests : DummyDbContextTestsBase
         var entityChange = temporaryChange.ToEntityChange();
 
         // Assert
-        entityChange.Should().NotBeNull();
-        entityChange.TableName.Should().Be("Dummies");
-        entityChange.Action.Should().Be(EntityState.Unchanged.ToString());
-        entityChange.Keys.Should().BeNullOrEmpty();
-        entityChange.PreviousState.Should().BeNullOrEmpty();
-        entityChange.NewState.Should().BeNullOrEmpty();
+        Assert.NotNull(entityChange);
+        Assert.Equal("Dummies", entityChange.TableName);
+        Assert.Equal(EntityState.Unchanged.ToString(), entityChange.Action);
+        Assert.Null(entityChange.Keys);
+        Assert.Null(entityChange.PreviousState);
+        Assert.Null(entityChange.NewState);
     }
 
-    [Test]
+    [Fact]
     public async Task ToEntityChange_WhenDictionariesHaveValues_ShouldSerializeProperties()
     {
         // Arrange
@@ -130,11 +132,11 @@ public sealed class TemporaryEntityChangeTests : DummyDbContextTestsBase
         var entityChange = temporaryChange.ToEntityChange();
 
         // Assert
-        entityChange.Should().NotBeNull();
-        entityChange.TableName.Should().Be("Dummies");
-        entityChange.Action.Should().Be(EntityState.Unchanged.ToString());
-        entityChange.Keys.Should().Be(/*lang=json,strict*/ "{\"Key1\":\"Value1\"}");
-        entityChange.PreviousState.Should().Be(/*lang=json,strict*/ "{\"Property1\":\"OldValue\"}");
-        entityChange.NewState.Should().Be(/*lang=json,strict*/ "{\"Property1\":\"NewValue\"}");
+        Assert.NotNull(entityChange);
+        Assert.Equal("Dummies", entityChange.TableName);
+        Assert.Equal(EntityState.Unchanged.ToString(), entityChange.Action);
+        Assert.Equal("{\"Key1\":\"Value1\"}", entityChange.Keys);
+        Assert.Equal("{\"Property1\":\"OldValue\"}", entityChange.PreviousState);
+        Assert.Equal("{\"Property1\":\"NewValue\"}", entityChange.NewState);
     }
 }

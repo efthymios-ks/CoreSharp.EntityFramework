@@ -1,12 +1,11 @@
 ﻿using CoreSharp.EntityFramework.Entities.Abstracts;
 using CoreSharp.EntityFramework.Entities.Interfaces;
 
-namespace Tests.Entities;
+namespace CoreSharp.EntityFramework.Tests.Entities;
 
-[TestFixture]
 public sealed class EntityBaseTests
 {
-    [Test]
+    [Fact]
     public void DateCreatedUtc_Setter_WhenDateTimeIsLocal_ShouldSetToUtc()
     {
         // Arrange
@@ -17,11 +16,11 @@ public sealed class EntityBaseTests
         entity.DateCreatedUtc = localDateTime;
 
         // Assert
-        entity.DateCreatedUtc.Kind.Should().Be(DateTimeKind.Utc);
-        entity.DateCreatedUtc.Should().Be(localDateTime.ToUniversalTime());
+        Assert.Equal(DateTimeKind.Utc, entity.DateCreatedUtc.Kind);
+        Assert.Equal(localDateTime.ToUniversalTime(), entity.DateCreatedUtc);
     }
 
-    [Test]
+    [Fact]
     public void DateCreatedUtc_Setter_WhenDateTimeIsUtc_ShouldSetToUtc()
     {
         // Arrange
@@ -32,11 +31,11 @@ public sealed class EntityBaseTests
         entity.DateCreatedUtc = utcDateTime;
 
         // Assert
-        entity.DateCreatedUtc.Kind.Should().Be(DateTimeKind.Utc);
-        entity.DateCreatedUtc.Should().Be(utcDateTime);
+        Assert.Equal(DateTimeKind.Utc, entity.DateCreatedUtc.Kind);
+        Assert.Equal(utcDateTime, entity.DateCreatedUtc);
     }
 
-    [Test]
+    [Fact]
     public void DateCreatedUtc_Setter_WhenDateTimeIsUnspecified_ShouldSetToUtc()
     {
         // Arrange
@@ -47,11 +46,11 @@ public sealed class EntityBaseTests
         entity.DateCreatedUtc = unspecifiedDateTime;
 
         // Assert
-        entity.DateCreatedUtc.Kind.Should().Be(DateTimeKind.Utc);
-        entity.DateCreatedUtc.Should().Be(unspecifiedDateTime.ToUniversalTime());
+        Assert.Equal(DateTimeKind.Utc, entity.DateCreatedUtc.Kind);
+        Assert.Equal(unspecifiedDateTime.ToUniversalTime(), entity.DateCreatedUtc);
     }
 
-    [Test]
+    [Fact]
     public void DateModifiedUtc_Setter_WhenNull_ShouldSetToNull()
     {
         // Arrange
@@ -64,10 +63,10 @@ public sealed class EntityBaseTests
         entity.DateModifiedUtc = null;
 
         // Assert
-        entity.DateModifiedUtc.Should().BeNull();
+        Assert.Null(entity.DateModifiedUtc);
     }
 
-    [Test]
+    [Fact]
     public void DateModifiedUtc_Setter_WhenDateTimeIsLocal_ShouldSetToUtc()
     {
         // Arrange
@@ -78,12 +77,12 @@ public sealed class EntityBaseTests
         entity.DateModifiedUtc = localDateTime;
 
         // Assert
-        entity.DateModifiedUtc.Should().NotBeNull();
-        entity.DateModifiedUtc.Value.Kind.Should().Be(DateTimeKind.Utc);
-        entity.DateModifiedUtc.Should().Be(localDateTime.ToUniversalTime());
+        Assert.NotNull(entity.DateModifiedUtc);
+        Assert.Equal(DateTimeKind.Utc, entity.DateModifiedUtc.Value.Kind);
+        Assert.Equal(localDateTime.ToUniversalTime(), entity.DateModifiedUtc);
     }
 
-    [Test]
+    [Fact]
     public void DateModifiedUtc_Setter_WhenDateTimeIsUtc_ShouldSetToUtc()
     {
         // Arrange
@@ -94,12 +93,12 @@ public sealed class EntityBaseTests
         entity.DateModifiedUtc = utcDateTime;
 
         // Assert
-        entity.DateModifiedUtc.Should().NotBeNull();
-        entity.DateModifiedUtc.Value.Kind.Should().Be(DateTimeKind.Utc);
-        entity.DateModifiedUtc.Should().Be(utcDateTime);
+        Assert.NotNull(entity.DateModifiedUtc);
+        Assert.Equal(DateTimeKind.Utc, entity.DateModifiedUtc.Value.Kind);
+        Assert.Equal(utcDateTime, entity.DateModifiedUtc);
     }
 
-    [Test]
+    [Fact]
     public void DateModifiedUtc_Setter_WhenDateTimeIsUnspecified_ShouldSetToUtc()
     {
         // Arrange
@@ -110,12 +109,12 @@ public sealed class EntityBaseTests
         entity.DateModifiedUtc = undefinedDateTime;
 
         // Assert
-        entity.DateModifiedUtc.Should().NotBeNull();
-        entity.DateModifiedUtc.Value.Kind.Should().Be(DateTimeKind.Utc);
-        entity.DateModifiedUtc.Should().Be(undefinedDateTime.ToUniversalTime());
+        Assert.NotNull(entity.DateModifiedUtc);
+        Assert.Equal(DateTimeKind.Utc, entity.DateModifiedUtc.Value.Kind);
+        Assert.Equal(undefinedDateTime.ToUniversalTime(), entity.DateModifiedUtc);
     }
 
-    [Test]
+    [Fact]
     public void DateCreatedUtc_WhenSerializedToJsonWithJsonNet_ShouldUseFormatO()
     {
         // Arrange
@@ -131,10 +130,10 @@ public sealed class EntityBaseTests
         var serializedDate = JsonNet.JsonConvert.SerializeObject(entity.DateCreatedUtc);
 
         // Assert 
-        serializedDate.Should().Be(expectedDate);
+        Assert.Equal(expectedDate, serializedDate);
     }
 
-    [Test]
+    [Fact]
     public void DateCreatedUtc_WhenSerializedToJsonUsingTextJson_ShouldUseFormatO()
     {
         // Arrange
@@ -150,10 +149,10 @@ public sealed class EntityBaseTests
         var serializedDate = TextJson.JsonSerializer.Serialize(entity.DateCreatedUtc);
 
         // Assert 
-        serializedDate.Should().Be(expectedDate);
+        Assert.Equal(expectedDate, serializedDate);
     }
 
-    [Test]
+    [Fact]
     public void DateModifiedUtc_WhenSerializedToJsonUsingJsonNet_ShouldUseFormatO()
     {
         // Arrange
@@ -169,10 +168,10 @@ public sealed class EntityBaseTests
         var serializedDate = JsonNet.JsonConvert.SerializeObject(entity.DateModifiedUtc);
 
         // Assert 
-        serializedDate.Should().Be(expectedDate);
+        Assert.Equal(expectedDate, serializedDate);
     }
 
-    [Test]
+    [Fact]
     public void DateModifiedUtc_WhenSerializedToJsonUsingTextJson_ShouldUseFormatO()
     {
         // Arrange
@@ -188,10 +187,10 @@ public sealed class EntityBaseTests
         var serializedDate = TextJson.JsonSerializer.Serialize(entity.DateModifiedUtc);
 
         // Assert 
-        serializedDate.Should().Be(expectedDate);
+        Assert.Equal(expectedDate, serializedDate);
     }
 
-    [Test]
+    [Fact]
     public void DateCreatedUtc_WhenDeserializedFromJsonUsingJsonNet_ShouldRetainDateTimeKindUtc()
     {
         // Arrange
@@ -207,11 +206,11 @@ public sealed class EntityBaseTests
         var entity = JsonNet.JsonConvert.DeserializeObject<DummyEntity>(entityAsJson)!;
 
         // Assert
-        entity.DateCreatedUtc.Should().Be(expectedDate);
-        entity.DateCreatedUtc.Kind.Should().Be(DateTimeKind.Utc);
+        Assert.Equal(expectedDate, entity.DateCreatedUtc);
+        Assert.Equal(DateTimeKind.Utc, entity.DateCreatedUtc.Kind);
     }
 
-    [Test]
+    [Fact]
     public void DateCreatedUtc_WhenDeserializedFromJsonUsingTextJson_ShouldRetainDateTimeKindUtc()
     {
         // Arrange
@@ -227,11 +226,11 @@ public sealed class EntityBaseTests
         var entity = TextJson.JsonSerializer.Deserialize<DummyEntity>(entityAsJson)!;
 
         // Assert
-        entity.DateCreatedUtc.Should().Be(expectedDate);
-        entity.DateCreatedUtc.Kind.Should().Be(DateTimeKind.Utc);
+        Assert.Equal(expectedDate, entity.DateCreatedUtc);
+        Assert.Equal(DateTimeKind.Utc, entity.DateCreatedUtc.Kind);
     }
 
-    [Test]
+    [Fact]
     public void DateModifiedUtc_WhenDeserializedFromJsonUsingJsonNet_RetainsDateTimeKindUtc()
     {
         // Arrange
@@ -247,12 +246,12 @@ public sealed class EntityBaseTests
         var entity = JsonNet.JsonConvert.DeserializeObject<DummyEntity>(entityAsJson)!;
 
         // Assert 
-        entity.DateModifiedUtc.Should().NotBeNull();
-        entity.DateModifiedUtc!.Value.Should().Be(expectedDate);
-        entity.DateModifiedUtc.Value.Kind.Should().Be(DateTimeKind.Utc);
+        Assert.NotNull(entity.DateModifiedUtc);
+        Assert.Equal(expectedDate, entity.DateModifiedUtc!.Value);
+        Assert.Equal(DateTimeKind.Utc, entity.DateModifiedUtc.Value.Kind);
     }
 
-    [Test]
+    [Fact]
     public void DateModifiedUtc_WhenDeserializedFromJsonUsingTextJson_ShouldRetainDateTimeKindUtc()
     {
         // Arrange
@@ -269,12 +268,12 @@ public sealed class EntityBaseTests
         var entity = TextJson.JsonSerializer.Deserialize<DummyEntity>(entityAsJson)!;
 
         // Assert 
-        entity.DateModifiedUtc.Should().NotBeNull();
-        entity.DateModifiedUtc!.Value.Should().Be(expectedDate);
-        entity.DateModifiedUtc.Value.Kind.Should().Be(DateTimeKind.Utc);
+        Assert.NotNull(entity.DateModifiedUtc);
+        Assert.Equal(expectedDate, entity.DateModifiedUtc!.Value);
+        Assert.Equal(DateTimeKind.Utc, entity.DateModifiedUtc.Value.Kind);
     }
 
-    [Test]
+    [Fact]
     public void ToString_WhenIdIsNull_ShouldReturnNull()
     {
         // Arrange
@@ -285,10 +284,10 @@ public sealed class EntityBaseTests
         var entityAsString = entity.ToString();
 
         // Assert
-        entityAsString.Should().BeNull();
+        Assert.Null(entityAsString);
     }
 
-    [Test]
+    [Fact]
     public void ToString_WhenNotOverriden_ShouldReturnId()
     {
         // Arrange
@@ -301,7 +300,7 @@ public sealed class EntityBaseTests
         var entityAsString = entity.ToString();
 
         // Assert
-        entityAsString.Should().Be(expected);
+        Assert.Equal(expected, entityAsString);
     }
 
     private sealed class DummyEntity : EntityBase

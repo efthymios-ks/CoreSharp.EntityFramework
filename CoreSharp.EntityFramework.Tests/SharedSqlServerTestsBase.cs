@@ -1,35 +1,35 @@
 ﻿using CoreSharp.EntityFramework.Extensions;
+using CoreSharp.EntityFramework.Tests.Internal.Database.DbContexts;
+using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Diagnostics.CodeAnalysis;
-using Tests.Internal.Database.DbContexts;
-using Tests.Internal.Database.Models;
 
-namespace Tests.Internal.Abstracts;
+namespace CoreSharp.EntityFramework.Tests;
 
-public abstract class DummyDbContextTestsBase
+public abstract class SharedSqlServerTestsBase(SharedSqlServerContainer sqlContainer) : IAsyncLifetime
 {
-    // Properties
-    [SuppressMessage(
-        "Structure", "NUnit1032:An IDisposable field/property should be Disposed in a TearDown method",
-        Justification = "<Pending>")]
-    internal static DummyDbContext DbContext
+    private readonly SharedSqlServerContainer _sqlContainer = sqlContainer;
+
+    protected DummyDbContext DbContext
     {
-        get => DummyMsSqlContainerSetup.DbContext;
-        set => DummyMsSqlContainerSetup.DbContext = value;
+        get => _sqlContainer.DbContext;
+        set => _sqlContainer.DbContext = value;
     }
 
-    // Methods 
-    [SetUp]
-    public async Task SetUpAsync()
+    public async Task InitializeAsync()
     {
+        /*
+            Try initialize on each test, ONLY IF NEEDED,
+            because DbContext is shared across all tests and some tests dispose it.
+        */
         if (DbContext is null || DbContext.IsDisposed)
         {
             var options = new DbContextOptionsBuilder<DummyDbContext>()
-              .UseSqlServer(DummyMsSqlContainerSetup.SqlConnectionString)
-              .EnableDetailedErrors()
-              .EnableSensitiveDataLogging()
-              .Options;
+                .UseSqlServer(_sqlContainer.SqlConnectionString)
+                .EnableDetailedErrors()
+                .EnableSensitiveDataLogging()
+                .Options;
+
             DbContext = new DummyDbContext(options);
             await DbContext.Database.EnsureCreatedAsync();
         }
@@ -37,8 +37,11 @@ public abstract class DummyDbContextTestsBase
         await DbContext.RollbackAsync();
         DbContext.ChangeTracker.DetectChanges();
         DbContext.ChangeTracker.Clear();
-        await DbContext.Database.ExecuteSqlAsync($"DELETE FROM Dummies");
+        await DbContext.Database.ExecuteSqlAsync($"TRUNCATE TABLE Dummies");
     }
+
+    public Task DisposeAsync()
+        => Task.CompletedTask;
 
     protected static DummyEntity GenerateDummy()
         => new()
@@ -52,10 +55,10 @@ public abstract class DummyDbContextTestsBase
             .Select(_ => GenerateDummy())
             .ToArray();
 
-    protected static async Task<DummyEntity> PreloadDummyAsync()
+    protected async Task<DummyEntity> PreloadDummyAsync()
         => (await PreloadDummiesAsync(1))[0];
 
-    protected static async Task<DummyEntity[]> PreloadDummiesAsync(int count)
+    protected async Task<DummyEntity[]> PreloadDummiesAsync(int count)
     {
         var dummies = GenerateDummies(count);
         await DbContext.Dummies.AddRangeAsync(dummies);
@@ -63,16 +66,16 @@ public abstract class DummyDbContextTestsBase
         return dummies;
     }
 
-    protected static EntityEntry<TEntity>? GetEntry<TEntity>(EntityState entityState)
+    protected EntityEntry<TEntity>? GetEntry<TEntity>(EntityState entityState)
         where TEntity : class
         => GetEntries<TEntity>(entityState)
             .FirstOrDefault();
 
-    protected static EntityEntry<DummyEntity>? GetDummyEntry(EntityState entityState)
+    protected EntityEntry<DummyEntity>? GetDummyEntry(EntityState entityState)
         => GetDummyEntries(entityState)
             .FirstOrDefault();
 
-    protected static EntityEntry<TEntity>[] GetEntries<TEntity>(EntityState entityState)
+    protected EntityEntry<TEntity>[] GetEntries<TEntity>(EntityState entityState)
         where TEntity : class
         => DbContext
             .ChangeTracker
@@ -80,6 +83,6 @@ public abstract class DummyDbContextTestsBase
             .Where(entry => entry.State == entityState)
             .ToArray();
 
-    protected static EntityEntry<DummyEntity>[] GetDummyEntries(EntityState entityState)
+    protected EntityEntry<DummyEntity>[] GetDummyEntries(EntityState entityState)
         => GetEntries<DummyEntity>(entityState);
 }

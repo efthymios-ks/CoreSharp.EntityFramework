@@ -1,24 +1,27 @@
 ﻿using CoreSharp.EntityFramework.Extensions;
+using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-using Tests.Internal.Database.Models;
 
-namespace Tests.Extensions;
+namespace CoreSharp.EntityFramework.Tests.Extensions;
 
-[TestFixture]
-public sealed class DbContextExtensionsTests : DummyDbContextTestsBase
+[Collection(nameof(SharedSqlServerCollection))]
+public sealed class DbContextExtensionsTests(SharedSqlServerContainer sqlContainer)
+    : SharedSqlServerTestsBase(sqlContainer)
 {
-    [Test]
+    [Fact]
     public async Task RollbackAsync_WhenHasNoChanges_ShouldNotThrowException()
     {
         // Act
-        Func<Task> action = () => DbContext.RollbackAsync();
+        async Task Action()
+            => await DbContext.RollbackAsync();
 
         // Assert
-        await action.Should().NotThrowAsync();
+        var exception = await Record.ExceptionAsync(Action);
+        Assert.Null(exception);
     }
 
-    [Test]
+    [Fact]
     public async Task RollbackAsync_WhenEntityAdded_ShouldRemoveAddedEntity()
     {
         // Arrange
@@ -32,14 +35,14 @@ public sealed class DbContextExtensionsTests : DummyDbContextTestsBase
         var addedDummyCountAfterRollback = GetAddedCount();
 
         // Assert
-        addedDummyCountAfterRollback.Should().Be(addedDummyCountBeforeAdding);
-        addedDummyCountAfterAdding.Should().Be(1);
+        Assert.Equal(addedDummyCountBeforeAdding, addedDummyCountAfterRollback);
+        Assert.Equal(1, addedDummyCountAfterAdding);
 
-        static int GetAddedCount()
+        int GetAddedCount()
             => GetEntryCount(EntityState.Added);
     }
 
-    [Test]
+    [Fact]
     public async Task RollbackAsync_WhenEntityModified_ShouldRestoreEntityToOriginalState()
     {
         // Arrange
@@ -56,18 +59,18 @@ public sealed class DbContextExtensionsTests : DummyDbContextTestsBase
         var dummyAfterRollbackAsJson = SerializeDummy(dummyAfterRollback!);
 
         // Assert 
-        modifiedDummyCountAfterRollback.Should().Be(modifiedDummyCountBeforeModify);
-        modifiedDummyCountAfterModify.Should().Be(1);
-        dummyAfterRollbackAsJson.Should().Be(dummyBeforeModificationAsJson);
+        Assert.Equal(modifiedDummyCountBeforeModify, modifiedDummyCountAfterRollback);
+        Assert.Equal(1, modifiedDummyCountAfterModify);
+        Assert.Equivalent(dummyBeforeModificationAsJson, dummyAfterRollbackAsJson);
 
         static string SerializeDummy(DummyEntity dummy)
             => JsonSerializer.Serialize(dummy);
 
-        static int GetModifiedCount()
+        int GetModifiedCount()
             => GetEntryCount(EntityState.Modified);
     }
 
-    [Test]
+    [Fact]
     public async Task RollbackAsync_WhenEntityDeletedAndCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
@@ -77,13 +80,14 @@ public sealed class DbContextExtensionsTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act  
-        Func<Task> action = () => DbContext.RollbackAsync(cancellationTokenSource.Token);
+        async Task Action()
+            => await DbContext.RollbackAsync(cancellationTokenSource.Token);
 
         // Assert 
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task RollbackAsync_WhenEntityDeleted_ShouldRestoreEntityToOriginalState()
     {
         // Arrange
@@ -97,14 +101,13 @@ public sealed class DbContextExtensionsTests : DummyDbContextTestsBase
         var deletedDummyCountAfterRollback = GetDeletedCount();
 
         // Assert
-        deletedDummyCountAfterRollback.Should().Be(deletedDummyCountBeforeDelete);
-        deletedDummyCountAfterDelete.Should().Be(1);
+        Assert.Equal(deletedDummyCountBeforeDelete, deletedDummyCountAfterRollback);
+        Assert.Equal(1, deletedDummyCountAfterDelete);
 
-        static int GetDeletedCount()
+        int GetDeletedCount()
             => GetEntryCount(EntityState.Deleted);
-
     }
 
-    private static int GetEntryCount(EntityState entityState)
+    private int GetEntryCount(EntityState entityState)
         => GetDummyEntries(entityState).Length;
 }

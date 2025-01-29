@@ -1,34 +1,39 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CoreSharp.EntityFramework.Tests.Internal.Database.Repositories;
+using Microsoft.EntityFrameworkCore;
 
-namespace Tests.Repositories.Abstracts;
+namespace CoreSharp.EntityFramework.Tests.Repositories.Abstracts;
 
-[TestFixture]
-public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
+[Collection(nameof(SharedSqlServerCollection))]
+public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlContainer)
+    : SharedSqlServerTestsBase(sqlContainer)
 {
-    [Test]
+    [Fact]
     public void Constructor_WhenDbContextIsNull_ShouldThrowArgumentNullException()
     {
         // Act
-        Action action = () => _ = new DummyRepository(dbContext: null!);
+        static void Action()
+            => _ = new DummyRepository(dbContext: null!);
 
         // Assert
-        action.Should().ThrowExactly<ArgumentNullException>();
+        Assert.Throws<ArgumentNullException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task GetAsync_WithKey_WhenNavigationIsNull_ShouldNotThrowArgumentNullException()
     {
         // Arrange
         var repository = new DummyRepository(DbContext);
 
         // Act
-        Func<Task> action = () => repository.GetAsync(Guid.NewGuid(), navigation: null);
+        Task Action()
+            => repository.GetAsync(Guid.NewGuid(), navigation: null);
 
         // Assert
-        await action.Should().NotThrowAsync();
+        var exception = await Record.ExceptionAsync(Action);
+        Assert.Null(exception);
     }
 
-    [Test]
+    [Fact]
     public async Task GetAsync_WithKey_WhenNavigationIsNotSet_ShouldReturnUnfilteredEntity()
     {
         // Arrange
@@ -39,10 +44,10 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         var dummy = await repository.GetAsync(existingDummyId, query => query);
 
         // Assert
-        dummy.Should().NotBeNull();
+        Assert.NotNull(dummy);
     }
 
-    [Test]
+    [Fact]
     public async Task GetAsync_WithKey_WhenNavigationIsSet_ShouldReturnFilteredEntity()
     {
         // Arrange
@@ -53,10 +58,10 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         var dummy = await repository.GetAsync(existingDummyId, query => query.Where(d => d.DateCreatedUtc == DateTime.MinValue));
 
         // Assert
-        dummy.Should().BeNull();
+        Assert.Null(dummy);
     }
 
-    [Test]
+    [Fact]
     public async Task GetAsync_WithKey_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
@@ -65,13 +70,14 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => repository.GetAsync(Guid.NewGuid(), cancellationToken: cancellationTokenSource.Token);
+        async Task Action()
+            => await repository.GetAsync(Guid.NewGuid(), cancellationToken: cancellationTokenSource.Token);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task GetAsync_WithKey_WhenKeyNotFound_ShouldReturnNull()
     {
         // Arrange
@@ -82,10 +88,10 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         var dummy = await repository.GetAsync(Guid.NewGuid());
 
         // Assert
-        dummy.Should().BeNull();
+        Assert.Null(dummy);
     }
 
-    [Test]
+    [Fact]
     public async Task GetAsync_WithKey_WhenKeyFound_ShouldReturnEntity()
     {
         // Arrange
@@ -96,23 +102,25 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         var readDummy = await repository.GetAsync(existingDummy.Id);
 
         // Assert
-        readDummy.Should().BeEquivalentTo(existingDummy);
+        Assert.Equivalent(existingDummy, readDummy);
     }
 
-    [Test]
+    [Fact]
     public async Task GetAsync_All_WhenNavigationIsNull_ShouldNotThrowArgumentNullException()
     {
         // Arrange
         var repository = new DummyRepository(DbContext);
 
         // Act
-        Func<Task> action = () => repository.GetAsync(navigation: null);
+        Task Action()
+            => repository.GetAsync(navigation: null);
 
         // Assert
-        await action.Should().NotThrowAsync();
+        var exception = await Record.ExceptionAsync(Action);
+        Assert.Null(exception);
     }
 
-    [Test]
+    [Fact]
     public async Task GetAsync_All_WhenNavigationIsNotSet_ShouldReturnUnfilteredEntities()
     {
         // Arrange
@@ -123,10 +131,10 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         var readDummies = await repository.GetAsync(navigation: query => query);
 
         // Assert
-        readDummies.Should().BeEquivalentTo(existingDummies);
+        Assert.Equivalent(existingDummies, readDummies);
     }
 
-    [Test]
+    [Fact]
     public async Task GetAsync_All_WhenNavigationIsSet_ShouldReturnFilteredEntity()
     {
         // Arrange
@@ -137,10 +145,10 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         var dummies = await repository.GetAsync(query => query.Where(d => d.DateCreatedUtc == DateTime.MinValue));
 
         // Assert
-        dummies.Should().BeEmpty();
+        Assert.Empty(dummies);
     }
 
-    [Test]
+    [Fact]
     public async Task GetAsync_All_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
@@ -149,26 +157,31 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => repository.GetAsync(cancellationToken: cancellationTokenSource.Token);
+        async Task Action()
+            => await repository.GetAsync(cancellationToken: cancellationTokenSource.Token);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task AddAsync_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
         var repository = new DummyRepository(DbContext);
 
         // Act
-        Func<Task> action = () => repository.AddAsync(entity: null!);
+        async Task Action()
+            => await repository.AddAsync(entity: null!);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+        await Assert.ThrowsAsync<ArgumentNullException>(Action);
     }
 
-    [Test(Description = "Should not throw, because token is not used internally by EF Core.")]
+    /// <summary>
+    /// Should not throw, because token is not used internally by EF Core.
+    /// </summary> 
+    [Fact]
     public async Task AddAsync_WhenCancellationIsRequested_ShouldNotThrowTaskCancelledException()
     {
         // Arrange
@@ -178,13 +191,15 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => repository.AddAsync(dummyToAdd, cancellationToken: cancellationTokenSource.Token);
+        Task Action()
+            => repository.AddAsync(dummyToAdd, cancellationToken: cancellationTokenSource.Token);
 
         // Assert
-        await action.Should().NotThrowAsync<TaskCanceledException>();
+        var exception = await Record.ExceptionAsync(Action);
+        Assert.Null(exception);
     }
 
-    [Test]
+    [Fact]
     public async Task AddAsync_WhenEntityExistsInDatabase_ShouldSetEntityAsAddedAndReturnIt()
     {
         // Arrange
@@ -196,12 +211,12 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         var dummyEntry = GetDummyEntry(EntityState.Added)!;
 
         // Assert
-        dummyReturned.Should().BeEquivalentTo(dummyToAdd);
-        dummyEntry.Should().NotBeNull();
-        dummyEntry.Entity.Should().BeEquivalentTo(dummyToAdd);
+        Assert.Equivalent(dummyToAdd, dummyReturned);
+        Assert.NotNull(dummyEntry);
+        Assert.Equivalent(dummyToAdd, dummyEntry.Entity);
     }
 
-    [Test]
+    [Fact]
     public async Task AddAsync_WhenEntityDoesNotExistInDatabase_ShouldSetEntityAsAddedAndReturnIt()
     {
         // Arrange
@@ -213,25 +228,29 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         var dummyEntry = GetDummyEntry(EntityState.Added)!;
 
         // Assert
-        dummyReturned.Should().BeEquivalentTo(dummyToAdd);
-        dummyEntry.Should().NotBeNull();
-        dummyEntry.Entity.Should().BeEquivalentTo(dummyToAdd);
+        Assert.Equivalent(dummyToAdd, dummyReturned);
+        Assert.NotNull(dummyEntry);
+        Assert.Equivalent(dummyToAdd, dummyEntry.Entity);
     }
 
-    [Test]
+    [Fact]
     public async Task UpdateAsync_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
         var repository = new DummyRepository(DbContext);
 
         // Act
-        Func<Task> action = () => repository.UpdateAsync(entity: null!);
+        async Task Action()
+            => await repository.UpdateAsync(entity: null!);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+        await Assert.ThrowsAsync<ArgumentNullException>(Action);
     }
 
-    [Test(Description = "Should not throw, because token is not used internally by EF Core.")]
+    /// <summary>
+    /// Should not throw, because token is not used internally by EF Core.
+    /// </summary> 
+    [Fact]
     public async Task UpdateAsync_WhenCancellationIsRequested_ShouldNotThrowTaskCancelledException()
     {
         // Arrange
@@ -241,13 +260,15 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => repository.UpdateAsync(existingDummy, cancellationToken: cancellationTokenSource.Token);
+        Task Action()
+            => repository.UpdateAsync(existingDummy, cancellationToken: cancellationTokenSource.Token);
 
         // Assert
-        await action.Should().NotThrowAsync<TaskCanceledException>();
+        var exception = await Record.ExceptionAsync(Action);
+        Assert.Null(exception);
     }
 
-    [Test]
+    [Fact]
     public async Task UpdateAsync_WhenEntityExistsInDatabase_ShouldSetEntityAsModifiedAndReturnIt()
     {
         // Arrange
@@ -260,12 +281,12 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         var dummyEntry = GetDummyEntry(EntityState.Modified)!;
 
         // Assert
-        dummyReturned.Should().BeEquivalentTo(dumymToUpdate);
-        dummyEntry.Should().NotBeNull();
-        dummyEntry.Entity.Should().BeEquivalentTo(dumymToUpdate);
+        Assert.Equivalent(dumymToUpdate, dummyReturned);
+        Assert.NotNull(dummyEntry);
+        Assert.Equivalent(dumymToUpdate, dummyEntry.Entity);
     }
 
-    [Test]
+    [Fact]
     public async Task UpdateAsync_WhenEntityDoesNotExistInDatabase_ShouldSetEntityAsAddedAndReturnIt()
     {
         // Arrange
@@ -278,25 +299,29 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         var dummyEntry = GetDummyEntry(EntityState.Added)!;
 
         // Assert
-        dummyReturned.Should().BeEquivalentTo(dummyToUpdate);
-        dummyEntry.Should().NotBeNull();
-        dummyEntry.Entity.Should().BeEquivalentTo(dummyToUpdate);
+        Assert.Equivalent(dummyToUpdate, dummyReturned);
+        Assert.NotNull(dummyEntry);
+        Assert.Equivalent(dummyToUpdate, dummyEntry.Entity);
     }
 
-    [Test]
+    [Fact]
     public async Task RemoveAsync_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
         var repository = new DummyRepository(DbContext);
 
         // Act
-        Func<Task> action = () => repository.RemoveAsync(entity: null!);
+        async Task Action()
+            => await repository.RemoveAsync(entity: null!);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+        await Assert.ThrowsAsync<ArgumentNullException>(Action);
     }
 
-    [Test(Description = "Should not throw, because token is not used internally by EF Core.")]
+    /// <summary>
+    /// Should not throw, because token is not used internally by EF Core
+    /// </summary> 
+    [Fact]
     public async Task RemoveAsync_WhenCancellationIsRequested_ShouldNotThrowTaskCancelledException()
     {
         // Arrange
@@ -306,13 +331,15 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => repository.RemoveAsync(dummyToRemove, cancellationToken: cancellationTokenSource.Token);
+        Task Action()
+            => repository.RemoveAsync(dummyToRemove, cancellationToken: cancellationTokenSource.Token);
 
         // Assert
-        await action.Should().NotThrowAsync<TaskCanceledException>();
+        var exception = await Record.ExceptionAsync(Action);
+        Assert.Null(exception);
     }
 
-    [Test]
+    [Fact]
     public async Task RemoveAsync_WhenEntityExistsInDatabase_ShouldSetEntityAsDeleted()
     {
         // Arrange
@@ -324,11 +351,11 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         var dummyEntry = GetDummyEntry(EntityState.Deleted)!;
 
         // Assert 
-        dummyEntry.Should().NotBeNull();
-        dummyEntry.Entity.Should().BeEquivalentTo(dummyToRemove);
+        Assert.NotNull(dummyEntry);
+        Assert.Equivalent(dummyToRemove, dummyEntry.Entity);
     }
 
-    [Test]
+    [Fact]
     public async Task RemoveAsync_WhenEntityDoesNotExistInDatabase_ShouldSetEntityAsDeleted()
     {
         // Arrange
@@ -340,7 +367,7 @@ public sealed partial class RepositoryBaseTests : DummyDbContextTestsBase
         var dummyEntry = GetDummyEntry(EntityState.Deleted)!;
 
         // Assert 
-        dummyEntry.Should().NotBeNull();
-        dummyEntry.Entity.Should().BeEquivalentTo(dummyToRemove);
+        Assert.NotNull(dummyEntry);
+        Assert.Equivalent(dummyToRemove, dummyEntry.Entity);
     }
 }

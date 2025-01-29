@@ -1,6 +1,6 @@
 ﻿using CoreSharp.EntityFramework.Entities.Abstracts;
 
-namespace Tests.Internal.Database.Models;
+namespace CoreSharp.EntityFramework.Tests.Internal.Database.Models;
 
 public class DummyEntity : EntityBase<Guid>
 {

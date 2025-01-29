@@ -1,7 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Repositories.Interfaces;
-using Tests.Internal.Database.Models;
+using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
 
-namespace Tests.Repositories.Abstracts;
+namespace CoreSharp.EntityFramework.Tests.Internal.Database.Repositories;
 
 public interface IDummyRepository : IRepository<DummyEntity, Guid>
 {

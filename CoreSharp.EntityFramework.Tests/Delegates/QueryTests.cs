@@ -1,85 +1,82 @@
-﻿using CoreSharp.EntityFramework.Delegates;
+﻿namespace CoreSharp.EntityFramework.Tests.Delegates;
 
-namespace Tests.Delegates;
-
-[TestFixture]
 public sealed class QueryDelegateTests
 {
-    [Test]
+    [Fact]
     public void FilterQuery_WheQueryFilters_ShouldReturnedFilteredItems()
     {
         // Arrange
         var query = new[] { 1, 2, 3, 4, 5 }.AsQueryable();
-        Query<int> filter = query => query.Where(number => number % 2 == 0);
+        static IQueryable<int> Filter(IQueryable<int> query) => query.Where(number => number % 2 == 0);
 
         // Act
-        var filteredQuery = filter(query);
+        var filteredQuery = Filter(query);
 
         // Assert
-        filteredQuery.Should().NotBeNull();
-        filteredQuery.Should().BeAssignableTo<IQueryable<int>>();
-        filteredQuery.Should().ContainInOrder(2, 4);
+        Assert.NotNull(filteredQuery);
+        Assert.IsAssignableFrom<IQueryable<int>>(filteredQuery);
+        Assert.Equal([2, 4], filteredQuery);
     }
 
-    [Test]
+    [Fact]
     public void SortQuery_WhenQuerySorts_ShouldReturnSortedItems()
     {
         // Arrange
         var query = new[] { 3, 1, 2 }.AsQueryable();
-        Query<int> sorter = query => query.OrderBy(number => number);
+        static IQueryable<int> Sorter(IQueryable<int> query) => query.OrderBy(number => number);
 
         // Act
-        var sortedQuery = sorter(query);
+        var sortedQuery = Sorter(query);
 
         // Assert
-        sortedQuery.Should().NotBeNull();
-        sortedQuery.Should().BeAssignableTo<IQueryable<int>>();
-        sortedQuery.Should().ContainInOrder(1, 2, 3);
+        Assert.NotNull(sortedQuery);
+        Assert.IsAssignableFrom<IQueryable<int>>(sortedQuery);
+        Assert.Equal([1, 2, 3], sortedQuery);
     }
 
-    [Test]
+    [Fact]
     public void IdentityQuery_WhenQueryIsEmpty_ShouldReturnUnchangedItems()
     {
         // Arrange
         var query = new[] { 1, 2, 3 }.AsQueryable();
-        Query<int> noOp = query => query;
+        static IQueryable<int> NoOp(IQueryable<int> query) => query;
 
         // Act
-        var result = noOp(query);
+        var result = NoOp(query);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().BeAssignableTo<IQueryable<int>>();
-        result.Should().ContainInOrder(1, 2, 3);
+        Assert.NotNull(result);
+        Assert.IsAssignableFrom<IQueryable<int>>(result);
+        Assert.Equal([1, 2, 3], result);
     }
 
-    [Test]
+    [Fact]
     public void FilterQuery_WhenQueryMatchesNothing_ShouldReturnNoItems()
     {
         // Arrange
         var query = new[] { 1, 3, 5 }.AsQueryable();
-        Query<int> filter = query => query.Where(x => x % 2 == 0);
+        static IQueryable<int> Filter(IQueryable<int> query) => query.Where(x => x % 2 == 0);
 
         // Act
-        var result = filter(query);
+        var result = Filter(query);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().BeEmpty();
+        Assert.NotNull(result);
+        Assert.Empty(result);
     }
 
-    [Test]
+    [Fact]
     public void FilterQuery_WhenSourceIsEmpty_ShouldReturnNoData()
     {
         // Arrange
         var query = Enumerable.Empty<int>().AsQueryable();
-        Query<int> filter = query => query.Where(x => x % 2 == 0);
+        static IQueryable<int> Filter(IQueryable<int> query) => query.Where(x => x % 2 == 0);
 
         // Act
-        var result = filter(query);
+        var result = Filter(query);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().BeEmpty();
+        Assert.NotNull(result);
+        Assert.Empty(result);
     }
 }

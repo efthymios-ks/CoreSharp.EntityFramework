@@ -1,11 +1,10 @@
 ﻿using CoreSharp.EntityFramework.Entities;
 
-namespace Tests.Entities;
+namespace CoreSharp.EntityFramework.Tests.Entities;
 
-[TestFixture]
 public sealed class EntityChangeTests
 {
-    [Test]
+    [Fact]
     public void DateCreatedUtc_Setter_WhenDateTimeIsLocal_ShouldSetToUtc()
     {
         // Arrange
@@ -16,11 +15,11 @@ public sealed class EntityChangeTests
         entity.DateCreatedUtc = localDateTime;
 
         // Assert
-        entity.DateCreatedUtc.Kind.Should().Be(DateTimeKind.Utc);
-        entity.DateCreatedUtc.Should().Be(localDateTime.ToUniversalTime());
+        Assert.Equal(DateTimeKind.Utc, entity.DateCreatedUtc.Kind);
+        Assert.Equal(localDateTime.ToUniversalTime(), entity.DateCreatedUtc);
     }
 
-    [Test]
+    [Fact]
     public void DateCreatedUtc_Setter_WhenDateTimeIsUtc_ShouldSetToUtc()
     {
         // Arrange
@@ -31,11 +30,11 @@ public sealed class EntityChangeTests
         entity.DateCreatedUtc = utcDateTime;
 
         // Assert
-        entity.DateCreatedUtc.Kind.Should().Be(DateTimeKind.Utc);
-        entity.DateCreatedUtc.Should().Be(utcDateTime);
+        Assert.Equal(DateTimeKind.Utc, entity.DateCreatedUtc.Kind);
+        Assert.Equal(utcDateTime, entity.DateCreatedUtc);
     }
 
-    [Test]
+    [Fact]
     public void DateCreatedUtc_Setter_WhenDateTimeisUnspecified_ShouldSetToUtc()
     {
         // Arrange
@@ -46,7 +45,7 @@ public sealed class EntityChangeTests
         entity.DateCreatedUtc = undefinedDateTime;
 
         // Assert
-        entity.DateCreatedUtc.Kind.Should().Be(DateTimeKind.Utc);
-        entity.DateCreatedUtc.Should().Be(undefinedDateTime.ToUniversalTime());
+        Assert.Equal(DateTimeKind.Utc, entity.DateCreatedUtc.Kind);
+        Assert.Equal(undefinedDateTime.ToUniversalTime(), entity.DateCreatedUtc);
     }
 }

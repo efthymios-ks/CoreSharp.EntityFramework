@@ -1,13 +1,12 @@
 ﻿using CoreSharp.EntityFramework.Entities.Abstracts;
 using CoreSharp.EntityFramework.Entities.Interfaces;
 
-namespace Tests.Entities;
+namespace CoreSharp.EntityFramework.Tests.Entities;
 
-[TestFixture]
 public sealed class EntityBase_1_Tests
 {
     // Methods 
-    [Test]
+    [Fact]
     public void Id_Set_ShouldSetBaseId()
     {
         // Arrange
@@ -20,10 +19,10 @@ public sealed class EntityBase_1_Tests
         var baseId = ((IUniqueEntity)entity).Id;
 
         // Assert
-        baseId.Should().Be(entity.Id);
+        Assert.Equal(entity.Id, baseId);
     }
 
-    [Test]
+    [Fact]
     public void Id_Get_ShouldGetBaseId()
     {
         // Arrange
@@ -35,24 +34,24 @@ public sealed class EntityBase_1_Tests
         var id = entity.Id;
 
         // Assert
-        id.Should().Be(baseId);
+        Assert.Equal(baseId, id);
     }
 
-    [Test]
+    [Fact]
     public void ToString_WhenIdNotSet_ShouldReturnDefaultForType()
     {
         // Arrange  
         var entity = new DummyEntity();
-        var expected = Guid.Empty.ToString();
+        const string expected = "00000000-0000-0000-0000-000000000000";
 
         // Act
         var entityAsString = entity.ToString();
 
         // Assert
-        entityAsString.Should().Be(expected);
+        Assert.Equal(expected, entityAsString);
     }
 
-    [Test]
+    [Fact]
     public void ToString_WhenNotOverriden_ShouldReturnId()
     {
         // Arrange 
@@ -66,7 +65,7 @@ public sealed class EntityBase_1_Tests
         var entityAsString = entity.ToString();
 
         // Assert
-        entityAsString.Should().Be(expected);
+        Assert.Equal(expected, entityAsString);
     }
 
     private sealed class DummyEntity : EntityBase<Guid>

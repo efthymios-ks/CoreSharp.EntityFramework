@@ -1,8 +1,8 @@
 ﻿using CoreSharp.EntityFramework.DbContexts.Abstracts;
+using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
 using Microsoft.EntityFrameworkCore;
-using Tests.Internal.Database.Models;
 
-namespace Tests.Internal.Database.DbContexts;
+namespace CoreSharp.EntityFramework.Tests.Internal.Database.DbContexts;
 
 public sealed class DummyDbContext(DbContextOptions<DummyDbContext> options) : AuditDbContextBase(options)
 {

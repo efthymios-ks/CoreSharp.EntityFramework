@@ -59,6 +59,7 @@ public abstract class AuditDbContextBase(DbContextOptions options) : DbContext(o
         }
 
         IsDisposed = true;
+        GC.SuppressFinalize(this);
         return base.DisposeAsync();
     }
 

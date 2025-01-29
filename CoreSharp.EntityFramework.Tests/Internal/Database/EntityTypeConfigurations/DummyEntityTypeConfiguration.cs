@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Tests.Internal.Database.Models;
 
-namespace Domain.Database.EntityTypeConfigurations;
+namespace CoreSharp.EntityFramework.Tests.Internal.Database.EntityTypeConfigurations;
 
 internal sealed class DummyEntityTypeConfiguration : IEntityTypeConfiguration<DummyEntity>
 {

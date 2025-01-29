@@ -1,4 +1,4 @@
-﻿namespace Tests.Internal.Database.Models;
+﻿namespace CoreSharp.EntityFramework.Tests.Internal.Database.Models;
 
 public enum DummyEnumeration
 {

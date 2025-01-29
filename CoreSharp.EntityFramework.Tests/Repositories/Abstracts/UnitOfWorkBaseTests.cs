@@ -1,24 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CoreSharp.EntityFramework.Tests.Internal.Database.Repositories;
+using Microsoft.EntityFrameworkCore;
 
-namespace Tests.Repositories.Abstracts;
+namespace CoreSharp.EntityFramework.Tests.Repositories.Abstracts;
 
-[TestFixture]
-public sealed class UnitOfWorkBaseTests : DummyDbContextTestsBase
+[Collection(nameof(SharedSqlServerCollection))]
+public sealed class UnitOfWorkBaseTests(SharedSqlServerContainer sqlContainer)
+    : SharedSqlServerTestsBase(sqlContainer)
 {
-    [Test]
+    [Fact]
     public void Constructor_WhenDbContextIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange 
         DbContext dbContext = null!;
 
         // Act
-        Action action = () => _ = new DummyUnitOfWork(dbContext);
+        void Action()
+            => _ = new DummyUnitOfWork(dbContext);
 
         // Assert
-        action.Should().ThrowExactly<ArgumentNullException>();
+        Assert.Throws<ArgumentNullException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task CommitAsync_WhenCalled_ShouldSaveChangesAndReturnChangeCount()
     {
         // Arrange 
@@ -31,11 +34,11 @@ public sealed class UnitOfWorkBaseTests : DummyDbContextTestsBase
         var dummiesRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert  
-        changeCount.Should().Be(1);
-        dummiesRead.Should().BeEquivalentTo(dummiesToAdd);
+        Assert.Equal(1, changeCount);
+        Assert.Equivalent(dummiesToAdd, dummiesRead);
     }
 
-    [Test]
+    [Fact]
     public async Task CommitAsync_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
@@ -46,13 +49,14 @@ public sealed class UnitOfWorkBaseTests : DummyDbContextTestsBase
 
         // Act
         await DbContext.Dummies.AddAsync(dummyToAdd);
-        Func<Task> action = () => unitOfWork.CommitAsync(cancellationTokenSource.Token);
+        Task Action()
+            => unitOfWork.CommitAsync(cancellationTokenSource.Token);
 
         // Assert  
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task RollbackAsync_WhenCalled_ShouldRollbackPendingChanges()
     {
         // Arrange 
@@ -65,10 +69,10 @@ public sealed class UnitOfWorkBaseTests : DummyDbContextTestsBase
         var dummiesRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert 
-        dummiesRead.Should().BeEmpty();
+        Assert.Empty(dummiesRead);
     }
 
-    [Test]
+    [Fact]
     public async Task RollbackAsync_WhenEntityDeletedAndCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
@@ -79,13 +83,14 @@ public sealed class UnitOfWorkBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act 
-        Func<Task> action = () => unitOfWork.RollbackAsync(cancellationTokenSource.Token);
+        Task Action()
+            => unitOfWork.RollbackAsync(cancellationTokenSource.Token);
 
         // Assert  
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task DisposeAsync_WhenCalled_ShouldCallDisposeAsyncOnContext()
     {
         // Arrange 
@@ -93,13 +98,14 @@ public sealed class UnitOfWorkBaseTests : DummyDbContextTestsBase
 
         // Act
         await unitOfWork.DisposeAsync();
-        Func<Task> action = () => unitOfWork.CommitAsync();
+        Task Action()
+            => unitOfWork.CommitAsync();
 
         // Assert
-        await action.Should().ThrowExactlyAsync<ObjectDisposedException>();
+        await Assert.ThrowsAsync<ObjectDisposedException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task DisposeAsync_WhenAlreadyDisposed_ShouldNotThrow()
     {
         // Arrange 
@@ -107,9 +113,11 @@ public sealed class UnitOfWorkBaseTests : DummyDbContextTestsBase
         await unitOfWork.DisposeAsync();
 
         // Act
-        Func<Task> action = () => unitOfWork.DisposeAsync().AsTask();
+        Task Action()
+            => unitOfWork.DisposeAsync().AsTask();
 
         // Assert
-        await action.Should().NotThrowAsync();
+        var exception = await Record.ExceptionAsync(Action);
+        Assert.Null(exception);
     }
 }

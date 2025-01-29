@@ -1,4 +1,5 @@
 <Project>
+
 	<PropertyGroup Label="Package">
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -6,36 +7,10 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
-	<!-- Test projects-->
 	<ItemGroup Label="Access internals for test projects">
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
 			<_Parameter1>$(AssemblyName).Tests</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>
 
-	<ItemGroup Label="Package references for test projects"
-			Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectName), '\.Tests$'))">
-		<PackageReference Include="AutoFixture" Version="4.18.1" />
-		<PackageReference Include="AutoFixture.AutoNSubstitute" Version="4.18.1" />
-		<PackageReference Include="AutoFixture.NUnit3" Version="4.18.1" />
-		<PackageReference Include="coverlet.collector" Version="6.0.2">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="FluentAssertions" Version="6.12.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-		<PackageReference Include="NSubstitute" Version="5.1.0" />
-		<PackageReference Include="NUnit" Version="3.14.0" />
-		<PackageReference Include="NUnit.Analyzers" Version="4.2.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-	</ItemGroup>
-
-	<PropertyGroup Label="Warning severities for test projects"
-				   Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectName), '\.Tests$'))">
-		<IsPackable>false</IsPackable>
-		<NoWarn>CA1001;CA1707;CA2201;CS9113;CS0649;IDE0130;S3459;IDE0039;IDE0052;S2376;S2094</NoWarn>
-	</PropertyGroup>
 </Project>

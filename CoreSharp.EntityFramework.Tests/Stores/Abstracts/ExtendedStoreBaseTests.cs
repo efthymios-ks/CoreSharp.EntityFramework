@@ -1,24 +1,26 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Tests.Internal.Database.Models;
-using Tests.Internal.Database.Stores;
+﻿using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
+using CoreSharp.EntityFramework.Tests.Internal.Database.Stores;
+using Microsoft.EntityFrameworkCore;
 
-namespace Tests.Repositories.Abstracts;
+namespace CoreSharp.EntityFramework.Tests.Stores.Abstracts;
 
-[TestFixture]
-public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
+[Collection(nameof(SharedSqlServerCollection))]
+public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer)
+    : SharedSqlServerTestsBase(sqlContainer)
 {
-    [Test]
+    [Fact]
     public void Constructor_WhenDbContextIsNull_ShouldThrowArgumentNullException()
     {
         // Act
-        Action action = () => _ = new ExtendedDummyStore(dbContext: null!);
+        static void Action()
+            => _ = new ExtendedDummyStore(dbContext: null!);
 
         // Assert
-        action.Should().ThrowExactly<ArgumentNullException>();
+        Assert.Throws<ArgumentNullException>(Action);
     }
 
-    // AddManyAsync
-    [Test]
+    // AddAsync
+    [Fact]
     public async Task AddAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -26,13 +28,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         IEnumerable<DummyEntity> dummiesToAdd = null!;
 
         // Act
-        Func<Task> action = () => store.AddAsync(dummiesToAdd);
+        Task Action()
+            => store.AddAsync(dummiesToAdd);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+        await Assert.ThrowsAsync<ArgumentNullException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task AddAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
@@ -42,13 +45,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => store.AddAsync(dummiesToAdd, cancellationTokenSource.Token);
+        Task Action()
+            => store.AddAsync(dummiesToAdd, cancellationTokenSource.Token);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task AddAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldAddEntitiesToDatabaseAndReturnThem()
     {
         // Arrange 
@@ -60,11 +64,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummiesRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert
-        dummiesReturned.Should().BeEquivalentTo(dummiesToAdd);
-        dummiesRead.Should().BeEquivalentTo(dummiesToAdd);
+        Assert.Equivalent(dummiesToAdd, dummiesReturned);
+        Assert.Equivalent(dummiesToAdd, dummiesRead);
     }
 
-    [Test]
+    [Fact]
     public async Task AddAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldThrowDbUpdateException()
     {
         // Arrange
@@ -72,14 +76,15 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummiesToAdd = await PreloadDummiesAsync(1);
 
         // Act
-        Func<Task> action = () => store.AddAsync(dummiesToAdd);
+        Task Action()
+            => store.AddAsync(dummiesToAdd);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<DbUpdateException>();
+        await Assert.ThrowsAsync<DbUpdateException>(Action);
     }
 
     // UpdateAsync
-    [Test]
+    [Fact]
     public async Task UpdateAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -87,13 +92,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         IEnumerable<DummyEntity> dummiesToUpdate = null!;
 
         // Act
-        Func<Task> action = () => store.UpdateAsync(dummiesToUpdate);
+        Task Action()
+            => store.UpdateAsync(dummiesToUpdate);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+        await Assert.ThrowsAsync<ArgumentNullException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task UpdateAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
@@ -108,13 +114,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => store.UpdateAsync(dummiesToUpdate, cancellationTokenSource.Token);
+        Task Action()
+            => store.UpdateAsync(dummiesToUpdate, cancellationTokenSource.Token);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task UpdateAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldModifyEntitiesInDatabaseAndReturnThem()
     {
         // Arrange 
@@ -130,14 +137,13 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummyRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert
-        dummiesReturned.Should().BeEquivalentTo(dummiesToUpdate);
-        dummyRead.Should().BeEquivalentTo(dummiesToUpdate);
+        Assert.Equivalent(dummiesToUpdate, dummiesReturned);
+        Assert.Equivalent(dummiesToUpdate, dummyRead);
     }
 
-    [Test]
+    [Fact]
     public async Task UpdateAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldModifyEntitiesInDatabaseAndReturnThem()
     {
-
         // Arrange 
         var store = new ExtendedDummyStore(DbContext);
         var dummiesToUpdate = await PreloadDummiesAsync(1);
@@ -151,12 +157,12 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummyRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert
-        dummiesReturned.Should().BeEquivalentTo(dummiesToUpdate);
-        dummyRead.Should().BeEquivalentTo(dummiesToUpdate);
+        Assert.Equivalent(dummiesToUpdate, dummiesReturned);
+        Assert.Equivalent(dummiesToUpdate, dummyRead);
     }
 
     // RemoveAsync
-    [Test]
+    [Fact]
     public async Task RemoveAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -164,13 +170,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         IEnumerable<DummyEntity> dummiesToRemove = null!;
 
         // Act
-        Func<Task> action = () => store.RemoveAsync(dummiesToRemove);
+        Task Action()
+            => store.RemoveAsync(dummiesToRemove);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+        await Assert.ThrowsAsync<ArgumentNullException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task RemoveAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
@@ -180,13 +187,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => store.RemoveAsync(dummiesToRemove, cancellationTokenSource.Token);
+        Task Action()
+            => store.RemoveAsync(dummiesToRemove, cancellationTokenSource.Token);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task RemoveAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldThrowDbUpdateConcurrencyException()
     {
         // Arrange 
@@ -194,13 +202,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummiesToRemove = GenerateDummies(1);
 
         // Act
-        Func<Task> action = () => store.RemoveAsync(dummiesToRemove);
+        Task Action()
+            => store.RemoveAsync(dummiesToRemove);
 
         // Assert  
-        await action.Should().ThrowExactlyAsync<DbUpdateConcurrencyException>();
+        await Assert.ThrowsAsync<DbUpdateConcurrencyException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task RemoveAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldRemoveThemFromDatabase()
     {
         // Arrange 
@@ -212,11 +221,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummyRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert 
-        dummyRead.Should().BeEmpty();
+        Assert.Empty(dummyRead);
     }
 
     // RemoveByKeyAsync
-    [Test]
+    [Fact]
     public async Task RemoveAsync_ByKey_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
@@ -226,13 +235,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => store.RemoveAsync(existingDummy.Id, cancellationTokenSource.Token);
+        Task Action()
+            => store.RemoveAsync(existingDummy.Id, cancellationTokenSource.Token);
 
         // Assert 
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task RemoveAsync_ByKey_WhenKeyExists_ShouldRemoveEntityFromDatabase()
     {
         // Arrange 
@@ -244,10 +254,10 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummyEntry = await DbContext.Dummies.FindAsync(dummyToRemove.Id);
 
         // Assert 
-        dummyEntry.Should().BeNull();
+        Assert.Null(dummyEntry);
     }
 
-    [Test]
+    [Fact]
     public async Task RemoveAsync_ByKey_WhenKeyNotFound_ShouldDoNothing()
     {
         // Arrange
@@ -259,11 +269,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummyRead = await DbContext.Dummies.FindAsync(dummyIdToRemove);
 
         // Assert 
-        dummyRead.Should().BeNull();
+        Assert.Null(dummyRead);
     }
 
     // ExistsAsync_WithKey
-    [Test]
+    [Fact]
     public async Task ExistsAsync_WithKey_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
@@ -272,13 +282,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => store.ExistsAsync(key: Guid.NewGuid(), cancellationTokenSource.Token);
+        Task Action()
+            => store.ExistsAsync(key: Guid.NewGuid(), cancellationTokenSource.Token);
 
         // Assert 
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task ExistsAsync_WithKey_WhenExists_ShouldReturnTrue()
     {
         // Arrange 
@@ -289,10 +300,10 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var exists = await store.ExistsAsync(existingDummy.Id);
 
         // Assert 
-        exists.Should().BeTrue();
+        Assert.True(exists);
     }
 
-    [Test]
+    [Fact]
     public async Task ExistsAsync_WithKey_WhenDoesNotExist_ShouldReturnFalse()
     {
         // Arrange 
@@ -302,11 +313,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var exists = await store.ExistsAsync(Guid.NewGuid());
 
         // Assert 
-        exists.Should().BeFalse();
+        Assert.False(exists);
     }
 
     // ExistsAsync_WithQuery
-    [Test]
+    [Fact]
     public async Task ExistsAsync_WithQuery_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
@@ -315,13 +326,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => store.ExistsAsync(cancellationToken: cancellationTokenSource.Token);
+        Task Action()
+            => store.ExistsAsync(cancellationToken: cancellationTokenSource.Token);
 
         // Assert 
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task ExistsAsync_WithQuery_WhenExists_ShouldReturnTrue()
     {
         // Arrange 
@@ -332,10 +344,10 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var exists = await store.ExistsAsync(q => q.Where(dummy => dummy.Name == existingDummy.Name));
 
         // Assert 
-        exists.Should().BeTrue();
+        Assert.True(exists);
     }
 
-    [Test]
+    [Fact]
     public async Task ExistsAsync_WithQuery_WhenDoesNotExist_ShouldReturnFalse()
     {
         // Arrange 
@@ -345,12 +357,12 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var exists = await store.ExistsAsync(q => q.Where(dummy => dummy.Name == "non-existing-name"));
 
         // Assert 
-        exists.Should().BeFalse();
+        Assert.False(exists);
     }
 
     // CountAsync
-    [Test]
-    public async Task CountAsyncAsync_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
+    [Fact]
+    public async Task CountAsync_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
         var store = new ExtendedDummyStore(DbContext);
@@ -358,14 +370,15 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => store.CountAsync(cancellationToken: cancellationTokenSource.Token);
+        Task Action()
+            => store.CountAsync(cancellationToken: cancellationTokenSource.Token);
 
         // Assert 
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
-    public async Task CountAsyncAsync_WhenQueryIsProvided_ShouldReturnCountBasedOnQuery()
+    [Fact]
+    public async Task CountAsync_WhenQueryIsProvided_ShouldReturnCountBasedOnQuery()
     {
         // Arrange 
         var store = new ExtendedDummyStore(DbContext);
@@ -376,11 +389,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var count = await store.CountAsync(q => q.Where(dummy => dummy.Name == dummyToFilterWith.Name));
 
         // Assert 
-        count.Should().Be(1);
+        Assert.Equal(1, count);
     }
 
-    [Test]
-    public async Task CountAsyncAsync_WhenCalled_ShouldReturnCount()
+    [Fact]
+    public async Task CountAsync_WhenCalled_ShouldReturnCount()
     {
         // Arrange 
         var store = new ExtendedDummyStore(DbContext);
@@ -390,11 +403,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var count = await store.CountAsync();
 
         // Assert 
-        count.Should().Be(2);
+        Assert.Equal(2, count);
     }
 
-    // AddOrUpdateAsync_WithSingleEntity 
-    [Test]
+    // AddOrUpdateAsync_Single
+    [Fact]
     public async Task AddOrUpdateAsync_WithSingleEntity_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -402,13 +415,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         DummyEntity dummyToAddOrUpdate = null!;
 
         // Act
-        Func<Task> action = () => store.AddOrUpdateAsync(dummyToAddOrUpdate);
+        async Task Action()
+            => await store.AddOrUpdateAsync(dummyToAddOrUpdate);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+        await Assert.ThrowsAsync<ArgumentNullException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task AddOrUpdateAsync_WithSingleEntity_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
@@ -418,13 +432,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => store.AddOrUpdateAsync(dummyToAddOrUpdate, cancellationTokenSource.Token);
+        async Task Action()
+            => await store.AddOrUpdateAsync(dummyToAddOrUpdate, cancellationTokenSource.Token);
 
         // Assert 
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task AddOrUpdateAsync_WithSingleEntity_WhenEntityDoNotExistInDatabase_ShoulAddEntityToDatabaseAndReturnIt()
     {
         // Arrange 
@@ -436,11 +451,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummyRead = await DbContext.Dummies.FindAsync(dummyToAdd.Id);
 
         // Assert 
-        dummyReturned.Should().BeEquivalentTo(dummyToAdd);
-        dummyRead.Should().BeEquivalentTo(dummyToAdd);
+        Assert.Equivalent(dummyToAdd, dummyReturned);
+        Assert.Equivalent(dummyToAdd, dummyRead);
     }
 
-    [Test]
+    [Fact]
     public async Task AddOrUpdateAsync_WithSingleEntity_WhenEntityExistsInDatabase_ShouldModifiedInDatabaseAndReturnIt()
     {
         // Arrange 
@@ -453,12 +468,12 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummyRead = await DbContext.Dummies.FindAsync(dummyToUpdate.Id);
 
         // Assert 
-        dummyReturned.Should().BeEquivalentTo(dummyToUpdate);
-        dummyRead.Should().BeEquivalentTo(dummyToUpdate);
+        Assert.Equivalent(dummyToUpdate, dummyReturned);
+        Assert.Equivalent(dummyToUpdate, dummyRead);
     }
 
-    // AddOrUpdateAsync_WithManyEntities 
-    [Test]
+    // AddOrUpdateAsync_Many
+    [Fact]
     public async Task AddOrUpdateAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -466,13 +481,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         IEnumerable<DummyEntity> dummiesToAddOrUpdate = null!;
 
         // Act
-        Func<Task> action = () => store.AddOrUpdateAsync(dummiesToAddOrUpdate);
+        async Task Action()
+            => await store.AddOrUpdateAsync(dummiesToAddOrUpdate);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+        await Assert.ThrowsAsync<ArgumentNullException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task AddOrUpdateAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
@@ -482,13 +498,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => store.AddOrUpdateAsync(dummiesToAddOrUpdate, cancellationTokenSource.Token);
+        async Task Action()
+            => await store.AddOrUpdateAsync(dummiesToAddOrUpdate, cancellationTokenSource.Token);
 
         // Assert 
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task AddOrUpdateAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldAddEntitiesToDatabaseAndReturnThem()
     {
         // Arrange 
@@ -500,11 +517,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummiesRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert 
-        dummiesReturned.Should().BeEquivalentTo(dummiesToAdd);
-        dummiesRead.Should().BeEquivalentTo(dummiesToAdd);
+        Assert.Equivalent(dummiesToAdd, dummiesReturned);
+        Assert.Equivalent(dummiesToAdd, dummiesRead);
     }
 
-    [Test]
+    [Fact]
     public async Task AddOrUpdateAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldModifyEntieisInDatabaseAndReturnThem()
     {
         // Arrange 
@@ -520,11 +537,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummiesRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert 
-        dummiesReturned.Should().BeEquivalentTo(dummiesToUpdate);
-        dummiesRead.Should().BeEquivalentTo(dummiesToUpdate);
+        Assert.Equivalent(dummiesToUpdate, dummiesReturned);
+        Assert.Equivalent(dummiesToUpdate, dummiesRead);
     }
 
-    [Test]
+    [Fact]
     public async Task AddOrUpdateAsync_WithManyEntities_WhenMixedEntities_ShouldSetNewEntitiesAsAddedAndExistingEntitiesAsModifiedAndReturnThem()
     {
         // Arrange 
@@ -543,12 +560,12 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummiesRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert 
-        dummiesReturned.Should().BeEquivalentTo(dummiesToAddOrUpdate);
-        dummiesRead.Should().BeEquivalentTo(dummiesToAddOrUpdate);
+        Assert.Equivalent(dummiesToAddOrUpdate, dummiesReturned);
+        Assert.Equivalent(dummiesToAddOrUpdate, dummiesRead);
     }
 
-    // AddIfNotExistAsync_WithSingleEntity
-    [Test]
+    // AddIfNotExistAsync_Single
+    [Fact]
     public async Task AddIfNotExistAsync_WithSingleEntity_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -556,13 +573,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         DummyEntity dummyToAdd = null!;
 
         // Act
-        Func<Task> action = () => store.AddIfNotExistAsync(dummyToAdd);
+        async Task Action()
+            => await store.AddIfNotExistAsync(dummyToAdd);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+        await Assert.ThrowsAsync<ArgumentNullException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task AddIfNotExistAsync_WithSingleEntity_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
@@ -572,13 +590,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => store.AddIfNotExistAsync(dummyToAdd, cancellationTokenSource.Token);
+        async Task Action()
+            => await store.AddIfNotExistAsync(dummyToAdd, cancellationTokenSource.Token);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task AddIfNotExistAsync_WithSingleEntity_WhenEntityDoesNotExistInDatabase_ShouldAddEntityToDatabaseAndReturnIt()
     {
         // Arrange 
@@ -590,11 +609,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummyRead = await DbContext.Dummies.FindAsync(dummyToAdd.Id);
 
         // Assert
-        dummyReturned.Should().BeEquivalentTo(dummyToAdd);
-        dummyRead.Should().BeEquivalentTo(dummyToAdd);
+        Assert.Equivalent(dummyToAdd, dummyReturned);
+        Assert.Equivalent(dummyToAdd, dummyRead);
     }
 
-    [Test]
+    [Fact]
     public async Task AddIfNotExistAsync_WithSingleEntity_WhenEntitysExistsInDatabase_ShouldDoNothing()
     {
         // Arrange 
@@ -606,12 +625,12 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummyRead = await DbContext.Dummies.FindAsync(dummyToAdd.Id);
 
         // Assert 
-        dummyReturned.Should().BeEquivalentTo(dummyToAdd);
-        dummyRead.Should().BeEquivalentTo(dummyToAdd);
+        Assert.Equivalent(dummyToAdd, dummyReturned);
+        Assert.Equivalent(dummyToAdd, dummyRead);
     }
 
-    // AddIfNotExistAsync_WithManyEntities 
-    [Test]
+    // AddIfNotExistAsync_Many
+    [Fact]
     public async Task AddIfNotExistAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -619,13 +638,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         IEnumerable<DummyEntity> dummiesToAdd = null!;
 
         // Act
-        Func<Task> action = () => store.AddIfNotExistAsync(dummiesToAdd);
+        async Task Action()
+            => await store.AddIfNotExistAsync(dummiesToAdd);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+        await Assert.ThrowsAsync<ArgumentNullException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task AddIfNotExistAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
@@ -635,13 +655,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => store.AddIfNotExistAsync(dummiesToAdd, cancellationTokenSource.Token);
+        async Task Action()
+            => await store.AddIfNotExistAsync(dummiesToAdd, cancellationTokenSource.Token);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task AddIfNotExistAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldAddEntitiesToDatabaseAndReturnThem()
     {
         // Arrange 
@@ -653,11 +674,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummiesRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert
-        dummiesReturned.Should().BeEquivalentTo(dummiesToAdd);
-        dummiesRead.Should().BeEquivalentTo(dummiesToAdd);
+        Assert.Equivalent(dummiesToAdd, dummiesReturned);
+        Assert.Equivalent(dummiesToAdd, dummiesRead);
     }
 
-    [Test]
+    [Fact]
     public async Task AddIfNotExistAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldDoNothing()
     {
         // Arrange 
@@ -669,12 +690,12 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummiesRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert 
-        dummiesReturned.Should().BeEmpty();
-        dummiesRead.Should().BeEquivalentTo(dummiesToAdd);
+        Assert.Empty(dummiesReturned);
+        Assert.Equivalent(dummiesToAdd, dummiesRead);
     }
 
-    // UpdateIfExistAsynct_WithSingleEntity
-    [Test]
+    // UpdateIfExistAsynct_Single
+    [Fact]
     public async Task UpdateIfExistAsync_WithSingleEntity_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -682,13 +703,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         DummyEntity dummyToUpdate = null!;
 
         // Act
-        Func<Task> action = () => store.UpdateIfExistAsync(dummyToUpdate);
+        async Task Action()
+            => await store.UpdateIfExistAsync(dummyToUpdate);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+        await Assert.ThrowsAsync<ArgumentNullException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task UpdateIfExistAsync_WithSingleEntity_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
@@ -700,13 +722,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => store.UpdateIfExistAsync(dummyToUpdate, cancellationTokenSource.Token);
+        async Task Action()
+            => await store.UpdateIfExistAsync(dummyToUpdate, cancellationTokenSource.Token);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task UpdateIfExistAsync_WithSingleEntity_WhenEntityExistInDatabase_ShouldModifyEntityInDatabaseAndReturnIt()
     {
         // Arrange 
@@ -719,11 +742,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummyRead = await DbContext.Dummies.FindAsync(dummyToUpdate.Id);
 
         // Assert 
-        dummyReturned.Should().BeEquivalentTo(dummyToUpdate);
-        dummyRead.Should().BeEquivalentTo(dummyToUpdate);
+        Assert.Equivalent(dummyToUpdate, dummyReturned);
+        Assert.Equivalent(dummyToUpdate, dummyRead);
     }
 
-    [Test]
+    [Fact]
     public async Task UpdateIfExistAsync_WithSingleEntity_WhenEntityDoesNotExistInDatabase_ShouldDoNothing()
     {
         // Arrange 
@@ -735,12 +758,12 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummyRead = await DbContext.Dummies.FindAsync(dummyToUpdate.Id);
 
         // Assert
-        dummyReturned.Should().BeEquivalentTo(dummyToUpdate);
-        dummyRead.Should().BeNull();
+        Assert.Equivalent(dummyToUpdate, dummyReturned);
+        Assert.Null(dummyRead);
     }
 
-    // UpdateIfExistAsync_WithManyEntities 
-    [Test]
+    // UpdateIfExistAsync_Many
+    [Fact]
     public async Task UpdateIfExistAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -748,13 +771,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         IEnumerable<DummyEntity> dummiesToUpdate = null!;
 
         // Act
-        Func<Task> action = () => store.UpdateIfExistAsync(dummiesToUpdate);
+        async Task Action()
+            => await store.UpdateIfExistAsync(dummiesToUpdate);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+        await Assert.ThrowsAsync<ArgumentNullException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task UpdateIfExistAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
@@ -769,13 +793,14 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         cancellationTokenSource.Cancel();
 
         // Act
-        Func<Task> action = () => store.UpdateIfExistAsync(dummiesToUpdate, cancellationTokenSource.Token);
+        async Task Action()
+            => await store.UpdateIfExistAsync(dummiesToUpdate, cancellationTokenSource.Token);
 
         // Assert
-        await action.Should().ThrowExactlyAsync<TaskCanceledException>();
+        await Assert.ThrowsAsync<TaskCanceledException>(Action);
     }
 
-    [Test]
+    [Fact]
     public async Task UpdateIfExistAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldModifyEntitiesInDatabaseAndReturnThem()
     {
         // Arrange 
@@ -791,11 +816,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummiesRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert 
-        dummiesReturned.Should().BeEquivalentTo(dummiesToUpdate);
-        dummiesRead.Should().BeEquivalentTo(dummiesToUpdate);
+        Assert.Equivalent(dummiesToUpdate, dummiesReturned);
+        Assert.Equivalent(dummiesToUpdate, dummiesRead);
     }
 
-    [Test]
+    [Fact]
     public async Task UpdateIfExistAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldDoNothing()
     {
         // Arrange 
@@ -807,12 +832,12 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var dummiesRead = await DbContext.Dummies.ToArrayAsync();
 
         // Assert
-        dummiesReturned.Should().BeEmpty();
-        dummiesRead.Should().BeEmpty();
+        Assert.Empty(dummiesReturned);
+        Assert.Empty(dummiesRead);
     }
 
     // GetPageAsync
-    [Test]
+    [Fact]
     public async Task GetPageAsync_WhenCalled_ShouldReturnCorrectPageNumberAndSize()
     {
         // Arrange 
@@ -826,12 +851,12 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var result = await store.GetPageAsync(pageNumber, pageSize);
 
         // Assert
-        result.Should().NotBeNull();
-        result.PageNumber.Should().Be(pageNumber);
-        result.PageSize.Should().Be(pageSize);
+        Assert.NotNull(result);
+        Assert.Equal(pageNumber, result.PageNumber);
+        Assert.Equal(pageSize, result.PageSize);
     }
 
-    [Test]
+    [Fact]
     public async Task GetPageAsync_WhenCalled_ShouldReturnCorrectTotalItems()
     {
         // Arrange 
@@ -845,11 +870,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var result = await store.GetPageAsync(pageNumber, pageSize);
 
         // Assert
-        result.Should().NotBeNull();
-        result.TotalItems.Should().Be(totalItems);
+        Assert.NotNull(result);
+        Assert.Equal(totalItems, result.TotalItems);
     }
 
-    [Test]
+    [Fact]
     public async Task GetPageAsync_WhenCalled_ShouldReturnCorrectTotalPages()
     {
         // Arrange 
@@ -863,11 +888,11 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var result = await store.GetPageAsync(pageNumber, pageSize);
 
         // Assert
-        result.Should().NotBeNull();
-        result.TotalPages.Should().Be(3);
+        Assert.NotNull(result);
+        Assert.Equal(3, result.TotalPages);
     }
 
-    [Test]
+    [Fact]
     public async Task GetPageAsync_WhenCalled_ShouldReturnCorrectItemsInPage()
     {
         // Arrange
@@ -884,8 +909,8 @@ public sealed class ExtendedStoreBaseTests : DummyDbContextTestsBase
         var result = await store.GetPageAsync(pageNumber, pageSize);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Items.Should().HaveCount(pageSize);
-        result.Items.Should().BeEquivalentTo(expectedDummies);
+        Assert.NotNull(result);
+        Assert.Equal(pageSize, result.Items.Count());
+        Assert.Equivalent(expectedDummies, result.Items);
     }
 }
