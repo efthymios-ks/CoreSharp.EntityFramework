@@ -10,13 +10,4 @@ public sealed class DummyDbContext(DbContextOptions<DummyDbContext> options) : A
     // Properties
     public DbSet<DummyEntity> Dummies { get; set; }
 
-    // Methods 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-        ConfigureModels(modelBuilder);
-    }
-
-    private static void ConfigureModels(ModelBuilder modelBuilder)
-        => modelBuilder.ApplyConfigurationsFromAssembly(typeof(DummyDbContext).Assembly);
 }

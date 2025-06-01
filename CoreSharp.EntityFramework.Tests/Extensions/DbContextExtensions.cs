@@ -1,20 +1,21 @@
 ﻿using CoreSharp.EntityFramework.Extensions;
+using CoreSharp.EntityFramework.Tests.Internal;
 using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace CoreSharp.EntityFramework.Tests.Extensions;
 
-[Collection(nameof(SharedSqlServerCollection))]
-public sealed class DbContextExtensionsTests(SharedSqlServerContainer sqlContainer)
-    : SharedSqlServerTestsBase(sqlContainer)
+[Collection(nameof(DummySqlServerCollection))]
+public sealed class DbContextExtensionsTests(DummySqlServerContainer sqlContainer)
+    : DummySqlServerTestsBase(sqlContainer)
 {
     [Fact]
     public async Task RollbackAsync_WhenHasNoChanges_ShouldNotThrowException()
     {
         // Act
         async Task Action()
-            => await DbContext.RollbackAsync();
+            => await DummyDbContext.RollbackAsync();
 
         // Assert
         var exception = await Record.ExceptionAsync(Action);
@@ -29,9 +30,9 @@ public sealed class DbContextExtensionsTests(SharedSqlServerContainer sqlContain
         var addedDummyCountBeforeAdding = GetAddedCount();
 
         // Act
-        await DbContext.Dummies.AddAsync(dummyToAdd);
+        await DummyDbContext.Dummies.AddAsync(dummyToAdd);
         var addedDummyCountAfterAdding = GetAddedCount();
-        await DbContext.RollbackAsync();
+        await DummyDbContext.RollbackAsync();
         var addedDummyCountAfterRollback = GetAddedCount();
 
         // Assert
@@ -53,9 +54,9 @@ public sealed class DbContextExtensionsTests(SharedSqlServerContainer sqlContain
         var modifiedDummyCountAfterModify = GetModifiedCount();
 
         // Act
-        await DbContext.RollbackAsync();
+        await DummyDbContext.RollbackAsync();
         var modifiedDummyCountAfterRollback = GetModifiedCount();
-        var dummyAfterRollback = await DbContext.Dummies.FindAsync(dummyBeforeModification.Id);
+        var dummyAfterRollback = await DummyDbContext.Dummies.FindAsync(dummyBeforeModification.Id);
         var dummyAfterRollbackAsJson = SerializeDummy(dummyAfterRollback!);
 
         // Assert 
@@ -75,13 +76,13 @@ public sealed class DbContextExtensionsTests(SharedSqlServerContainer sqlContain
     {
         // Arrange
         var dummyToRemove = await PreloadDummyAsync();
-        DbContext.Dummies.Remove(dummyToRemove);
+        DummyDbContext.Dummies.Remove(dummyToRemove);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
         // Act  
         async Task Action()
-            => await DbContext.RollbackAsync(cancellationTokenSource.Token);
+            => await DummyDbContext.RollbackAsync(cancellationTokenSource.Token);
 
         // Assert 
         await Assert.ThrowsAsync<TaskCanceledException>(Action);
@@ -95,9 +96,9 @@ public sealed class DbContextExtensionsTests(SharedSqlServerContainer sqlContain
         var deletedDummyCountBeforeDelete = GetDeletedCount();
 
         // Act
-        DbContext.Dummies.Remove(dummyToRemove);
+        DummyDbContext.Dummies.Remove(dummyToRemove);
         var deletedDummyCountAfterDelete = GetDeletedCount();
-        await DbContext.RollbackAsync();
+        await DummyDbContext.RollbackAsync();
         var deletedDummyCountAfterRollback = GetDeletedCount();
 
         // Assert

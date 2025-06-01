@@ -1,12 +1,13 @@
-﻿using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
+﻿using CoreSharp.EntityFramework.Tests.Internal;
+using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
 using CoreSharp.EntityFramework.Tests.Internal.Database.Stores;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Tests.Stores.Abstracts;
 
-[Collection(nameof(SharedSqlServerCollection))]
-public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer)
-    : SharedSqlServerTestsBase(sqlContainer)
+[Collection(nameof(DummySqlServerCollection))]
+public sealed class ExtendedStoreBaseTests(DummySqlServerContainer sqlContainer)
+    : DummySqlServerTestsBase(sqlContainer)
 {
     [Fact]
     public void Constructor_WhenDbContextIsNull_ShouldThrowArgumentNullException()
@@ -24,7 +25,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         IEnumerable<DummyEntity> dummiesToAdd = null!;
 
         // Act
@@ -39,7 +40,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToAdd = GenerateDummies(1);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -56,12 +57,12 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldAddEntitiesToDatabaseAndReturnThem()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToAdd = GenerateDummies(1);
 
         // Act
         var dummiesReturned = await store.AddAsync(dummiesToAdd);
-        var dummiesRead = await DbContext.Dummies.ToArrayAsync();
+        var dummiesRead = await DummyDbContext.Dummies.ToArrayAsync();
 
         // Assert
         Assert.Equivalent(dummiesToAdd, dummiesReturned);
@@ -72,7 +73,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldThrowDbUpdateException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToAdd = await PreloadDummiesAsync(1);
 
         // Act
@@ -88,7 +89,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task UpdateAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         IEnumerable<DummyEntity> dummiesToUpdate = null!;
 
         // Act
@@ -103,7 +104,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task UpdateAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToUpdate = await PreloadDummiesAsync(1);
         foreach (var dummy in dummiesToUpdate)
         {
@@ -125,7 +126,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task UpdateAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldModifyEntitiesInDatabaseAndReturnThem()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToUpdate = GenerateDummies(1);
         foreach (var dummy in dummiesToUpdate)
         {
@@ -134,7 +135,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
 
         // Act
         var dummiesReturned = await store.UpdateAsync(dummiesToUpdate);
-        var dummyRead = await DbContext.Dummies.ToArrayAsync();
+        var dummyRead = await DummyDbContext.Dummies.ToArrayAsync();
 
         // Assert
         Assert.Equivalent(dummiesToUpdate, dummiesReturned);
@@ -145,7 +146,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task UpdateAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldModifyEntitiesInDatabaseAndReturnThem()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToUpdate = await PreloadDummiesAsync(1);
         foreach (var dummy in dummiesToUpdate)
         {
@@ -154,7 +155,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
 
         // Act
         var dummiesReturned = await store.UpdateAsync(dummiesToUpdate);
-        var dummyRead = await DbContext.Dummies.ToArrayAsync();
+        var dummyRead = await DummyDbContext.Dummies.ToArrayAsync();
 
         // Assert
         Assert.Equivalent(dummiesToUpdate, dummiesReturned);
@@ -166,7 +167,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task RemoveAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         IEnumerable<DummyEntity> dummiesToRemove = null!;
 
         // Act
@@ -181,7 +182,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task RemoveAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToRemove = await PreloadDummiesAsync(1);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -198,7 +199,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task RemoveAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldThrowDbUpdateConcurrencyException()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToRemove = GenerateDummies(1);
 
         // Act
@@ -213,12 +214,12 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task RemoveAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldRemoveThemFromDatabase()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToRemove = await PreloadDummiesAsync(1);
 
         // Act
         await store.RemoveAsync(dummiesToRemove);
-        var dummyRead = await DbContext.Dummies.ToArrayAsync();
+        var dummyRead = await DummyDbContext.Dummies.ToArrayAsync();
 
         // Assert 
         Assert.Empty(dummyRead);
@@ -229,7 +230,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task RemoveAsync_ByKey_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var existingDummy = await PreloadDummyAsync();
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -246,12 +247,12 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task RemoveAsync_ByKey_WhenKeyExists_ShouldRemoveEntityFromDatabase()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummyToRemove = await PreloadDummyAsync();
 
         // Act
         await store.RemoveAsync(dummyToRemove.Id);
-        var dummyEntry = await DbContext.Dummies.FindAsync(dummyToRemove.Id);
+        var dummyEntry = await DummyDbContext.Dummies.FindAsync(dummyToRemove.Id);
 
         // Assert 
         Assert.Null(dummyEntry);
@@ -261,12 +262,12 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task RemoveAsync_ByKey_WhenKeyNotFound_ShouldDoNothing()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummyIdToRemove = Guid.NewGuid();
 
         // Act
         await store.RemoveAsync(dummyIdToRemove);
-        var dummyRead = await DbContext.Dummies.FindAsync(dummyIdToRemove);
+        var dummyRead = await DummyDbContext.Dummies.FindAsync(dummyIdToRemove);
 
         // Assert 
         Assert.Null(dummyRead);
@@ -277,7 +278,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task ExistsAsync_WithKey_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
@@ -293,7 +294,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task ExistsAsync_WithKey_WhenExists_ShouldReturnTrue()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var existingDummy = await PreloadDummyAsync();
 
         // Act
@@ -307,7 +308,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task ExistsAsync_WithKey_WhenDoesNotExist_ShouldReturnFalse()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
 
         // Act
         var exists = await store.ExistsAsync(Guid.NewGuid());
@@ -321,7 +322,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task ExistsAsync_WithQuery_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
@@ -337,7 +338,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task ExistsAsync_WithQuery_WhenExists_ShouldReturnTrue()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var existingDummy = await PreloadDummyAsync();
 
         // Act
@@ -351,7 +352,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task ExistsAsync_WithQuery_WhenDoesNotExist_ShouldReturnFalse()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
 
         // Act
         var exists = await store.ExistsAsync(q => q.Where(dummy => dummy.Name == "non-existing-name"));
@@ -365,7 +366,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task CountAsync_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
@@ -381,7 +382,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task CountAsync_WhenQueryIsProvided_ShouldReturnCountBasedOnQuery()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var existingDummies = await PreloadDummiesAsync(2);
         var dummyToFilterWith = existingDummies[0];
 
@@ -396,7 +397,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task CountAsync_WhenCalled_ShouldReturnCount()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         await PreloadDummiesAsync(2);
 
         // Act
@@ -411,7 +412,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddOrUpdateAsync_WithSingleEntity_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         DummyEntity dummyToAddOrUpdate = null!;
 
         // Act
@@ -426,7 +427,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddOrUpdateAsync_WithSingleEntity_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummyToAddOrUpdate = GenerateDummy();
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -443,12 +444,12 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddOrUpdateAsync_WithSingleEntity_WhenEntityDoNotExistInDatabase_ShoulAddEntityToDatabaseAndReturnIt()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummyToAdd = GenerateDummy();
 
         // Act
         var dummyReturned = await store.AddOrUpdateAsync(dummyToAdd);
-        var dummyRead = await DbContext.Dummies.FindAsync(dummyToAdd.Id);
+        var dummyRead = await DummyDbContext.Dummies.FindAsync(dummyToAdd.Id);
 
         // Assert 
         Assert.Equivalent(dummyToAdd, dummyReturned);
@@ -459,13 +460,13 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddOrUpdateAsync_WithSingleEntity_WhenEntityExistsInDatabase_ShouldModifiedInDatabaseAndReturnIt()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummyToUpdate = await PreloadDummyAsync();
         dummyToUpdate.Name = Guid.NewGuid().ToString();
 
         // Act
         var dummyReturned = await store.AddOrUpdateAsync(dummyToUpdate);
-        var dummyRead = await DbContext.Dummies.FindAsync(dummyToUpdate.Id);
+        var dummyRead = await DummyDbContext.Dummies.FindAsync(dummyToUpdate.Id);
 
         // Assert 
         Assert.Equivalent(dummyToUpdate, dummyReturned);
@@ -477,7 +478,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddOrUpdateAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         IEnumerable<DummyEntity> dummiesToAddOrUpdate = null!;
 
         // Act
@@ -492,7 +493,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddOrUpdateAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToAddOrUpdate = GenerateDummies(1);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -509,12 +510,12 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddOrUpdateAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldAddEntitiesToDatabaseAndReturnThem()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToAdd = GenerateDummies(1);
 
         // Act
         var dummiesReturned = await store.AddOrUpdateAsync(dummiesToAdd);
-        var dummiesRead = await DbContext.Dummies.ToArrayAsync();
+        var dummiesRead = await DummyDbContext.Dummies.ToArrayAsync();
 
         // Assert 
         Assert.Equivalent(dummiesToAdd, dummiesReturned);
@@ -525,7 +526,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddOrUpdateAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldModifyEntieisInDatabaseAndReturnThem()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToUpdate = await PreloadDummiesAsync(1);
         foreach (var dummy in dummiesToUpdate)
         {
@@ -534,7 +535,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
 
         // Act
         var dummiesReturned = await store.AddOrUpdateAsync(dummiesToUpdate);
-        var dummiesRead = await DbContext.Dummies.ToArrayAsync();
+        var dummiesRead = await DummyDbContext.Dummies.ToArrayAsync();
 
         // Assert 
         Assert.Equivalent(dummiesToUpdate, dummiesReturned);
@@ -545,7 +546,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddOrUpdateAsync_WithManyEntities_WhenMixedEntities_ShouldSetNewEntitiesAsAddedAndExistingEntitiesAsModifiedAndReturnThem()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToUpdate = await PreloadDummiesAsync(1);
         foreach (var dummy in dummiesToUpdate)
         {
@@ -557,7 +558,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
 
         // Act
         var dummiesReturned = await store.AddOrUpdateAsync(dummiesToAddOrUpdate);
-        var dummiesRead = await DbContext.Dummies.ToArrayAsync();
+        var dummiesRead = await DummyDbContext.Dummies.ToArrayAsync();
 
         // Assert 
         Assert.Equivalent(dummiesToAddOrUpdate, dummiesReturned);
@@ -569,7 +570,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddIfNotExistAsync_WithSingleEntity_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         DummyEntity dummyToAdd = null!;
 
         // Act
@@ -584,7 +585,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddIfNotExistAsync_WithSingleEntity_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummyToAdd = GenerateDummy();
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -601,12 +602,12 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddIfNotExistAsync_WithSingleEntity_WhenEntityDoesNotExistInDatabase_ShouldAddEntityToDatabaseAndReturnIt()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummyToAdd = GenerateDummy();
 
         // Act
         var dummyReturned = await store.AddIfNotExistAsync(dummyToAdd);
-        var dummyRead = await DbContext.Dummies.FindAsync(dummyToAdd.Id);
+        var dummyRead = await DummyDbContext.Dummies.FindAsync(dummyToAdd.Id);
 
         // Assert
         Assert.Equivalent(dummyToAdd, dummyReturned);
@@ -617,12 +618,12 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddIfNotExistAsync_WithSingleEntity_WhenEntitysExistsInDatabase_ShouldDoNothing()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummyToAdd = await PreloadDummyAsync();
 
         // Act
         var dummyReturned = await store.AddIfNotExistAsync(dummyToAdd);
-        var dummyRead = await DbContext.Dummies.FindAsync(dummyToAdd.Id);
+        var dummyRead = await DummyDbContext.Dummies.FindAsync(dummyToAdd.Id);
 
         // Assert 
         Assert.Equivalent(dummyToAdd, dummyReturned);
@@ -634,7 +635,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddIfNotExistAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         IEnumerable<DummyEntity> dummiesToAdd = null!;
 
         // Act
@@ -649,7 +650,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddIfNotExistAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToAdd = GenerateDummies(1);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -666,12 +667,12 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddIfNotExistAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldAddEntitiesToDatabaseAndReturnThem()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToAdd = GenerateDummies(1);
 
         // Act
         var dummiesReturned = await store.AddIfNotExistAsync(dummiesToAdd);
-        var dummiesRead = await DbContext.Dummies.ToArrayAsync();
+        var dummiesRead = await DummyDbContext.Dummies.ToArrayAsync();
 
         // Assert
         Assert.Equivalent(dummiesToAdd, dummiesReturned);
@@ -682,12 +683,12 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task AddIfNotExistAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldDoNothing()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToAdd = await PreloadDummiesAsync(1);
 
         // Act
         var dummiesReturned = await store.AddIfNotExistAsync(dummiesToAdd);
-        var dummiesRead = await DbContext.Dummies.ToArrayAsync();
+        var dummiesRead = await DummyDbContext.Dummies.ToArrayAsync();
 
         // Assert 
         Assert.Empty(dummiesReturned);
@@ -699,7 +700,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task UpdateIfExistAsync_WithSingleEntity_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         DummyEntity dummyToUpdate = null!;
 
         // Act
@@ -714,7 +715,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task UpdateIfExistAsync_WithSingleEntity_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummyToUpdate = await PreloadDummyAsync();
         dummyToUpdate.Name = Guid.NewGuid().ToString();
 
@@ -733,13 +734,13 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task UpdateIfExistAsync_WithSingleEntity_WhenEntityExistInDatabase_ShouldModifyEntityInDatabaseAndReturnIt()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummyToUpdate = await PreloadDummyAsync();
         dummyToUpdate.Name = Guid.NewGuid().ToString();
 
         // Act
         var dummyReturned = await store.UpdateIfExistAsync(dummyToUpdate);
-        var dummyRead = await DbContext.Dummies.FindAsync(dummyToUpdate.Id);
+        var dummyRead = await DummyDbContext.Dummies.FindAsync(dummyToUpdate.Id);
 
         // Assert 
         Assert.Equivalent(dummyToUpdate, dummyReturned);
@@ -750,12 +751,12 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task UpdateIfExistAsync_WithSingleEntity_WhenEntityDoesNotExistInDatabase_ShouldDoNothing()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummyToUpdate = GenerateDummy();
 
         // Act
         var dummyReturned = await store.UpdateIfExistAsync(dummyToUpdate);
-        var dummyRead = await DbContext.Dummies.FindAsync(dummyToUpdate.Id);
+        var dummyRead = await DummyDbContext.Dummies.FindAsync(dummyToUpdate.Id);
 
         // Assert
         Assert.Equivalent(dummyToUpdate, dummyReturned);
@@ -767,7 +768,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task UpdateIfExistAsync_WithManyEntities_WhenEntitiesIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         IEnumerable<DummyEntity> dummiesToUpdate = null!;
 
         // Act
@@ -782,7 +783,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task UpdateIfExistAsync_WithManyEntities_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToUpdate = await PreloadDummiesAsync(1);
         foreach (var dummy in dummiesToUpdate)
         {
@@ -804,7 +805,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task UpdateIfExistAsync_WithManyEntities_WhenEntitiesExistInDatabase_ShouldModifyEntitiesInDatabaseAndReturnThem()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToUpdate = await PreloadDummiesAsync(1);
         foreach (var dummy in dummiesToUpdate)
         {
@@ -813,7 +814,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
 
         // Act
         var dummiesReturned = await store.UpdateIfExistAsync(dummiesToUpdate);
-        var dummiesRead = await DbContext.Dummies.ToArrayAsync();
+        var dummiesRead = await DummyDbContext.Dummies.ToArrayAsync();
 
         // Assert 
         Assert.Equivalent(dummiesToUpdate, dummiesReturned);
@@ -824,12 +825,12 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
     public async Task UpdateIfExistAsync_WithManyEntities_WhenEntitiesDoNotExistInDatabase_ShouldDoNothing()
     {
         // Arrange 
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var dummiesToUpdate = GenerateDummies(1);
 
         // Act
         var dummiesReturned = await store.UpdateIfExistAsync(dummiesToUpdate);
-        var dummiesRead = await DbContext.Dummies.ToArrayAsync();
+        var dummiesRead = await DummyDbContext.Dummies.ToArrayAsync();
 
         // Assert
         Assert.Empty(dummiesReturned);
@@ -844,7 +845,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
         const int totalItems = 5;
         const int pageNumber = 1;
         const int pageSize = 2;
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         await PreloadDummiesAsync(totalItems);
 
         // Act
@@ -863,7 +864,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
         const int totalItems = 5;
         const int pageNumber = 1;
         const int pageSize = 2;
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         await PreloadDummiesAsync(totalItems);
 
         // Act
@@ -881,7 +882,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
         const int totalItems = 5;
         const int pageNumber = 1;
         const int pageSize = 2;
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         await PreloadDummiesAsync(totalItems);
 
         // Act
@@ -899,7 +900,7 @@ public sealed class ExtendedStoreBaseTests(SharedSqlServerContainer sqlContainer
         const int totalItems = 5;
         const int pageNumber = 1;
         const int pageSize = 2;
-        var store = new ExtendedDummyStore(DbContext);
+        var store = new ExtendedDummyStore(DummyDbContext);
         var existingDummies = await PreloadDummiesAsync(totalItems);
         var expectedDummies = existingDummies
             .Skip(pageNumber * pageSize)

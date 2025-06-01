@@ -1,11 +1,12 @@
-﻿using CoreSharp.EntityFramework.Tests.Internal.Database.Repositories;
+﻿using CoreSharp.EntityFramework.Tests.Internal;
+using CoreSharp.EntityFramework.Tests.Internal.Database.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Tests.Repositories.Abstracts;
 
-[Collection(nameof(SharedSqlServerCollection))]
-public sealed class UnitOfWorkBaseTests(SharedSqlServerContainer sqlContainer)
-    : SharedSqlServerTestsBase(sqlContainer)
+[Collection(nameof(DummySqlServerCollection))]
+public sealed class UnitOfWorkBaseTests(DummySqlServerContainer sqlContainer)
+    : DummySqlServerTestsBase(sqlContainer)
 {
     [Fact]
     public void Constructor_WhenDbContextIsNull_ShouldThrowArgumentNullException()
@@ -25,13 +26,13 @@ public sealed class UnitOfWorkBaseTests(SharedSqlServerContainer sqlContainer)
     public async Task CommitAsync_WhenCalled_ShouldSaveChangesAndReturnChangeCount()
     {
         // Arrange 
-        var unitOfWork = new DummyUnitOfWork(DbContext);
+        var unitOfWork = new DummyUnitOfWork(DummyDbContext);
         var dummiesToAdd = GenerateDummies(1);
-        await DbContext.Dummies.AddRangeAsync(dummiesToAdd);
+        await DummyDbContext.Dummies.AddRangeAsync(dummiesToAdd);
 
         // Act
         var changeCount = await unitOfWork.CommitAsync();
-        var dummiesRead = await DbContext.Dummies.ToArrayAsync();
+        var dummiesRead = await DummyDbContext.Dummies.ToArrayAsync();
 
         // Assert  
         Assert.Equal(1, changeCount);
@@ -42,13 +43,13 @@ public sealed class UnitOfWorkBaseTests(SharedSqlServerContainer sqlContainer)
     public async Task CommitAsync_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var unitOfWork = new DummyUnitOfWork(DbContext);
+        var unitOfWork = new DummyUnitOfWork(DummyDbContext);
         var dummyToAdd = GenerateDummy();
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
         // Act
-        await DbContext.Dummies.AddAsync(dummyToAdd);
+        await DummyDbContext.Dummies.AddAsync(dummyToAdd);
         Task Action()
             => unitOfWork.CommitAsync(cancellationTokenSource.Token);
 
@@ -60,13 +61,13 @@ public sealed class UnitOfWorkBaseTests(SharedSqlServerContainer sqlContainer)
     public async Task RollbackAsync_WhenCalled_ShouldRollbackPendingChanges()
     {
         // Arrange 
-        var unitOfWork = new DummyUnitOfWork(DbContext);
+        var unitOfWork = new DummyUnitOfWork(DummyDbContext);
         var dummyToAdd = GenerateDummy();
-        await DbContext.Dummies.AddAsync(dummyToAdd);
+        await DummyDbContext.Dummies.AddAsync(dummyToAdd);
 
         // Act
         await unitOfWork.RollbackAsync();
-        var dummiesRead = await DbContext.Dummies.ToArrayAsync();
+        var dummiesRead = await DummyDbContext.Dummies.ToArrayAsync();
 
         // Assert 
         Assert.Empty(dummiesRead);
@@ -76,9 +77,9 @@ public sealed class UnitOfWorkBaseTests(SharedSqlServerContainer sqlContainer)
     public async Task RollbackAsync_WhenEntityDeletedAndCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange 
-        var unitOfWork = new DummyUnitOfWork(DbContext);
+        var unitOfWork = new DummyUnitOfWork(DummyDbContext);
         var dummyToRemove = await PreloadDummiesAsync(1);
-        DbContext.Dummies.RemoveRange(dummyToRemove);
+        DummyDbContext.Dummies.RemoveRange(dummyToRemove);
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
@@ -94,7 +95,7 @@ public sealed class UnitOfWorkBaseTests(SharedSqlServerContainer sqlContainer)
     public async Task DisposeAsync_WhenCalled_ShouldCallDisposeAsyncOnContext()
     {
         // Arrange 
-        var unitOfWork = new DummyUnitOfWork(DbContext);
+        var unitOfWork = new DummyUnitOfWork(DummyDbContext);
 
         // Act
         await unitOfWork.DisposeAsync();
@@ -109,7 +110,7 @@ public sealed class UnitOfWorkBaseTests(SharedSqlServerContainer sqlContainer)
     public async Task DisposeAsync_WhenAlreadyDisposed_ShouldNotThrow()
     {
         // Arrange 
-        var unitOfWork = new DummyUnitOfWork(DbContext);
+        var unitOfWork = new DummyUnitOfWork(DummyDbContext);
         await unitOfWork.DisposeAsync();
 
         // Act

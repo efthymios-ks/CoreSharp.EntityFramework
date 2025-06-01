@@ -1,24 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CoreSharp.EntityFramework.Tests.Internal;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace CoreSharp.EntityFramework.Tests.DbContexts.Abstracts;
 
-[Collection(nameof(SharedSqlServerCollection))]
-public sealed class AuditableDbContextBaseTests(SharedSqlServerContainer sqlContainer)
-    : SharedSqlServerTestsBase(sqlContainer)
+[Collection(nameof(DummySqlServerCollection))]
+public sealed class AuditableDbContextBaseTests(DummySqlServerContainer sqlContainer)
+    : DummySqlServerTestsBase(sqlContainer)
 {
     [Fact]
     public async Task SaveChanges_WhenEntityAdded_ShouldSaveChangesAndUpdateDataChanges()
     {
         // Arrange 
         var dummyToAdd = GenerateDummy();
-        DbContext.Dummies.Add(dummyToAdd);
+        DummyDbContext.Dummies.Add(dummyToAdd);
 
         // Act
-        DbContext.SaveChanges();
+        DummyDbContext.SaveChanges();
 
         // Assert
-        var change = await DbContext
+        var change = await DummyDbContext
             .DataChanges
             .OrderBy(entity => entity.DateCreatedUtc)
             .LastOrDefaultAsync();
@@ -36,10 +37,10 @@ public sealed class AuditableDbContextBaseTests(SharedSqlServerContainer sqlCont
 
         // Act
         dummyToUpdate.Name = Guid.NewGuid().ToString();
-        await DbContext.SaveChangesAsync();
+        await DummyDbContext.SaveChangesAsync();
 
         // Assert
-        var change = await DbContext
+        var change = await DummyDbContext
             .DataChanges
             .OrderBy(entity => entity.DateCreatedUtc)
             .LastOrDefaultAsync();
@@ -54,10 +55,10 @@ public sealed class AuditableDbContextBaseTests(SharedSqlServerContainer sqlCont
     {
         // Arrange 
         var dummy = GenerateDummy();
-        await DbContext.Dummies.AddAsync(dummy);
+        await DummyDbContext.Dummies.AddAsync(dummy);
 
         // Act 
-        await DbContext.SaveChangesAsync();
+        await DummyDbContext.SaveChangesAsync();
 
         // Assert
         Assert.NotEqual(Guid.Empty, dummy.Id);
@@ -71,8 +72,8 @@ public sealed class AuditableDbContextBaseTests(SharedSqlServerContainer sqlCont
 
         // Act 
         var dateCreatedUtcBeforeAdding = dummyToAdd.DateCreatedUtc;
-        await DbContext.Dummies.AddAsync(dummyToAdd);
-        await DbContext.SaveChangesAsync();
+        await DummyDbContext.Dummies.AddAsync(dummyToAdd);
+        await DummyDbContext.SaveChangesAsync();
         var dateCreatedUtcAfterAdding = dummyToAdd.DateCreatedUtc;
 
         // Assert
@@ -87,8 +88,8 @@ public sealed class AuditableDbContextBaseTests(SharedSqlServerContainer sqlCont
 
         // Act 
         var dateModifiedUtcBeforeAdding = dummyToAdd.DateModifiedUtc;
-        await DbContext.Dummies.AddAsync(dummyToAdd);
-        await DbContext.SaveChangesAsync();
+        await DummyDbContext.Dummies.AddAsync(dummyToAdd);
+        await DummyDbContext.SaveChangesAsync();
         var dateModifiedUtcAfterAdding = dummyToAdd.DateModifiedUtc;
 
         // Assert
@@ -104,8 +105,8 @@ public sealed class AuditableDbContextBaseTests(SharedSqlServerContainer sqlCont
         // Act 
         var dateCreatedUtcBeforeUpdating = dummyToUpdate.DateCreatedUtc;
         dummyToUpdate.Name = Guid.NewGuid().ToString();
-        DbContext.Dummies.Update(dummyToUpdate);
-        await DbContext.SaveChangesAsync();
+        DummyDbContext.Dummies.Update(dummyToUpdate);
+        await DummyDbContext.SaveChangesAsync();
         var dateCreatedUtcAfterUpdating = dummyToUpdate.DateCreatedUtc;
 
         // Assert 
@@ -121,8 +122,8 @@ public sealed class AuditableDbContextBaseTests(SharedSqlServerContainer sqlCont
         // Act 
         var dateModifiedUtcBeforeUpdating = dummyToUpdate.DateModifiedUtc ?? DateTime.MinValue.ToUniversalTime();
         dummyToUpdate.Name = Guid.NewGuid().ToString();
-        DbContext.Dummies.Update(dummyToUpdate);
-        await DbContext.SaveChangesAsync();
+        DummyDbContext.Dummies.Update(dummyToUpdate);
+        await DummyDbContext.SaveChangesAsync();
         var dateModifiedUtcAfterUpdating = dummyToUpdate.DateModifiedUtc;
 
         // Assert

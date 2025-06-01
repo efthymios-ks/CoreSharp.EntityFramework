@@ -1,13 +1,14 @@
 ﻿using CoreSharp.EntityFramework.Extensions;
+using CoreSharp.EntityFramework.Tests.Internal;
 using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Tests.Extensions;
 
 
-[Collection(nameof(SharedSqlServerCollection))]
-public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
-    : SharedSqlServerTestsBase(sqlContainer)
+[Collection(nameof(DummySqlServerCollection))]
+public sealed class DbSetExtensionsTests(DummySqlServerContainer sqlContainer)
+    : DummySqlServerTestsBase(sqlContainer)
 {
     // AddManyAsync
     [Fact]
@@ -33,7 +34,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         Task Action()
-            => DbContext.Dummies.AddManyAsync<DummyEntity, Guid>(dummiesToAdd);
+            => DummyDbContext.Dummies.AddManyAsync<DummyEntity, Guid>(dummiesToAdd);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentNullException>(Action);
@@ -46,7 +47,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var dummiesToAdd = GenerateDummies(1);
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AddManyAsync<DummyEntity, Guid>(dummiesToAdd);
+        var dummiesReturned = await DummyDbContext.Dummies.AddManyAsync<DummyEntity, Guid>(dummiesToAdd);
         var dummyEntries = GetDummyEntries(EntityState.Added);
 
         // Assert
@@ -61,7 +62,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var dummiesToAdd = await PreloadDummiesAsync(1);
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AddManyAsync<DummyEntity, Guid>(dummiesToAdd);
+        var dummiesReturned = await DummyDbContext.Dummies.AddManyAsync<DummyEntity, Guid>(dummiesToAdd);
         var dummyEntries = GetDummyEntries(EntityState.Added);
 
         // Assert
@@ -92,7 +93,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         Task Action()
-            => DbContext.Dummies.AttachManyAsync<DummyEntity, Guid>(dummiesToAttach);
+            => DummyDbContext.Dummies.AttachManyAsync<DummyEntity, Guid>(dummiesToAttach);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentNullException>(Action);
@@ -109,7 +110,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         }
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AttachManyAsync<DummyEntity, Guid>(dummiesToAttach);
+        var dummiesReturned = await DummyDbContext.Dummies.AttachManyAsync<DummyEntity, Guid>(dummiesToAttach);
         var dummyEntries = GetDummyEntries(EntityState.Modified);
 
         // Assert
@@ -131,7 +132,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         }
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AttachManyAsync<DummyEntity, Guid>(dummiesToAttach);
+        var dummiesReturned = await DummyDbContext.Dummies.AttachManyAsync<DummyEntity, Guid>(dummiesToAttach);
         var dummyEntries = GetDummyEntries(EntityState.Added);
 
         // Assert
@@ -163,7 +164,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         Task Action()
-            => DbContext.Dummies.UpdateManyAsync<DummyEntity, Guid>(dummiesToUpdate);
+            => DummyDbContext.Dummies.UpdateManyAsync<DummyEntity, Guid>(dummiesToUpdate);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentNullException>(Action);
@@ -180,7 +181,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         }
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.UpdateManyAsync<DummyEntity, Guid>(dummiesToUpdate);
+        var dummiesReturned = await DummyDbContext.Dummies.UpdateManyAsync<DummyEntity, Guid>(dummiesToUpdate);
         var dummyEntries = GetDummyEntries(EntityState.Modified);
 
         // Assert
@@ -202,7 +203,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         }
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.UpdateManyAsync<DummyEntity, Guid>(dummiesToUpdate);
+        var dummiesReturned = await DummyDbContext.Dummies.UpdateManyAsync<DummyEntity, Guid>(dummiesToUpdate);
         var dummyEntries = GetDummyEntries(EntityState.Added);
 
         // Assert
@@ -234,7 +235,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         Task Action()
-            => DbContext.Dummies.RemoveManyAsync<DummyEntity, Guid>(dummiesToRemove);
+            => DummyDbContext.Dummies.RemoveManyAsync<DummyEntity, Guid>(dummiesToRemove);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentNullException>(Action);
@@ -247,7 +248,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var dummiesToRemove = await PreloadDummiesAsync(1);
 
         // Act
-        await DbContext.Dummies.RemoveManyAsync<DummyEntity, Guid>(dummiesToRemove);
+        await DummyDbContext.Dummies.RemoveManyAsync<DummyEntity, Guid>(dummiesToRemove);
         var dummyEntries = GetDummyEntries(EntityState.Deleted);
 
         // Assert  
@@ -261,7 +262,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var dummiesToRemove = GenerateDummies(1);
 
         // Act
-        await DbContext.Dummies.RemoveManyAsync<DummyEntity, Guid>(dummiesToRemove);
+        await DummyDbContext.Dummies.RemoveManyAsync<DummyEntity, Guid>(dummiesToRemove);
         var dummyEntries = GetDummyEntries(EntityState.Deleted);
 
         // Assert  
@@ -294,7 +295,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         Task Action()
-            => DbContext.Dummies.RemoveByKeyAsync(existingDummy.Id, cancellationTokenSource.Token);
+            => DummyDbContext.Dummies.RemoveByKeyAsync(existingDummy.Id, cancellationTokenSource.Token);
 
         // Assert 
         await Assert.ThrowsAsync<TaskCanceledException>(Action);
@@ -307,7 +308,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var existingDummy = await PreloadDummyAsync();
 
         // Act
-        var removed = await DbContext.Dummies.RemoveByKeyAsync(existingDummy.Id);
+        var removed = await DummyDbContext.Dummies.RemoveByKeyAsync(existingDummy.Id);
         var dummyEntry = GetDummyEntry(EntityState.Deleted)!;
 
         // Assert 
@@ -323,7 +324,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var dummyIdToRemove = Guid.NewGuid();
 
         // Act
-        var removed = await DbContext.Dummies.RemoveByKeyAsync(dummyIdToRemove);
+        var removed = await DummyDbContext.Dummies.RemoveByKeyAsync(dummyIdToRemove);
         var dummyEntry = GetDummyEntry(EntityState.Deleted);
 
         // Assert 
@@ -355,7 +356,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         Task Action()
-            => DbContext.Dummies.AddManyIfNotExistAsync<DummyEntity, Guid>(dummiesToAdd);
+            => DummyDbContext.Dummies.AddManyIfNotExistAsync<DummyEntity, Guid>(dummiesToAdd);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentNullException>(Action);
@@ -371,7 +372,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         async Task Action()
-            => await DbContext.Dummies.AddManyIfNotExistAsync<DummyEntity, Guid>(dummiesToAdd, cancellationTokenSource.Token);
+            => await DummyDbContext.Dummies.AddManyIfNotExistAsync<DummyEntity, Guid>(dummiesToAdd, cancellationTokenSource.Token);
 
         // Assert
         await Assert.ThrowsAsync<TaskCanceledException>(Action);
@@ -384,7 +385,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var dummiesToAdd = GenerateDummies(1);
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AddManyIfNotExistAsync<DummyEntity, Guid>(dummiesToAdd);
+        var dummiesReturned = await DummyDbContext.Dummies.AddManyIfNotExistAsync<DummyEntity, Guid>(dummiesToAdd);
         var dummyEntries = GetDummyEntries(EntityState.Added);
 
         // Assert
@@ -399,7 +400,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var dummiesToAdd = await PreloadDummiesAsync(1);
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AddManyIfNotExistAsync<DummyEntity, Guid>(dummiesToAdd);
+        var dummiesReturned = await DummyDbContext.Dummies.AddManyIfNotExistAsync<DummyEntity, Guid>(dummiesToAdd);
         var dummyEntries = GetDummyEntries(EntityState.Added);
 
         // Assert 
@@ -431,7 +432,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         async Task Action()
-            => await DbContext.Dummies.AttachManyIfExistAsync<DummyEntity, Guid>(dummiesToAttach);
+            => await DummyDbContext.Dummies.AttachManyIfExistAsync<DummyEntity, Guid>(dummiesToAttach);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentNullException>(Action);
@@ -452,7 +453,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         async Task Action()
-            => await DbContext.Dummies.AttachManyIfExistAsync<DummyEntity, Guid>(dummiesToAttach, cancellationTokenSource.Token);
+            => await DummyDbContext.Dummies.AttachManyIfExistAsync<DummyEntity, Guid>(dummiesToAttach, cancellationTokenSource.Token);
 
         // Assert
         await Assert.ThrowsAsync<TaskCanceledException>(Action);
@@ -469,7 +470,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         }
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AttachManyIfExistAsync<DummyEntity, Guid>(dummiesToAttach);
+        var dummiesReturned = await DummyDbContext.Dummies.AttachManyIfExistAsync<DummyEntity, Guid>(dummiesToAttach);
         var dummyEntries = GetDummyEntries(EntityState.Modified);
 
         // Assert 
@@ -484,7 +485,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var dummiesToAttach = GenerateDummies(1);
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AttachManyIfExistAsync<DummyEntity, Guid>(dummiesToAttach);
+        var dummiesReturned = await DummyDbContext.Dummies.AttachManyIfExistAsync<DummyEntity, Guid>(dummiesToAttach);
         var dummyEntries = GetDummyEntries(EntityState.Modified);
 
         // Assert
@@ -516,7 +517,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         async Task Action()
-            => await DbContext.Dummies.UpdateManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate);
+            => await DummyDbContext.Dummies.UpdateManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentNullException>(Action);
@@ -537,7 +538,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         async Task Action()
-            => await DbContext.Dummies.UpdateManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate, cancellationTokenSource.Token);
+            => await DummyDbContext.Dummies.UpdateManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate, cancellationTokenSource.Token);
 
         // Assert
         await Assert.ThrowsAsync<TaskCanceledException>(Action);
@@ -554,7 +555,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         }
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.UpdateManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate);
+        var dummiesReturned = await DummyDbContext.Dummies.UpdateManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate);
         var dummyEntries = GetDummyEntries(EntityState.Modified);
 
         // Assert 
@@ -569,7 +570,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var dummiesToUpdate = GenerateDummies(1);
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.UpdateManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate);
+        var dummiesReturned = await DummyDbContext.Dummies.UpdateManyIfExistAsync<DummyEntity, Guid>(dummiesToUpdate);
         var dummyEntries = GetDummyEntries(EntityState.Modified);
 
         // Assert
@@ -601,7 +602,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         async Task Action()
-            => await DbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAddOrAttach);
+            => await DummyDbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAddOrAttach);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentNullException>(Action);
@@ -617,7 +618,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         async Task Action()
-            => await DbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAddOrAttach, cancellationTokenSource.Token);
+            => await DummyDbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAddOrAttach, cancellationTokenSource.Token);
 
         // Assert 
         await Assert.ThrowsAsync<TaskCanceledException>(Action);
@@ -630,7 +631,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var dummiesToAdd = GenerateDummies(1);
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAdd);
+        var dummiesReturned = await DummyDbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAdd);
         var dummyEntries = GetDummyEntries(EntityState.Added);
 
         // Assert 
@@ -649,7 +650,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         }
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAttach);
+        var dummiesReturned = await DummyDbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAttach);
         var dummyEntries = GetDummyEntries(EntityState.Modified);
 
         // Assert 
@@ -671,7 +672,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var dummiesToAddOrAttach = dummiesToAttach.Concat(dummiesToAdd).ToArray();
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAddOrAttach);
+        var dummiesReturned = await DummyDbContext.Dummies.AddOrAttachManyAsync<DummyEntity, Guid>(dummiesToAddOrAttach);
         var addedEntries = GetDummyEntries(EntityState.Added);
         var mofidiedEntries = GetDummyEntries(EntityState.Modified);
 
@@ -705,7 +706,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         async Task Action()
-            => await DbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToAddOrUpdate);
+            => await DummyDbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToAddOrUpdate);
 
         // Assert
         await Assert.ThrowsAsync<ArgumentNullException>(Action);
@@ -721,7 +722,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
 
         // Act
         async Task Action()
-            => await DbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToAddOrUpdate, cancellationTokenSource.Token);
+            => await DummyDbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToAddOrUpdate, cancellationTokenSource.Token);
 
         // Assert 
         await Assert.ThrowsAsync<TaskCanceledException>(Action);
@@ -734,7 +735,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var dummiesToAdd = GenerateDummies(1);
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToAdd);
+        var dummiesReturned = await DummyDbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToAdd);
         var dummyEntries = GetDummyEntries(EntityState.Added);
 
         // Assert 
@@ -754,7 +755,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         }
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToUpdate);
+        var dummiesReturned = await DummyDbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToUpdate);
         var dummyEntries = GetDummyEntries(EntityState.Modified);
 
         // Assert 
@@ -776,7 +777,7 @@ public sealed class DbSetExtensionsTests(SharedSqlServerContainer sqlContainer)
         var dummiesToAddOrUpdate = dummiesToUpdate.Concat(dummiesToAdd).ToArray();
 
         // Act
-        var dummiesReturned = await DbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToAddOrUpdate);
+        var dummiesReturned = await DummyDbContext.Dummies.AddOrUpdateManyAsync<DummyEntity, Guid>(dummiesToAddOrUpdate);
         var addedEntries = GetDummyEntries(EntityState.Added);
         var mofidiedEntries = GetDummyEntries(EntityState.Modified);
 
