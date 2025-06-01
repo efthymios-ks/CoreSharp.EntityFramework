@@ -1,15 +1,15 @@
 ﻿using CoreSharp.EntityFramework.Tests.Internal.Database.DbContexts;
-using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
+using CoreSharp.EntityFramework.Tests.Internal.Database.DbContexts.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace CoreSharp.EntityFramework.Tests.Internal;
+namespace CoreSharp.EntityFramework.Tests.Internal.Database;
 
 public abstract class DummySqlServerTestsBase(DummySqlServerContainer sqlContainer) : IAsyncLifetime
 {
     private readonly DummySqlServerContainer _sqlContainer = sqlContainer;
 
-    protected DummyDbContext DummyDbContext { get; set; } = null!;
+    protected DummyDbContext DummyDbContext { get; private set; } = null!;
 
     protected string SqlConnectionString
         => _sqlContainer.SqlConnectionString;

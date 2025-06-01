@@ -1,6 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Extensions;
-using CoreSharp.EntityFramework.Tests.Internal;
-using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
+using CoreSharp.EntityFramework.Tests.Internal.Database;
+using CoreSharp.EntityFramework.Tests.Internal.Database.DbContexts;
+using CoreSharp.EntityFramework.Tests.Internal.Database.DbContexts.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Tests.Extensions;

@@ -1,7 +1,7 @@
 ﻿using CoreSharp.EntityFramework.Entities.Abstracts;
 using System.ComponentModel.DataAnnotations;
 
-namespace CoreSharp.EntityFramework.Tests.Internal.Database.Models;
+namespace CoreSharp.EntityFramework.Tests.Internal.Database.DbContexts.Models;
 
 public class DummyEntity : EntityBase<Guid>
 {

@@ -1,4 +1,4 @@
-﻿using CoreSharp.EntityFramework.Tests.Internal;
+﻿using CoreSharp.EntityFramework.Tests.Internal.Database;
 using CoreSharp.EntityFramework.Tests.Internal.Database.Repositories;
 using Microsoft.EntityFrameworkCore;
 

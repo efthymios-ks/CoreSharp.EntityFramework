@@ -1,6 +1,6 @@
 ﻿using Testcontainers.MsSql;
 
-namespace CoreSharp.EntityFramework.Tests.Internal;
+namespace CoreSharp.EntityFramework.Tests.Internal.Database;
 
 public sealed class DummySqlServerContainer : IAsyncLifetime
 {
