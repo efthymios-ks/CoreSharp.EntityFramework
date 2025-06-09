@@ -1,11 +1,12 @@
 ﻿using CoreSharp.EntityFramework.Entities;
+using CoreSharp.EntityFramework.Tests.Internal.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Tests.Entities;
 
-[Collection(nameof(SharedSqlServerCollection))]
-public sealed class TemporaryEntityChangeTests(SharedSqlServerContainer sqlContainer)
-    : SharedSqlServerTestsBase(sqlContainer)
+[Collection(nameof(DummySqlServerCollection))]
+public sealed class TemporaryEntityChangeTests(DummySqlServerContainer sqlContainer)
+    : DummySqlServerTestsBase(sqlContainer)
 {
     [Fact]
     public void Constructor_WhenEntryIsNull_ShouldThrowArgumentNullException()
@@ -23,7 +24,7 @@ public sealed class TemporaryEntityChangeTests(SharedSqlServerContainer sqlConta
     {
         // Arrange
         var dummyToAdd = GenerateDummy();
-        await DbContext.Dummies.AddAsync(dummyToAdd);
+        await DummyDbContext.Dummies.AddAsync(dummyToAdd);
         var change = GetDummyEntry(EntityState.Added)!;
 
         // Act
@@ -42,7 +43,7 @@ public sealed class TemporaryEntityChangeTests(SharedSqlServerContainer sqlConta
     {
         // Arrange
         var dummyToAdd = GenerateDummy();
-        await DbContext.Dummies.AddAsync(dummyToAdd);
+        await DummyDbContext.Dummies.AddAsync(dummyToAdd);
         var dummyEntry = GetDummyEntry(EntityState.Added)!;
 
         // Act
@@ -72,7 +73,7 @@ public sealed class TemporaryEntityChangeTests(SharedSqlServerContainer sqlConta
     {
         // Arrange
         var dummyToRemove = await PreloadDummyAsync();
-        DbContext.Dummies.Remove(dummyToRemove);
+        DummyDbContext.Dummies.Remove(dummyToRemove);
         var dummyEntry = GetDummyEntry(EntityState.Deleted)!;
 
         // Act

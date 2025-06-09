@@ -1,20 +1,18 @@
-﻿using CoreSharp.EntityFramework.Extensions;
-using CoreSharp.EntityFramework.Tests.Internal.Database.DbContexts;
-using CoreSharp.EntityFramework.Tests.Internal.Database.Models;
+﻿using CoreSharp.EntityFramework.Tests.Internal.Database.DbContexts;
+using CoreSharp.EntityFramework.Tests.Internal.Database.DbContexts.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace CoreSharp.EntityFramework.Tests;
+namespace CoreSharp.EntityFramework.Tests.Internal.Database;
 
-public abstract class SharedSqlServerTestsBase(SharedSqlServerContainer sqlContainer) : IAsyncLifetime
+public abstract class DummySqlServerTestsBase(DummySqlServerContainer sqlContainer) : IAsyncLifetime
 {
-    private readonly SharedSqlServerContainer _sqlContainer = sqlContainer;
+    private readonly DummySqlServerContainer _sqlContainer = sqlContainer;
 
-    protected DummyDbContext DbContext
-    {
-        get => _sqlContainer.DbContext;
-        set => _sqlContainer.DbContext = value;
-    }
+    protected DummyDbContext DummyDbContext { get; private set; } = null!;
+
+    protected string SqlConnectionString
+        => _sqlContainer.SqlConnectionString;
 
     public async Task InitializeAsync()
     {
@@ -22,7 +20,7 @@ public abstract class SharedSqlServerTestsBase(SharedSqlServerContainer sqlConta
             Try initialize on each test, ONLY IF NEEDED,
             because DbContext is shared across all tests and some tests dispose it.
         */
-        if (DbContext is null || DbContext.IsDisposed)
+        if (DummyDbContext is null || DummyDbContext.IsDisposed)
         {
             var options = new DbContextOptionsBuilder<DummyDbContext>()
                 .UseSqlServer(_sqlContainer.SqlConnectionString)
@@ -30,14 +28,14 @@ public abstract class SharedSqlServerTestsBase(SharedSqlServerContainer sqlConta
                 .EnableSensitiveDataLogging()
                 .Options;
 
-            DbContext = new DummyDbContext(options);
-            await DbContext.Database.EnsureCreatedAsync();
+            DummyDbContext = new DummyDbContext(options);
+            await DummyDbContext.Database.EnsureCreatedAsync();
+            await DummyDbContext.EnsureValueGeneratedConstraintsAsync();
         }
 
-        await DbContext.RollbackAsync();
-        DbContext.ChangeTracker.DetectChanges();
-        DbContext.ChangeTracker.Clear();
-        await DbContext.Database.ExecuteSqlAsync($"TRUNCATE TABLE Dummies");
+        await DummyDbContext.Database.ExecuteSqlAsync($"TRUNCATE TABLE Dummies");
+        DummyDbContext.ChangeTracker.DetectChanges();
+        DummyDbContext.ChangeTracker.Clear();
     }
 
     public Task DisposeAsync()
@@ -50,10 +48,10 @@ public abstract class SharedSqlServerTestsBase(SharedSqlServerContainer sqlConta
         };
 
     protected static DummyEntity[] GenerateDummies(int count)
-        => Enumerable
+        => [.. Enumerable
             .Range(0, count)
             .Select(_ => GenerateDummy())
-            .ToArray();
+        ];
 
     protected async Task<DummyEntity> PreloadDummyAsync()
         => (await PreloadDummiesAsync(1))[0];
@@ -61,8 +59,8 @@ public abstract class SharedSqlServerTestsBase(SharedSqlServerContainer sqlConta
     protected async Task<DummyEntity[]> PreloadDummiesAsync(int count)
     {
         var dummies = GenerateDummies(count);
-        await DbContext.Dummies.AddRangeAsync(dummies);
-        await DbContext.SaveChangesAsync();
+        await DummyDbContext.Dummies.AddRangeAsync(dummies);
+        await DummyDbContext.SaveChangesAsync();
         return dummies;
     }
 
@@ -77,11 +75,11 @@ public abstract class SharedSqlServerTestsBase(SharedSqlServerContainer sqlConta
 
     protected EntityEntry<TEntity>[] GetEntries<TEntity>(EntityState entityState)
         where TEntity : class
-        => DbContext
+        => [.. DummyDbContext
             .ChangeTracker
             .Entries<TEntity>()
             .Where(entry => entry.State == entityState)
-            .ToArray();
+        ];
 
     protected EntityEntry<DummyEntity>[] GetDummyEntries(EntityState entityState)
         => GetEntries<DummyEntity>(entityState);

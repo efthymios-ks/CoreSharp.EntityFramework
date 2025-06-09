@@ -1,11 +1,12 @@
-﻿using CoreSharp.EntityFramework.Tests.Internal.Database.Repositories;
+﻿using CoreSharp.EntityFramework.Tests.Internal.Database;
+using CoreSharp.EntityFramework.Tests.Internal.Database.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreSharp.EntityFramework.Tests.Repositories.Abstracts;
 
-[Collection(nameof(SharedSqlServerCollection))]
-public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlContainer)
-    : SharedSqlServerTestsBase(sqlContainer)
+[Collection(nameof(DummySqlServerCollection))]
+public sealed partial class RepositoryBaseTests(DummySqlServerContainer sqlContainer)
+    : DummySqlServerTestsBase(sqlContainer)
 {
     [Fact]
     public void Constructor_WhenDbContextIsNull_ShouldThrowArgumentNullException()
@@ -22,7 +23,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task GetAsync_WithKey_WhenNavigationIsNull_ShouldNotThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
 
         // Act
         Task Action()
@@ -37,7 +38,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task GetAsync_WithKey_WhenNavigationIsNotSet_ShouldReturnUnfilteredEntity()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         var existingDummyId = (await PreloadDummyAsync()).Id;
 
         // Act
@@ -51,7 +52,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task GetAsync_WithKey_WhenNavigationIsSet_ShouldReturnFilteredEntity()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         var existingDummyId = (await PreloadDummyAsync()).Id;
 
         // Act
@@ -65,7 +66,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task GetAsync_WithKey_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
@@ -81,7 +82,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task GetAsync_WithKey_WhenKeyNotFound_ShouldReturnNull()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         await PreloadDummiesAsync(1);
 
         // Act
@@ -95,7 +96,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task GetAsync_WithKey_WhenKeyFound_ShouldReturnEntity()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         var existingDummy = await PreloadDummyAsync();
 
         // Act
@@ -109,7 +110,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task GetAsync_All_WhenNavigationIsNull_ShouldNotThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
 
         // Act
         Task Action()
@@ -124,7 +125,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task GetAsync_All_WhenNavigationIsNotSet_ShouldReturnUnfilteredEntities()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         var existingDummies = await PreloadDummiesAsync(1);
 
         // Act
@@ -138,7 +139,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task GetAsync_All_WhenNavigationIsSet_ShouldReturnFilteredEntity()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         await PreloadDummiesAsync(1);
 
         // Act
@@ -152,7 +153,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task GetAsync_All_WhenCancellationIsRequested_ShouldThrowTaskCancelledException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
@@ -168,7 +169,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task AddAsync_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
 
         // Act
         async Task Action()
@@ -185,7 +186,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task AddAsync_WhenCancellationIsRequested_ShouldNotThrowTaskCancelledException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         var dummyToAdd = GenerateDummy();
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -203,7 +204,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task AddAsync_WhenEntityExistsInDatabase_ShouldSetEntityAsAddedAndReturnIt()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         var dummyToAdd = GenerateDummy();
 
         // Act 
@@ -220,7 +221,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task AddAsync_WhenEntityDoesNotExistInDatabase_ShouldSetEntityAsAddedAndReturnIt()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         var dummyToAdd = await PreloadDummyAsync();
 
         // Act 
@@ -237,7 +238,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task UpdateAsync_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
 
         // Act
         async Task Action()
@@ -254,7 +255,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task UpdateAsync_WhenCancellationIsRequested_ShouldNotThrowTaskCancelledException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         var existingDummy = await PreloadDummyAsync();
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -272,7 +273,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task UpdateAsync_WhenEntityExistsInDatabase_ShouldSetEntityAsModifiedAndReturnIt()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         var dumymToUpdate = await PreloadDummyAsync();
         dumymToUpdate.Name = Guid.NewGuid().ToString();
 
@@ -290,7 +291,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task UpdateAsync_WhenEntityDoesNotExistInDatabase_ShouldSetEntityAsAddedAndReturnIt()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         var dummyToUpdate = GenerateDummy();
         dummyToUpdate.Name = Guid.NewGuid().ToString();
 
@@ -308,7 +309,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task RemoveAsync_WhenEntityIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
 
         // Act
         async Task Action()
@@ -325,7 +326,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task RemoveAsync_WhenCancellationIsRequested_ShouldNotThrowTaskCancelledException()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         var dummyToRemove = await PreloadDummyAsync();
         using var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
@@ -343,7 +344,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task RemoveAsync_WhenEntityExistsInDatabase_ShouldSetEntityAsDeleted()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         var dummyToRemove = await PreloadDummyAsync();
 
         // Act 
@@ -359,7 +360,7 @@ public sealed partial class RepositoryBaseTests(SharedSqlServerContainer sqlCont
     public async Task RemoveAsync_WhenEntityDoesNotExistInDatabase_ShouldSetEntityAsDeleted()
     {
         // Arrange
-        var repository = new DummyRepository(DbContext);
+        var repository = new DummyRepository(DummyDbContext);
         var dummyToRemove = GenerateDummy();
 
         // Act 

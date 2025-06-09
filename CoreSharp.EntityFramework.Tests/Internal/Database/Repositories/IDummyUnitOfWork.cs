@@ -2,6 +2,4 @@
 
 namespace CoreSharp.EntityFramework.Tests.Internal.Database.Repositories;
 
-public interface IDummyUnitOfWork : IUnitOfWork
-{
-}
+public interface IDummyUnitOfWork : IUnitOfWork;
